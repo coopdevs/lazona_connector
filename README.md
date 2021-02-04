@@ -1,6 +1,6 @@
 # La Zona connector
 
-This Django app aims to integrate Lazona's woocommerce site to Koiki's API, its
+This Django app aims to integrate Lazona's Woocommerce site to Koiki's API, its
 delivery and distribution provider.
 
 ## Requirements
