@@ -83,7 +83,6 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'lazona_connector',
-            'USER': 'lazona_connector',
         }
     }
 
