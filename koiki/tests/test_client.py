@@ -26,18 +26,26 @@ class KoikiTest(TestCase):
         }
 
     @responses.activate
-    def test_create_delivery_successful_response(self):
+    @patch('koiki.client.logging', autospec=True)
+    def test_create_delivery_successful_response(self, mock_logger):
         responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
                   json={}, status=200)
 
         self.assertTrue(Client(self.order).create_delivery())
+        mock_logger.error.assert_not_called()
 
     @responses.activate
-    def test_create_delivery_failed_response(self):
+    @patch('koiki.client.logging', autospec=True)
+    def test_create_delivery_failed_response(self, mock_logger):
         responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
                   json={'error': 'Bad Request'}, status=400)
 
         self.assertFalse(Client(self.order).create_delivery())
+        mock_logger.error.assert_called_once_with(
+            'Failed request. status=%s, body=%s',
+            400,
+            '{"error": "Bad Request"}'
+        )
 
     @patch('koiki.client.requests.post', autospec=True)
     def test_create_delivery_sends_request_with_body(self, post_mock):

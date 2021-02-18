@@ -1,4 +1,5 @@
 import requests
+import logging
 
 from koiki.sender import Sender
 from koiki.recipient import Recipient
@@ -17,7 +18,12 @@ class Client():
 
     def create_delivery(self):
         response = requests.post(self.URL, json=self._body())
-        return response.status_code == 200
+
+        if response.status_code != 200:
+            logging.error('Failed request. status=%s, body=%s', response.status_code, response.text)
+            return False
+
+        return True
 
     def _body(self):
         return {
