@@ -16,8 +16,8 @@ class Client():
         self.recipient = Recipient(order)
 
     def create_delivery(self):
-        requests.post(self.URL, json=self._body())
-        return True
+        response = requests.post(self.URL, json=self._body())
+        return response.status_code == 200
 
     def _body(self):
         return {

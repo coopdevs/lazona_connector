@@ -1,5 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch
+import responses
 
 from koiki import Client
 
@@ -23,6 +24,20 @@ class KoikiTest(TestCase):
                 'phone': '+34666554433'
             }
         }
+
+    @responses.activate
+    def test_create_delivery_successful_response(self):
+        responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
+                  json={}, status=200)
+
+        self.assertTrue(Client(self.order).create_delivery())
+
+    @responses.activate
+    def test_create_delivery_failed_response(self):
+        responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
+                  json={'error': 'Bad Request'}, status=400)
+
+        self.assertFalse(Client(self.order).create_delivery())
 
     @patch('koiki.client.requests.post', autospec=True)
     def test_create_delivery_sends_request_with_body(self, post_mock):
