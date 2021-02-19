@@ -2,7 +2,8 @@ from unittest import TestCase
 from unittest.mock import patch
 import responses
 
-from koiki import Client
+from koiki.client import Client
+
 
 class KoikiTest(TestCase):
 
@@ -29,7 +30,7 @@ class KoikiTest(TestCase):
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_successful_response(self, mock_logger):
         responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
-                  json={}, status=200)
+                      json={}, status=200)
 
         self.assertTrue(Client(self.order).create_delivery())
         mock_logger.error.assert_not_called()
@@ -38,7 +39,7 @@ class KoikiTest(TestCase):
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_failed_response(self, mock_logger):
         responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
-                  json={'error': 'Bad Request'}, status=400)
+                      json={'error': 'Bad Request'}, status=400)
 
         self.assertFalse(Client(self.order).create_delivery())
         mock_logger.error.assert_called_once_with(
@@ -93,6 +94,6 @@ class KoikiTest(TestCase):
         MockSender().to_dict.assert_called_once()
 
     @patch('koiki.client.Recipient')
-    def test_create_delivery_calls_sender(self, MockRecipient):
+    def test_create_delivery_calls_recipient(self, MockRecipient):
         Client(self.order).create_delivery()
         MockRecipient().to_dict.assert_called_once()

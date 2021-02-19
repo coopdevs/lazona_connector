@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from koiki.sender import Sender
 
+
 class SenderTest(TestCase):
 
     def test_to_dict(self):

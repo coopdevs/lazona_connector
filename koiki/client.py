@@ -7,6 +7,7 @@ from koiki.recipient import Recipient
 HOST = 'https://rekistest.koiki.es/services'
 API_PATH = '/rekis/api'
 
+
 class Client():
     URL = f'{HOST}{API_PATH}/altaEnvios'
     label_format = 'PDF'
@@ -20,7 +21,11 @@ class Client():
         response = requests.post(self.URL, json=self._body())
 
         if response.status_code != 200:
-            logging.error('Failed request. status=%s, body=%s', response.status_code, response.text)
+            logging.error(
+                'Failed request. status=%s, body=%s',
+                response.status_code,
+                response.text
+            )
             return False
 
         return True
@@ -32,5 +37,5 @@ class Client():
         }
 
     def _delivery(self):
-        order = { 'numPedido': self.order['order_key'] }
+        order = {'numPedido': self.order['order_key']}
         return {**order, **self.recipient.to_dict(), **self.sender.to_dict()}

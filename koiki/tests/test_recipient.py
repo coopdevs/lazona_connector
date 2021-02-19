@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from koiki.recipient import Recipient
 
+
 class RecipientTest(TestCase):
 
     def test_to_dict(self):
@@ -35,4 +36,3 @@ class RecipientTest(TestCase):
             'telefonoDesti': billing['phone'],
             'emailDesti': billing['email']
         })
-
