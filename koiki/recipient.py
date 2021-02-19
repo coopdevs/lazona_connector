@@ -10,7 +10,7 @@ class Recipient():
         return {
             'nombreDesti': self.shipping['first_name'],
             'apellidoDesti': self.shipping['last_name'],
-            'direccionDesti': self.shipping['address_1'] + self.shipping['address_2'],
+            'direccionDesti': self._address(),
             'codPostalDesti': self.shipping['postcode'],
             'poblacionDesti': self.shipping['city'],
             'provinciaDesti': self.shipping['state'],
@@ -18,3 +18,11 @@ class Recipient():
             'telefonoDesti': self.billing['phone'],
             'emailDesti': self.billing['email']
         }
+
+    def _address(self):
+        address = self.shipping['address_1']
+
+        if self.shipping['address_2']:
+            address += ' ' + self.shipping['address_2']
+
+        return address

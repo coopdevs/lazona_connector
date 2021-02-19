@@ -75,7 +75,7 @@ class KoikiTest(TestCase):
 
                         'nombreDesti': shipping['first_name'],
                         'apellidoDesti': shipping['last_name'],
-                        'direccionDesti': shipping['address_1'] + shipping['address_2'],
+                        'direccionDesti': shipping['address_1'] + ' ' + shipping['address_2'],
                         'codPostalDesti': shipping['postcode'],
                         'poblacionDesti': shipping['city'],
                         'provinciaDesti': shipping['state'],
