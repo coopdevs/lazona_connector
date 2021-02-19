@@ -1,2 +1,5 @@
 ignore:
   - "*/tests/*”
+  - "manage.py"
+  - "lazona_connector/settings.py"
+  - "lazona_connector/wsgi.py"
