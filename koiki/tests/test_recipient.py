@@ -5,8 +5,8 @@ from koiki.recipient import Recipient
 
 class RecipientTest(TestCase):
 
-    def test_to_dict(self):
-        shipping = {
+    def setUp(self):
+        self.shipping = {
             'first_name': 'Philip',
             'last_name': 'Glass',
             'address_1': 'Pl. de la Vila',
@@ -16,55 +16,44 @@ class RecipientTest(TestCase):
             'state': 'Barcelona',
             'country': 'Catalunya'
         }
-        billing = {
+        self.billing = {
             'email': 'email@example.com',
             'phone': '+34666554433'
         }
-        order = {'shipping': shipping, 'billing': billing}
+
+    def test_to_dict(self):
+        order = {'shipping': self.shipping, 'billing': self.billing}
 
         recipient = Recipient(order)
 
         self.assertEqual(recipient.to_dict(), {
-            'nombreDesti': shipping['first_name'],
-            'apellidoDesti': shipping['last_name'],
-            'direccionDesti': shipping['address_1'] + ' ' + shipping['address_2'],
-            'codPostalDesti': shipping['postcode'],
-            'poblacionDesti': shipping['city'],
-            'provinciaDesti': shipping['state'],
-            'paisDesti': shipping['country'],
+            'nombreDesti': self.shipping['first_name'],
+            'apellidoDesti': self.shipping['last_name'],
+            'direccionDesti': self.shipping['address_1'] + ' ' + self.shipping['address_2'],
+            'codPostalDesti': self.shipping['postcode'],
+            'poblacionDesti': self.shipping['city'],
+            'provinciaDesti': self.shipping['state'],
+            'paisDesti': self.shipping['country'],
 
-            'telefonoDesti': billing['phone'],
-            'emailDesti': billing['email']
+            'telefonoDesti': self.billing['phone'],
+            'emailDesti': self.billing['email']
         })
 
     def test_to_dict_without_address_2(self):
-        shipping = {
-            'first_name': 'Philip',
-            'last_name': 'Glass',
-            'address_1': 'Pl. de la Vila',
-            'address_2': '',
-            'postcode': '08921',
-            'city': 'Santa Coloma de Gramenet',
-            'state': 'Barcelona',
-            'country': 'Catalunya'
-        }
-        billing = {
-            'email': 'email@example.com',
-            'phone': '+34666554433'
-        }
-        order = {'shipping': shipping, 'billing': billing}
+        self.shipping['address_2'] = ''
+        order = {'shipping': self.shipping, 'billing': self.billing}
 
         recipient = Recipient(order)
 
         self.assertEqual(recipient.to_dict(), {
-            'nombreDesti': shipping['first_name'],
-            'apellidoDesti': shipping['last_name'],
-            'direccionDesti': shipping['address_1'],
-            'codPostalDesti': shipping['postcode'],
-            'poblacionDesti': shipping['city'],
-            'provinciaDesti': shipping['state'],
-            'paisDesti': shipping['country'],
+            'nombreDesti': self.shipping['first_name'],
+            'apellidoDesti': self.shipping['last_name'],
+            'direccionDesti': self.shipping['address_1'],
+            'codPostalDesti': self.shipping['postcode'],
+            'poblacionDesti': self.shipping['city'],
+            'provinciaDesti': self.shipping['state'],
+            'paisDesti': self.shipping['country'],
 
-            'telefonoDesti': billing['phone'],
-            'emailDesti': billing['email']
+            'telefonoDesti': self.billing['phone'],
+            'emailDesti': self.billing['email']
         })
