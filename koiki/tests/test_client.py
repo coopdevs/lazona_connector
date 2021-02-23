@@ -48,8 +48,9 @@ class KoikiTest(TestCase):
             '{"error": "Bad Request"}'
         )
 
+    @patch('koiki.client.logging', autospec=True)
     @patch('koiki.client.requests.post', autospec=True)
-    def test_create_delivery_sends_request_with_body(self, post_mock):
+    def test_create_delivery_sends_request_with_body(self, post_mock, _logger_mock):
         """create_delivery builds the delivery based on the specified order"""
         shipping = self.order['shipping']
         billing = self.order['billing']
