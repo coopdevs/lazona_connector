@@ -1,10 +1,11 @@
 import requests
 import logging
+import os
 
 from koiki.sender import Sender
 from koiki.recipient import Recipient
 
-HOST = 'https://rekistest.koiki.es/services'
+HOST = os.getenv('HOST', 'https://testing_host')
 API_PATH = '/rekis/api'
 
 

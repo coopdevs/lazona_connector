@@ -29,7 +29,7 @@ class KoikiTest(TestCase):
     @responses.activate
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_successful_response(self, mock_logger):
-        responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={}, status=200)
 
         self.assertTrue(Client(self.order).create_delivery())
@@ -38,7 +38,7 @@ class KoikiTest(TestCase):
     @responses.activate
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_failed_response(self, mock_logger):
-        responses.add(responses.POST, 'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={'error': 'Bad Request'}, status=400)
 
         self.assertFalse(Client(self.order).create_delivery())
@@ -57,7 +57,7 @@ class KoikiTest(TestCase):
         Client(self.order).create_delivery()
 
         post_mock.assert_called_with(
-            'https://rekistest.koiki.es/services/rekis/api/altaEnvios',
+            'https://testing_host/rekis/api/altaEnvios',
             json={
                 'formatoEtiqueta': 'PDF',
                 'envios': [
@@ -88,12 +88,20 @@ class KoikiTest(TestCase):
             }
         )
 
+    @responses.activate
     @patch('koiki.client.Sender')
     def test_create_delivery_calls_sender(self, MockSender):
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
+                      json={}, status=200)
+
         Client(self.order).create_delivery()
         MockSender().to_dict.assert_called_once()
 
+    @responses.activate
     @patch('koiki.client.Recipient')
     def test_create_delivery_calls_recipient(self, MockRecipient):
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
+                      json={}, status=200)
+
         Client(self.order).create_delivery()
         MockRecipient().to_dict.assert_called_once()
