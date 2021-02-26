@@ -4,6 +4,8 @@ chardet==4.0.0
 coverage==5.4
 dj-database-url==0.5.0
 Django==3.1.6
+django-rest-framework==0.1.0
+djangorestframework==3.12.2
 flake8==3.8.4
 flake8-django==1.1.1
 gunicorn==20.0.4
