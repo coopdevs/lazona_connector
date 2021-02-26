@@ -7,31 +7,28 @@ import httpretty
 
 class DeliveryViewTests(TestCase):
 
-    def test_successful_request(self):
-        url = reverse('deliveries:create')
-        data = {'order_number': 'xxx'}
-        response = self.client.post(url, data, format='json')
+    def setUp(self):
+        self.url = reverse('deliveries:create')
+        self.data = {'order_number': 'xxx'}
+        self.api_url = 'https://testing_host/rekis/api/altaEnvios'
 
-        self.assertEqual(response.data, {'order_number': 'xxx'})
+    def test_successful_request(self):
+        response = self.client.post(self.url, self.data)
+
+        self.assertEqual(response.data, self.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_unsuccessful_request(self):
-        url = reverse('deliveries:create')
-        data = {}
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(self.url, {})
 
         self.assertEqual(response.data, {'order_number': ['This field is required.']})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch('api.views.Client', autospec=True)
     def test_koiki_client_is_used(self, mock_koiki_client):
-        url = reverse('deliveries:create')
-        data = {'order_number': 'xxx'}
+        httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
 
-        httpretty.register_uri(httpretty.POST, 'https://testing_host/rekis/api/altaEnvios',
-                               status=200, content_type='text/json')
-
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(self.url, self.data)
 
         mock_koiki_client.assert_called_once_with({
             'order_key': 'xxx',
@@ -54,13 +51,9 @@ class DeliveryViewTests(TestCase):
 
     @patch('api.views.Client.create_delivery', autospec=True)
     def test_koiki_create_delivery_is_called(self, mock_create_delivery):
-        url = reverse('deliveries:create')
-        data = {'order_number': 'xxx'}
+        httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
 
-        httpretty.register_uri(httpretty.POST, 'https://testing_host/rekis/api/altaEnvios',
-                               status=200, content_type='text/json')
-
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(self.url, self.data)
 
         mock_create_delivery.assert_called()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
