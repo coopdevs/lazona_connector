@@ -1,23 +1,9 @@
-import json
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase
 from unittest.mock import patch
-from unittest.mock import MagicMock
-
-from .models import Delivery
-from api.views import Client
-
-# TODO: Move me to tests/__init__.py and make sure is still protecting us
+from rest_framework import status
 import httpretty
-httpretty.enable(allow_net_connect=False)
 
-class DeliveryModelTests(APITestCase):
-
-    def test_delivery(self):
-        delivery = Delivery(order_number='abc')
-        self.assertEqual(delivery.order_number, 'abc')
 
 class DeliveryViewTests(TestCase):
 
