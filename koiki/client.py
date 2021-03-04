@@ -1,6 +1,7 @@
 import requests
 import logging
 import os
+import json
 
 from koiki.sender import Sender
 from koiki.recipient import Recipient
@@ -22,14 +23,15 @@ class Client():
         response = requests.post(self.URL, json=self._body())
 
         if response.status_code != 200:
-            logging.error(
-                'Failed request. status=%s, body=%s',
-                response.status_code,
-                response.text
-            )
-            return False
+            self._log_error(response.status_code, response.text)
+        elif self._errored(response):
+            self._log_error(400, response.text)
 
-        return True
+        logging.info(
+            'Koiki response. status=%s, body=%',
+            response.status_code,
+            response.text
+        )
 
     def _body(self):
         return {
@@ -40,3 +42,10 @@ class Client():
     def _delivery(self):
         order = {'numPedido': self.order['order_key']}
         return {**order, **self.recipient.to_dict(), **self.sender.to_dict()}
+
+    def _errored(self, response):
+        body = json.loads(response.text)
+        return '102' in body.get('respuesta', '')
+
+    def _log_error(self, code, msg):
+        logging.error('Failed request. status=%s, body=%s', code, msg)
