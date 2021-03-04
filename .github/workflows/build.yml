@@ -7,8 +7,24 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          POSTGRES_DB: lazona_connector
+          POSTGRES_USER: lazona_connector
+          POSTGRES_PASSWORD: secret
+
     env:
       SECRET_KEY: 'secret_key'
+      DATABASE_URL: postgres://lazona_connector:secret@localhost:5432/lazona_connector
+      DATABASE_DISABLE_SSL: 'true'
 
     steps:
       - uses: actions/checkout@v2
