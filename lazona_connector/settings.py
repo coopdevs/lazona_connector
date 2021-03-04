@@ -74,8 +74,10 @@ WSGI_APPLICATION = 'lazona_connector.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 if 'DATABASE_URL' in os.environ:
+    disable_ssl = bool(os.getenv('DATABASE_DISABLE_SSL', default=False))
+
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=not disable_ssl)
     }
 
 else:
@@ -85,7 +87,6 @@ else:
             'NAME': 'lazona_connector',
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
