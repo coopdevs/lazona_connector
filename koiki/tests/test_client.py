@@ -32,7 +32,7 @@ class KoikiTest(TestCase):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={}, status=200)
 
-        self.assertTrue(Client(self.order).create_delivery())
+        Client(self.order).create_delivery()
         mock_logger.error.assert_not_called()
 
     @responses.activate
@@ -41,11 +41,22 @@ class KoikiTest(TestCase):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={'error': 'Bad Request'}, status=400)
 
-        self.assertFalse(Client(self.order).create_delivery())
+        Client(self.order).create_delivery()
+        mock_logger.error.assert_called_once_with(
+            'Failed request. status=%s, body=%s', 400, '{"error": "Bad Request"}')
+
+    @responses.activate
+    @patch('koiki.client.logging', autospec=True)
+    def test_create_delivery_succesful_code_failed_response(self, mock_logger):
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
+                      json={'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []},
+                      status=200)
+
+        Client(self.order).create_delivery()
         mock_logger.error.assert_called_once_with(
             'Failed request. status=%s, body=%s',
             400,
-            '{"error": "Bad Request"}'
+            '{"respuesta": "102", "mensaje": "TOKEN NOT FOUND", "envios": []}'
         )
 
     @patch('koiki.client.logging', autospec=True)
