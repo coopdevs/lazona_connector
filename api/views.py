@@ -13,24 +13,8 @@ class DeliveryList(APIView):
     def post(self, request):
         serializer = DeliverySerializer(data=request.data)
         if serializer.is_valid():
-            order = {
-                'order_key': 'xxx',
-                'shipping': {
-                    'first_name': 'John',
-                    'last_name': 'Lennon',
-                    'address_1': 'Beatles Street 66',
-                    'address_2': '',
-                    'postcode': '08032',
-                    'city': 'Barcelona',
-                    'state': 'Barcelona',
-                    'country': 'Spain'
-                },
-                'billing': {
-                    'phone': '666666666',
-                    'email': 'lennon@example.com'
-                }
-            }
+            order = serializer.validated_data
             Client(order).create_delivery()
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(order, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
