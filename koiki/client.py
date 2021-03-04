@@ -6,7 +6,7 @@ import json
 from koiki.sender import Sender
 from koiki.recipient import Recipient
 
-HOST = os.getenv('HOST', 'https://testing_host')
+HOST = os.getenv('KOIKI_HOST', 'https://testing_host')
 API_PATH = '/rekis/api'
 
 
