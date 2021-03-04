@@ -6,6 +6,7 @@ from rest_framework import status
 from api.serializers import DeliverySerializer
 from koiki.client import Client
 
+
 class DeliveryList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

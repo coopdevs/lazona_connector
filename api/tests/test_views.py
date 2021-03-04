@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from unittest.mock import patch
 from rest_framework import status
-from rest_framework import exceptions
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import httpretty
@@ -57,7 +56,8 @@ class DeliveryViewTests(TestCase):
         self.client.force_authenticate(user=None)
         response = self.client.post(self.url, {})
 
-        self.assertEqual(response.content, b'{"detail":"Authentication credentials were not provided."}')
+        self.assertEqual(response.content,
+                         b'{"detail":"Authentication credentials were not provided."}')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     @patch('api.views.Client', autospec=True)
