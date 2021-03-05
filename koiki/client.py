@@ -15,7 +15,7 @@ class Client():
     URL = f'{HOST}{API_PATH}/altaEnvios'
     LABEL_FORMAT = 'PDF'
 
-    def __init__(self, order, auth_token=os.environ['KOIKI_AUTH_TOKEN']):
+    def __init__(self, order, auth_token=os.getenv('KOIKI_AUTH_TOKEN')):
         self.order = Order(order)
         self.sender = Sender()
         self.recipient = Recipient(order)
