@@ -29,26 +29,9 @@ class RecipientTest(TestCase):
         self.assertEqual(recipient.to_dict(), {
             'nombreDesti': self.shipping['first_name'],
             'apellidoDesti': self.shipping['last_name'],
-            'direccionDesti': self.shipping['address_1'] + ' ' + self.shipping['address_2'],
-            'codPostalDesti': self.shipping['postcode'],
-            'poblacionDesti': self.shipping['city'],
-            'provinciaDesti': self.shipping['state'],
-            'paisDesti': self.shipping['country'],
-
-            'telefonoDesti': self.billing['phone'],
-            'emailDesti': self.billing['email']
-        })
-
-    def test_to_dict_without_address_2(self):
-        self.shipping['address_2'] = ''
-        order = {'shipping': self.shipping, 'billing': self.billing}
-
-        recipient = Recipient(order)
-
-        self.assertEqual(recipient.to_dict(), {
-            'nombreDesti': self.shipping['first_name'],
-            'apellidoDesti': self.shipping['last_name'],
             'direccionDesti': self.shipping['address_1'],
+            'direccionAdicionalDesti': self.shipping['address_2'],
+            'numeroCalleDesti': '',
             'codPostalDesti': self.shipping['postcode'],
             'poblacionDesti': self.shipping['city'],
             'provinciaDesti': self.shipping['state'],

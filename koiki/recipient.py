@@ -10,7 +10,9 @@ class Recipient():
         return {
             'nombreDesti': self.shipping['first_name'],
             'apellidoDesti': self.shipping['last_name'],
-            'direccionDesti': self._address(),
+            'direccionDesti': self.shipping['address_1'],
+            'direccionAdicionalDesti': self.shipping['address_2'],
+            'numeroCalleDesti': '',
             'codPostalDesti': self.shipping['postcode'],
             'poblacionDesti': self.shipping['city'],
             'provinciaDesti': self.shipping['state'],

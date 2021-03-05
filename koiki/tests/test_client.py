@@ -10,6 +10,7 @@ class KoikiTest(TestCase):
     def setUp(self):
         self.order = {
             'order_key': 'xxx',
+            'customer_note': 'delivery testing',
             'shipping': {
                 'first_name': 'James',
                 'last_name': 'Bond',
@@ -75,9 +76,16 @@ class KoikiTest(TestCase):
                 'envios': [
                     {
                         'numPedido': self.order['order_key'],
+                        'bultos': 1,
+                        'kilos': 1.0,
+                        'tipoServicio': '.',
+                        'reembolso': 0.0,
+                        'observaciones': self.order['customer_note'],
 
                         'nombreRemi': 'La Zona',
+                        'apellidoRemi': '',
                         'direccionRemi': 'C/ La Zona, 1',
+                        'numeroCalleRemi': '',
                         'codPostalRemi': '08186',
                         'poblacionRemi': 'Barcelona',
                         'provinciaRemi': 'Barcelona',
@@ -87,14 +95,16 @@ class KoikiTest(TestCase):
 
                         'nombreDesti': shipping['first_name'],
                         'apellidoDesti': shipping['last_name'],
-                        'direccionDesti': shipping['address_1'] + ' ' + shipping['address_2'],
+                        'direccionDesti': shipping['address_1'],
+                        'direccionAdicionalDesti': shipping['address_2'],
+                        'numeroCalleDesti': '',
                         'codPostalDesti': shipping['postcode'],
                         'poblacionDesti': shipping['city'],
                         'provinciaDesti': shipping['state'],
                         'paisDesti': shipping['country'],
 
                         'telefonoDesti': billing['phone'],
-                        'emailDesti': billing['email']
+                        'emailDesti': billing['email'],
                     }
                 ]
             }
