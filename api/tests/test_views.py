@@ -22,7 +22,7 @@ class DeliveryViewTests(TestCase):
                 'postcode': '08032',
                 'city': 'Barcelona',
                 'state': 'Barcelona',
-                'country': 'Spain'
+                'country': 'ES'
             },
             'billing': {
                 'phone': '666666666',
