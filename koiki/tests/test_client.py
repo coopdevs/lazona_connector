@@ -64,7 +64,6 @@ class KoikiTest(TestCase):
     @patch('koiki.client.logging', autospec=True)
     @patch('koiki.client.requests.post', autospec=True)
     def test_create_delivery_sends_request_with_body(self, post_mock, _logger_mock):
-        """create_delivery builds the delivery based on the specified order"""
         shipping = self.order['shipping']
         billing = self.order['billing']
 
@@ -111,21 +110,3 @@ class KoikiTest(TestCase):
                 ]
             }
         )
-
-    @responses.activate
-    @patch('koiki.client.Sender')
-    def test_create_delivery_calls_sender(self, MockSender):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
-                      json={}, status=200)
-
-        Client(self.order).create_delivery()
-        MockSender().to_dict.assert_called_once()
-
-    @responses.activate
-    @patch('koiki.client.Recipient')
-    def test_create_delivery_calls_recipient(self, MockRecipient):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
-                      json={}, status=200)
-
-        Client(self.order).create_delivery()
-        MockRecipient().to_dict.assert_called_once()
