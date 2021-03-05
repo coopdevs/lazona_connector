@@ -27,7 +27,7 @@ class Client():
 
         if response.status_code != 200:
             self._log_error(response.status_code, response.text)
-        elif self._errored(response):
+        elif self._is_errored(response):
             self._log_error(400, response.text)
 
         self.logger.info(
@@ -39,7 +39,7 @@ class Client():
     def _authentication(self, endpoint_req):
         return {**endpoint_req.body(), **{'token': self.auth_token}}
 
-    def _errored(self, response):
+    def _is_errored(self, response):
         body = json.loads(response.text)
         return '102' in body.get('respuesta', '')
 
