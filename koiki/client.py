@@ -5,6 +5,7 @@ import json
 
 from koiki.sender import Sender
 from koiki.recipient import Recipient
+from koiki.order import Order
 
 HOST = os.getenv('KOIKI_HOST', 'https://testing_host')
 API_PATH = '/rekis/api'
@@ -15,7 +16,7 @@ class Client():
     label_format = 'PDF'
 
     def __init__(self, order):
-        self.order = order
+        self.order = Order(order)
         self.sender = Sender()
         self.recipient = Recipient(order)
 
@@ -40,8 +41,11 @@ class Client():
         }
 
     def _delivery(self):
-        order = {'numPedido': self.order['order_key']}
-        return {**order, **self.recipient.to_dict(), **self.sender.to_dict()}
+        return {
+            **self.order.to_dict(),
+            **self.recipient.to_dict(),
+            **self.sender.to_dict(),
+        }
 
     def _errored(self, response):
         body = json.loads(response.text)

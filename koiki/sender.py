@@ -5,6 +5,8 @@ class Sender():
     def to_dict(self):
         return {
             'nombreRemi': 'La Zona',
+            'apellidoRemi': '',
+            'numeroCalleRemi': '',
             'direccionRemi': 'C/ La Zona, 1',
             'codPostalRemi': '08186',
             'poblacionRemi': 'Barcelona',

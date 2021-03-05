@@ -10,7 +10,9 @@ class SenderTest(TestCase):
 
         self.assertEqual(sender.to_dict(), {
             'nombreRemi': 'La Zona',
+            'apellidoRemi': '',
             'direccionRemi': 'C/ La Zona, 1',
+            'numeroCalleRemi': '',
             'codPostalRemi': '08186',
             'poblacionRemi': 'Barcelona',
             'provinciaRemi': 'Barcelona',
