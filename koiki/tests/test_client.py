@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import responses
 
 from koiki.client import Client
@@ -42,18 +42,19 @@ class KoikiTest(TestCase):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={'error': 'Bad Request'}, status=400)
 
-        Client(self.order).create_delivery()
+        mock_logger = MagicMock()
+        Client(self.order, logger=mock_logger).create_delivery()
         mock_logger.error.assert_called_once_with(
             'Failed request. status=%s, body=%s', 400, '{"error": "Bad Request"}')
 
     @responses.activate
-    @patch('koiki.client.logging', autospec=True)
-    def test_create_delivery_succesful_code_failed_response(self, mock_logger):
+    def test_create_delivery_succesful_code_failed_response(self):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []},
                       status=200)
 
-        Client(self.order).create_delivery()
+        mock_logger = MagicMock()
+        Client(self.order, logger=mock_logger).create_delivery()
         mock_logger.error.assert_called_once_with(
             'Failed request. status=%s, body=%s',
             400,

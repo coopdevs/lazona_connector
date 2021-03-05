@@ -15,21 +15,25 @@ class Client():
     URL = f'{HOST}{API_PATH}/altaEnvios'
     LABEL_FORMAT = 'PDF'
 
-    def __init__(self, order, auth_token=os.getenv('KOIKI_AUTH_TOKEN')):
+    def __init__(self, order, auth_token=os.getenv('KOIKI_AUTH_TOKEN'),
+                 logger=logging.getLogger('django.server')):
         self.order = Order(order)
         self.sender = Sender()
         self.recipient = Recipient(order)
         self.auth_token = auth_token
+        self.logger = logger
 
     def create_delivery(self):
-        response = requests.post(self.URL, json=self._body())
+        body = self._body()
+        self.logger.info('Koiki request. body=%s', body)
+        response = requests.post(self.URL, json=body)
 
         if response.status_code != 200:
             self._log_error(response.status_code, response.text)
         elif self._errored(response):
             self._log_error(400, response.text)
 
-        logging.info(
+        self.logger.info(
             'Koiki response. status=%s, body=%',
             response.status_code,
             response.text
@@ -54,4 +58,4 @@ class Client():
         return '102' in body.get('respuesta', '')
 
     def _log_error(self, code, msg):
-        logging.error('Failed request. status=%s, body=%s', code, msg)
+        self.logger.error('Failed request. status=%s, body=%s', code, msg)
