@@ -39,9 +39,17 @@ class Client():
     def _authentication(self, endpoint_req):
         return {**endpoint_req.body(), **{'token': self.auth_token}}
 
+    # So far we've seen that failed responses come as:
+    #
+    #   {"respuesta":"102","mensaje":"ERROR IN THE RECEIVED DATA",...}
+    #
+    # while successful ones as:
+    #
+    #   {"respuesta":"101","mensaje":"OK",...}
+    #
     def _is_errored(self, response):
         body = json.loads(response.text)
-        return '102' in body.get('respuesta', '')
+        return body.get('respuesta', '') != '101'
 
     def _log_error(self, code, msg):
         self.logger.error('Failed request. status=%s, body=%s', code, msg)
