@@ -19,7 +19,7 @@ class KoikiTest(TestCase):
                 'postcode': '08025',
                 'city': 'Barcelona',
                 'state': 'Barcelona',
-                'country': 'Spain'
+                'country': 'ES'
             },
             'billing': {
                 'email': 'email@example.com',
