@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 import responses
+import json
 
 from koiki.client import Client
 
@@ -31,41 +32,62 @@ class KoikiTest(TestCase):
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_successful_response(self, mock_logger):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
-                      json={}, status=200)
+                      json={
+                        'respuesta': '101',
+                        'mensaje': 'OK',
+                        'envios': [{'numPedido': '123', 'codBarras': 'yyy', 'etiqueta': 'abcd'}]
+                      },
+                      status=200)
 
-        Client(self.order).create_delivery()
+        delivery = Client(self.order).create_delivery()
+
         mock_logger.error.assert_not_called()
+        self.assertEqual(delivery.to_dict(), {'number': '123', 'barcode': 'yyy', 'label': 'abcd'})
 
     @responses.activate
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_failed_response(self, mock_logger):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={'error': 'Bad Request'}, status=400)
-
         mock_logger = MagicMock()
-        Client(self.order, logger=mock_logger).create_delivery()
+
+        delivery = Client(self.order, logger=mock_logger).create_delivery()
+
         mock_logger.error.assert_called_once_with(
             'Failed request. status=%s, body=%s', 400, '{"error": "Bad Request"}')
+        self.assertEqual(delivery.to_dict(), {'error': 'Bad Request'})
 
     @responses.activate
     def test_create_delivery_succesful_code_failed_response(self):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
                       json={'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []},
                       status=200)
-
         mock_logger = MagicMock()
-        Client(self.order, logger=mock_logger).create_delivery()
+
+        delivery = Client(self.order, logger=mock_logger).create_delivery()
+
         mock_logger.error.assert_called_once_with(
-            'Failed request. status=%s, body=%s',
-            400,
+            'Failed request. status=%s, body=%s', 200,
             '{"respuesta": "102", "mensaje": "TOKEN NOT FOUND", "envios": []}'
         )
+        self.assertEqual(delivery.to_dict(), {'error': 'TOKEN NOT FOUND'})
 
     @patch('koiki.client.logging', autospec=True)
     @patch('koiki.client.requests.post', autospec=True)
     def test_create_delivery_sends_request_with_body(self, post_mock, _logger_mock):
         shipping = self.order['shipping']
         billing = self.order['billing']
+
+        response = MagicMock()
+        response.text = json.dumps(
+            {
+                'respuesta': '101',
+                'mensaje': 'OK',
+                'envios': [{'numPedido': '123', 'codBarras': 'yyy', 'etiqueta': 'abcd'}]
+            }
+        )
+        response.status_code = 200
+        post_mock.return_value = response
 
         Client(self.order, auth_token='xxx').create_delivery()
 
