@@ -15,6 +15,7 @@ class DeliveryList(APIView):
         serializer = DeliverySerializer(data=request.data)
         if serializer.is_valid():
             order = serializer.validated_data
+
             Client(order).create_delivery()
 
             return Response(order, status=status.HTTP_201_CREATED)
