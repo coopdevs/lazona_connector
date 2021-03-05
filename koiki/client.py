@@ -13,12 +13,13 @@ API_PATH = '/rekis/api'
 
 class Client():
     URL = f'{HOST}{API_PATH}/altaEnvios'
-    label_format = 'PDF'
+    LABEL_FORMAT = 'PDF'
 
-    def __init__(self, order):
+    def __init__(self, order, auth_token=os.environ['KOIKI_AUTH_TOKEN']):
         self.order = Order(order)
         self.sender = Sender()
         self.recipient = Recipient(order)
+        self.auth_token = auth_token
 
     def create_delivery(self):
         response = requests.post(self.URL, json=self._body())
@@ -36,7 +37,8 @@ class Client():
 
     def _body(self):
         return {
-            'formatoEtiqueta': self.label_format,
+            'formatoEtiqueta': self.LABEL_FORMAT,
+            'token': self.auth_token,
             'envios': [self._delivery()]
         }
 

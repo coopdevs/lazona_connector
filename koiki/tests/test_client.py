@@ -67,11 +67,12 @@ class KoikiTest(TestCase):
         shipping = self.order['shipping']
         billing = self.order['billing']
 
-        Client(self.order).create_delivery()
+        Client(self.order, auth_token='xxx').create_delivery()
 
         post_mock.assert_called_with(
             'https://testing_host/rekis/api/altaEnvios',
             json={
+                'token': 'xxx',
                 'formatoEtiqueta': 'PDF',
                 'envios': [
                     {
