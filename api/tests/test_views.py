@@ -27,7 +27,8 @@ class DeliveryViewTests(TestCase):
             'billing': {
                 'phone': '666666666',
                 'email': 'lennon@example.com'
-            }
+            },
+            'customer_note': ''
         }
         self.api_url = 'https://testing_host/rekis/api/altaEnvios'
 
