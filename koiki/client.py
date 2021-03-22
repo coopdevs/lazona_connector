@@ -2,6 +2,7 @@ import requests
 import logging
 import os
 import json
+import copy
 
 from koiki.create_delivery import CreateDelivery
 from koiki.delivery import Delivery
@@ -21,19 +22,18 @@ class Client():
 
     def create_delivery(self):
         endpoint_req = CreateDelivery(self.order)
-        body = self._authentication(endpoint_req)
+        req_body = self._authentication(endpoint_req)
 
-        self.logger.info('Koiki request. body=%s', body)
+        self.logger.info('Koiki request. body={}'.format(req_body))
 
-        response = requests.post(self._url(endpoint_req), json=body)
+        response = requests.post(self._url(endpoint_req), json=req_body)
         response_body = json.loads(response.text)
 
         if self._is_errored(response_body):
-            self._log_error(response.status_code, response.text)
+            self._log(response.status_code, response.text, logger='error')
             return Error(response_body)
         else:
-            self.logger.info(
-                'Koiki response. status=%s, body=%', response.status_code, response.text)
+            self._log(response.status_code, self._masked_body(response_body))
             return Delivery(response_body['envios'][0])
 
     def _url(self, endpoint_req):
@@ -53,5 +53,15 @@ class Client():
     def _is_errored(self, response_body):
         return response_body.get('respuesta', '') != '101'
 
-    def _log_error(self, code, msg):
-        self.logger.error('Failed request. status=%s, body=%s', code, msg)
+    def _log(self, code, msg, logger='info'):
+        log_line = "Koiki response. status={}, body={}".format(code, msg)
+        if logger == 'info':
+            self.logger.info(log_line)
+        else:
+            self.logger.error(log_line)
+
+    def _masked_body(self, body):
+        masked_body = copy.deepcopy(body)
+        for delivery in masked_body['envios']:
+            delivery['etiqueta'] = f"{delivery['etiqueta'][:10]}..."
+        return masked_body
