@@ -101,7 +101,7 @@ class KoikiTest(TestCase):
                         'numPedido': self.order['order_key'],
                         'bultos': 1,
                         'kilos': 1.0,
-                        'tipoServicio': '.',
+                        'tipoServicio': '',
                         'reembolso': 0.0,
                         'observaciones': self.order['customer_note'],
 

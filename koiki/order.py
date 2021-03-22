@@ -9,7 +9,7 @@ class Order():
             'numPedido': self.number,
             'bultos': 1,
             'kilos': 1.0,
-            'tipoServicio': '.',
+            'tipoServicio': '',
             'reembolso': 0.0,
             'observaciones': self.note
         }
