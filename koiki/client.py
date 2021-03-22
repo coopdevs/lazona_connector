@@ -2,6 +2,7 @@ import requests
 import logging
 import os
 import json
+import copy
 
 from koiki.create_delivery import CreateDelivery
 from koiki.delivery import Delivery
@@ -58,3 +59,9 @@ class Client():
             self.logger.info(log_line)
         else:
             self.logger.error(log_line)
+
+    def _masked_body(self, body):
+        masked_body = copy.deepcopy(body)
+        for delivery in masked_body['envios']:
+            delivery['etiqueta'] = f"{delivery['etiqueta'][:10]}..."
+        return masked_body
