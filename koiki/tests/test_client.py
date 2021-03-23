@@ -54,7 +54,7 @@ class KoikiTest(TestCase):
         delivery = Client(self.order, logger=mock_logger).create_delivery()
 
         mock_logger.error.assert_called_once_with(
-            'Failed request. status=%s, body=%s', 400, '{"error": "Bad Request"}')
+            'Koiki response. status=400, body={"error": "Bad Request"}')
         self.assertEqual(delivery.to_dict(), {'error': 'Bad Request'})
 
     @responses.activate
@@ -67,8 +67,7 @@ class KoikiTest(TestCase):
         delivery = Client(self.order, logger=mock_logger).create_delivery()
 
         mock_logger.error.assert_called_once_with(
-            'Failed request. status=%s, body=%s', 200,
-            '{"respuesta": "102", "mensaje": "TOKEN NOT FOUND", "envios": []}'
+            'Koiki response. status=200, body={"respuesta": "102", "mensaje": "TOKEN NOT FOUND", "envios": []}'  # noqa: E501
         )
         self.assertEqual(delivery.to_dict(), {'error': 'TOKEN NOT FOUND'})
 
@@ -101,7 +100,7 @@ class KoikiTest(TestCase):
                         'numPedido': self.order['order_key'],
                         'bultos': 1,
                         'kilos': 1.0,
-                        'tipoServicio': '.',
+                        'tipoServicio': '',
                         'reembolso': 0.0,
                         'observaciones': self.order['customer_note'],
 
