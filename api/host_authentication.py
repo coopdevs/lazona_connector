@@ -6,7 +6,7 @@ from rest_framework import exceptions
 class HostAuthentication(authentication.BaseAuthentication):
 
     def authenticate(self, request):
-        source = request.META.get('X-WC-Webhook-Source')
+        source = request.META.get('HTTP_X_WC_WEBHOOK_SOURCE')
         if not source:
             return None
 
