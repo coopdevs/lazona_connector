@@ -15,7 +15,7 @@ class HostAuthenticationTests(TestCase):
 
     def test_invalid_host(self):
         request = RequestFactory().post('')
-        request.META['X-WC-Webhook-Source'] = 'dummy.lazona.coop'
+        request.META['HTTP_X_WC_WEBHOOK_SOURCE'] = 'dummy.lazona.coop'
 
         self.assertRaises(
                 rest_framework.exceptions.AuthenticationFailed,
@@ -24,7 +24,7 @@ class HostAuthenticationTests(TestCase):
 
     def test_user_does_not_exist(self):
         request = RequestFactory().post('')
-        request.META['X-WC-Webhook-Source'] = 'staging.lazona.coop'
+        request.META['HTTP_X_WC_WEBHOOK_SOURCE'] = 'staging.lazona.coop'
 
         self.assertRaises(
                 rest_framework.exceptions.AuthenticationFailed,
@@ -36,7 +36,7 @@ class HostAuthenticationTests(TestCase):
         user.save()
 
         request = RequestFactory().post('')
-        request.META['X-WC-Webhook-Source'] = 'staging.lazona.coop'
+        request.META['HTTP_X_WC_WEBHOOK_SOURCE'] = 'staging.lazona.coop'
 
         result = HostAuthentication().authenticate(request)
         self.assertEqual(result, (user, None))
