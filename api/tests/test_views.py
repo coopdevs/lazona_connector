@@ -31,6 +31,40 @@ class DeliveryViewTests(TestCase):
                 'phone': '666666666',
                 'email': 'lennon@example.com'
             },
+            "line_items": [
+                {
+                    "id": 17,
+                    "name": "Suc Taronja 1l",
+                    "product_id": 5279,
+                    "variation_id": 0,
+                    "quantity": 1,
+                    "tax_class": "",
+                    "subtotal": "1.00",
+                    "subtotal_tax": "0.00",
+                    "total": "1.00",
+                    "total_tax": "0.00",
+                    "taxes": [],
+                    "meta_data": [
+                        {
+                            "id": 172,
+                            "key": "_vendor_id",
+                            "value": "6",
+                            "display_key": "Store",
+                            "display_value": "Quèviure"
+                            },
+                        {
+                            "id": 173,
+                            "key": "_wcfmmp_order_item_processed",
+                            "value": "5",
+                            "display_key": "Store Order ID",
+                            "display_value": "5"
+                            }
+                    ],
+                    "sku": "",
+                    "price": 1,
+                    "parent_name": None
+                }
+            ],
             'customer_note': ''
         }
         self.api_url = 'https://testing_host/rekis/api/altaEnvios'
@@ -47,7 +81,7 @@ class DeliveryViewTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = self.client.post(self.url, self.data, format='json')
 
-        self.assertEqual(response.data, self.data)
+        self.assertEqual(response.data['order_key'], self.data['order_key'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_unsuccessful_request(self):
@@ -70,7 +104,7 @@ class DeliveryViewTests(TestCase):
 
         response = self.client.post(self.url, self.data, format='json')
 
-        mock_koiki_client.assert_called_once_with(self.data)
+        mock_koiki_client.assert_called_once()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @patch('api.views.Client.create_delivery', autospec=True)

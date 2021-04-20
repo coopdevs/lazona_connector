@@ -25,7 +25,41 @@ class KoikiTest(TestCase):
             'billing': {
                 'email': 'email@example.com',
                 'phone': '+34666554433'
-            }
+            },
+            "line_items": [
+                {
+                    "id": 17,
+                    "name": "Suc Taronja 1l",
+                    "product_id": 5279,
+                    "variation_id": 0,
+                    "quantity": 1,
+                    "tax_class": "",
+                    "subtotal": "1.00",
+                    "subtotal_tax": "0.00",
+                    "total": "1.00",
+                    "total_tax": "0.00",
+                    "taxes": [],
+                    "meta_data": [
+                        {
+                            "id": 172,
+                            "key": "_vendor_id",
+                            "value": "6",
+                            "display_key": "Store",
+                            "display_value": "Quèviure"
+                            },
+                        {
+                            "id": 173,
+                            "key": "_wcfmmp_order_item_processed",
+                            "value": "5",
+                            "display_key": "Store Order ID",
+                            "display_value": "5"
+                            }
+                    ],
+                    "sku": "",
+                    "price": 1,
+                    "parent_name": None
+                }
+            ],
         }
 
     @responses.activate
