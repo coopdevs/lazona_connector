@@ -24,9 +24,10 @@ class Client():
         endpoint_req = CreateDelivery(self.order)
         req_body = self._authentication(endpoint_req)
 
-        self.logger.info('Koiki request. body={}'.format(req_body))
+        url = self._url(endpoint_req)
+        self.logger.info('Koiki request to {}. body={}'.format(url, req_body))
 
-        response = requests.post(self._url(endpoint_req), json=req_body)
+        response = requests.post(url, json=req_body)
         response_body = json.loads(response.text)
 
         if self._is_errored(response_body):
