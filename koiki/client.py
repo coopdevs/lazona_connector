@@ -8,7 +8,6 @@ from koiki.create_delivery import CreateDelivery
 from koiki.delivery import Delivery
 from koiki.error import Error
 
-HOST = os.getenv('KOIKI_HOST', 'https://testing_host')
 API_PATH = '/rekis/api'
 
 
@@ -18,6 +17,7 @@ class Client():
                  logger=logging.getLogger('django.server')):
         self.order = order
         self.auth_token = auth_token
+        self.host = os.getenv('KOIKI_HOST')
         self.logger = logger
 
     def create_delivery(self):
@@ -37,7 +37,7 @@ class Client():
             return Delivery(response_body['envios'][0])
 
     def _url(self, endpoint_req):
-        return f'{HOST}{API_PATH}{endpoint_req.url()}'
+        return f'{self.host}{API_PATH}{endpoint_req.url()}'
 
     def _authentication(self, endpoint_req):
         return {**endpoint_req.body(), **{'token': self.auth_token}}

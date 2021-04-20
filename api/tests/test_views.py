@@ -6,11 +6,14 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import httpretty
+import os
 
 
 class DeliveryViewTests(TestCase):
 
     def setUp(self):
+        os.environ['KOIKI_HOST'] = 'https://testing_host'
+
         self.url = reverse('deliveries:create')
         self.data = {
             'order_key': 'xxx',
