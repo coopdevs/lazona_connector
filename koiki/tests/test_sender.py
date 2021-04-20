@@ -18,5 +18,5 @@ class SenderTest(TestCase):
             'provinciaRemi': 'Barcelona',
             'paisRemi': 'ES',
             'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '+34518888191',
+            'telefonoRemi': '518888191',
         })

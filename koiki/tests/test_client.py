@@ -113,7 +113,7 @@ class KoikiTest(TestCase):
                         'provinciaRemi': 'Barcelona',
                         'paisRemi': 'ES',
                         'emailRemi': 'lazona@opcions.org',
-                        'telefonoRemi': '+34518888191',
+                        'telefonoRemi': '518888191',
 
                         'nombreDesti': shipping['first_name'],
                         'apellidoDesti': shipping['last_name'],
