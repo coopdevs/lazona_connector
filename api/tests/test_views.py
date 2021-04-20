@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from unittest.mock import patch
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
@@ -97,21 +96,3 @@ class DeliveryViewTests(TestCase):
         self.assertEqual(response.content,
                          b'{"detail":"Authentication credentials were not provided."}')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    @patch('api.views.Client', autospec=True)
-    def test_koiki_client_is_used(self, mock_koiki_client):
-        httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
-
-        response = self.client.post(self.url, self.data, format='json')
-
-        mock_koiki_client.assert_called_once()
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    @patch('api.views.Client.create_delivery', autospec=True)
-    def test_koiki_create_delivery_is_called(self, mock_create_delivery):
-        httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
-
-        response = self.client.post(self.url, self.data, format='json')
-
-        mock_create_delivery.assert_called()
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
