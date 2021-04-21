@@ -32,7 +32,7 @@ class LineItemSerializer(serializers.Serializer):
     meta_data = MetadataSerializer(many=True)
 
 
-class DeliverySerializer(serializers.Serializer):
+class OrderSerializer(serializers.Serializer):
     order_key = serializers.CharField(required=True)
     customer_note = serializers.CharField(max_length=100, allow_blank=True)
     shipping = ShippingSerializer()

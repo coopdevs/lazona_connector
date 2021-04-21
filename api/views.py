@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from api.serializers import DeliverySerializer
+from api.serializers import OrderSerializer
 from koiki.client import Client
 
 
@@ -13,7 +13,7 @@ class DeliveryList(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = DeliverySerializer(data=request.data)
+        serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             order = serializer.validated_data
 
