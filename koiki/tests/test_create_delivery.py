@@ -41,13 +41,22 @@ class CreateDeliveryTest(TestCase):
                 {
                     'id': 2,
                     'quantity': 1,
-                    'meta_data': [{
-                        'id': 172,
-                        'key': '_vendor_id',
-                        'value': '6',
-                        'display_key': 'Store',
-                        'display_value': 'Quèviure'
-                    }]
+                    'meta_data': [
+                        {
+                            'id': 173,
+                            'key': '_wcfmmp_order_item_processed',
+                            'value': '5',
+                            'display_key': 'Store Order ID',
+                            'display_value': '5'
+                        },
+                        {
+                            'id': 172,
+                            'key': '_vendor_id',
+                            'value': '6',
+                            'display_key': 'Store',
+                            'display_value': 'Quèviure'
+                        }
+                    ],
                 },
                 {
                     'id': 3,
@@ -101,12 +110,19 @@ class CreateDeliveryTest(TestCase):
     def test_vendor(self):
         metadata = [
             {
+                'id': 234,
+                'key': '_dummy_id',
+                'value': '2',
+                'display_key': 'Dummy key',
+                'display_value': 'Dummy value'
+            },
+            {
                 'id': 123,
                 'key': '_vendor_id',
                 'value': '5',
                 'display_key': 'Store',
                 'display_value': 'A granel'
-            }
+            },
         ]
         vendor = CreateDelivery(self.order)._vendor_id(metadata)
         self.assertEquals(vendor, '5')
@@ -143,13 +159,22 @@ class CreateDeliveryTest(TestCase):
             {
                 'id': 2,
                 'quantity': 1,
-                'meta_data': [{
-                    'id': 172,
-                    'key': '_vendor_id',
-                    'value': '6',
-                    'display_key': 'Store',
-                    'display_value': 'Quèviure'
-                }]
+                'meta_data': [
+                    {
+                        'id': 173,
+                        'key': '_wcfmmp_order_item_processed',
+                        'value': '5',
+                        'display_key': 'Store Order ID',
+                        'display_value': '5'
+                    },
+                    {
+                        'id': 172,
+                        'key': '_vendor_id',
+                        'value': '6',
+                        'display_key': 'Store',
+                        'display_value': 'Quèviure'
+                    }
+                ]
             }
         ])
 

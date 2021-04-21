@@ -27,7 +27,13 @@ class CreateDelivery():
 
         for vendor in self.by_vendor.keys():
             line_items = self.by_vendor[vendor]
-            vendor_metadata = line_items[0]['meta_data'][0]
+            metadata = line_items[0]['meta_data']
+            vendor_metadata = {}
+
+            for datum in metadata:
+                if datum['key'] == '_vendor_id':
+                    vendor_metadata = datum
+
             deliveries.append(self._delivery(line_items, vendor_metadata))
 
         return deliveries
@@ -49,11 +55,11 @@ class CreateDelivery():
     def _vendor_id(self, metadata):
         datum = metadata[0]
 
-        vendor = None
-        if datum['key'] == '_vendor_id':
-            vendor = datum['value']
+        for datum in metadata:
+            if datum['key'] == '_vendor_id':
+                return datum['value']
 
-        return vendor
+        return None
 
     # A vendor delivery consists of a Sender (which maps to a marketplace vendor) and a Recipient
     #

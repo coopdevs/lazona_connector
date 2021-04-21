@@ -38,19 +38,19 @@ class KoikiTest(TestCase):
                     "quantity": 1,
                     "meta_data": [
                         {
-                            "id": 172,
-                            "key": "_vendor_id",
-                            "value": "6",
-                            "display_key": "Store",
-                            "display_value": "Quèviure"
-                            },
-                        {
                             "id": 173,
                             "key": "_wcfmmp_order_item_processed",
                             "value": "5",
                             "display_key": "Store Order ID",
                             "display_value": "5"
-                            }
+                        },
+                        {
+                            "id": 172,
+                            "key": "_vendor_id",
+                            "value": "6",
+                            "display_key": "Store",
+                            "display_value": "Quèviure"
+                        }
                     ],
                     "sku": "",
                     "price": 1,
