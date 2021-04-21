@@ -36,12 +36,6 @@ class KoikiTest(TestCase):
                     "product_id": 5279,
                     "variation_id": 0,
                     "quantity": 1,
-                    "tax_class": "",
-                    "subtotal": "1.00",
-                    "subtotal_tax": "0.00",
-                    "total": "1.00",
-                    "total_tax": "0.00",
-                    "taxes": [],
                     "meta_data": [
                         {
                             "id": 172,
