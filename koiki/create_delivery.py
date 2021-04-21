@@ -8,22 +8,26 @@ class CreateDelivery():
     RESOURCE_PATH = '/altaEnvios'
 
     def __init__(self, order):
-        self.order = Order(order)
+        self.vendor_order = Order(order)
         self.recipient = Recipient(order)
-        self.sender = Sender()
+        self.line_items = order['line_items']
 
     def body(self):
         return {
             'formatoEtiqueta': self.LABEL_FORMAT,
-            'envios': [self._delivery()]
+            'envios': self._deliveries()
         }
 
     def url(self):
         return self.RESOURCE_PATH
 
-    def _delivery(self):
+    def _deliveries(self):
+        return [self._delivery(line_item) for line_item in self.line_items]
+
+    # A vendor delivery consists of a Sender (which maps to a marketplace vendor) and a Recipient
+    def _delivery(self, line_item):
         return {
-            **self.order.to_dict(),
+            **self.vendor_order.to_dict(),
             **self.recipient.to_dict(),
-            **self.sender.to_dict(),
+            **Sender(line_item).to_dict(),
         }
