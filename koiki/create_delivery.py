@@ -1,6 +1,7 @@
 from koiki.sender import Sender
 from koiki.recipient import Recipient
 from koiki.shipment import Shipment
+from koiki.line_item import LineItem
 
 
 class CreateDelivery():
@@ -26,16 +27,11 @@ class CreateDelivery():
     def _deliveries(self):
         deliveries = []
 
-        for vendor in self.by_vendor.keys():
-            line_items = self.by_vendor[vendor]
-            metadata = line_items[0]['meta_data']
-            vendor_metadata = {}
+        for vendor_id in self.by_vendor.keys():
+            line_items = self.by_vendor[vendor_id]
+            vendor = line_items[0].vendor
 
-            for datum in metadata:
-                if datum['key'] == '_vendor_id':
-                    vendor_metadata = datum
-
-            deliveries.append(self._delivery(line_items, vendor_metadata))
+            deliveries.append(self._delivery(line_items, vendor))
 
         return deliveries
 
@@ -43,40 +39,27 @@ class CreateDelivery():
         by_vendor = {}
 
         for line_item in self.line_items:
-            metadata = line_item['meta_data']
-            vendor_id = self._vendor_id(metadata)
+            item = LineItem(line_item)
+            vendor_id = item.vendor.id
 
             if vendor_id in by_vendor.keys():
-                by_vendor[vendor_id].append(line_item)
+                by_vendor[vendor_id].append(item)
             else:
-                by_vendor[vendor_id] = [line_item]
+                by_vendor[vendor_id] = [item]
 
         return by_vendor
-
-    def _vendor_id(self, metadata):
-        datum = metadata[0]
-
-        for datum in metadata:
-            if datum['key'] == '_vendor_id':
-                return datum['value']
-
-        return None
 
     # A vendor delivery consists of a Sender (which maps to a marketplace vendor) and a Recipient
     #
     # Builds a delivery structure from all the line_items, which are sold by the same vendor
-    def _delivery(self, line_items, vendor_metadata):
-        delivery = {}
+    def _delivery(self, line_items, vendor):
         total_quantity = 0
 
         for line_item in line_items:
-            total_quantity += line_item['quantity']
+            total_quantity += line_item.quantity
 
-        shipment = Shipment(self.order, packages=total_quantity)
-        delivery = {
-            **shipment.to_dict(),
+        return {
+            **Shipment(self.order, packages=total_quantity).to_dict(),
             **self.recipient.to_dict(),
-            **Sender(vendor_metadata).to_dict(),
+            **Sender(vendor).to_dict(),
         }
-
-        return delivery

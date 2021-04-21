@@ -1,13 +1,14 @@
 from unittest import TestCase
 
 from koiki.sender import Sender
+from koiki.vendor import Vendor
 
 
 class SenderTest(TestCase):
 
     def test_to_dict(self):
-        metadata = { 'display_value': 'Quèviure' }
-        sender = Sender(metadata)
+        vendor = Vendor(id=1, name='Quèviure')
+        sender = Sender(vendor)
 
         self.assertEqual(sender.to_dict(), {
             'nombreRemi': 'Quèviure',

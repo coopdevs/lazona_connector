@@ -1,5 +1,4 @@
 from unittest import TestCase
-from unittest.mock import patch
 
 from koiki.create_delivery import CreateDelivery
 
@@ -72,115 +71,11 @@ class CreateDeliveryTest(TestCase):
             ]
         }
 
-    def test_delivery(self):
-        line_items = [
-            {
-                'quantity': 1,
-                'meta_data': [{
-                    'id': 182,
-                    'key': '_vendor_id',
-                    'value': '5',
-                    'display_key': 'Store',
-                    'display_value': 'A granel'
-                }]
-            },
-            {
-                'quantity': 1,
-                'meta_data': [{
-                    'id': 123,
-                    'key': '_vendor_id',
-                    'value': '5',
-                    'display_key': 'Store',
-                    'display_value': 'A granel'
-                }]
-            }
-        ]
-        vendor_metadata = {
-            'id': 123,
-            'key': '_vendor_id',
-            'value': '5',
-            'display_key': 'Store',
-            'display_value': 'A granel'
-        }
-        delivery = CreateDelivery(self.order)._delivery(line_items, vendor_metadata)
-
-        self.assertDictContainsSubset({'bultos': 2}, delivery)
-        self.assertDictContainsSubset({'nombreRemi': 'A granel'}, delivery)
-
-    def test_vendor(self):
-        metadata = [
-            {
-                'id': 234,
-                'key': '_dummy_id',
-                'value': '2',
-                'display_key': 'Dummy key',
-                'display_value': 'Dummy value'
-            },
-            {
-                'id': 123,
-                'key': '_vendor_id',
-                'value': '5',
-                'display_key': 'Store',
-                'display_value': 'A granel'
-            },
-        ]
-        vendor = CreateDelivery(self.order)._vendor_id(metadata)
-        self.assertEquals(vendor, '5')
-
-    def test_build_structure(self):
-        by_vendor = CreateDelivery(self.order)._by_vendor()
-
-        self.assertListEqual(by_vendor['5'], [
-            {
-                'id': 1,
-                'quantity': 1,
-                'meta_data': [{
-                    'id': 182,
-                    'key': '_vendor_id',
-                    'value': '5',
-                    'display_key': 'Store',
-                    'display_value': 'A granel'
-                }]
-            },
-            {
-                'id': 3,
-                'quantity': 1,
-                'meta_data': [{
-                    'id': 123,
-                    'key': '_vendor_id',
-                    'value': '5',
-                    'display_key': 'Store',
-                    'display_value': 'A granel'
-                }]
-            }
-        ])
-
-        self.assertListEqual(by_vendor['6'], [
-            {
-                'id': 2,
-                'quantity': 1,
-                'meta_data': [
-                    {
-                        'id': 173,
-                        'key': '_wcfmmp_order_item_processed',
-                        'value': '5',
-                        'display_key': 'Store Order ID',
-                        'display_value': '5'
-                    },
-                    {
-                        'id': 172,
-                        'key': '_vendor_id',
-                        'value': '6',
-                        'display_key': 'Store',
-                        'display_value': 'Quèviure'
-                    }
-                ]
-            }
-        ])
-
-    def test_deliveries(self):
+    def test_body(self):
         body = CreateDelivery(self.order).body()
         deliveries = body['envios']
+
+        self.assertEquals(len(deliveries), 2)
 
         self.assertDictContainsSubset({
             'numPedido': 'xxx',
@@ -219,16 +114,6 @@ class CreateDeliveryTest(TestCase):
             'emailRemi': 'lazona@opcions.org',
             'telefonoRemi': '518888191',
         }, deliveries[1])
-
-    @patch('koiki.create_delivery.Sender')
-    def test_body_calls_sender(self, MockSender):
-        CreateDelivery(self.order).body()
-        MockSender().to_dict.assert_called()
-
-    @patch('koiki.create_delivery.Recipient')
-    def test_body_calls_recipient(self, MockRecipient):
-        CreateDelivery(self.order).body()
-        MockRecipient().to_dict.assert_called()
 
     def test_url(self):
         self.assertEqual(CreateDelivery(self.order).url(), '/altaEnvios')

@@ -1,15 +1,13 @@
 class Sender():
 
-    """Encapsulates the sender information to be provided to all Koiki deliveries"""
-
     # Note telefonoRemi can only have 9 digits.
-    def __init__(self, metadata):
-        self.metadata = metadata
+    def __init__(self, vendor):
+        self.vendor = vendor
 
     def to_dict(self):
         # TODO: find the actual _vendor_id key. Don't rely on the index
         return {
-            'nombreRemi': self.metadata['display_value'],
+            'nombreRemi': self.vendor.name,
             'apellidoRemi': '',
             'numeroCalleRemi': '',
             'direccionRemi': 'C/ La Zona, 1',
