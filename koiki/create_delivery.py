@@ -22,6 +22,7 @@ class CreateDelivery():
     def url(self):
         return self.RESOURCE_PATH
 
+    # Builds a single delivery for each vendor, aggregating the line items that vendor sold
     def _deliveries(self):
         deliveries = []
 
