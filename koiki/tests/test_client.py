@@ -110,10 +110,7 @@ class KoikiTest(TestCase):
 
     @patch('koiki.client.logging', autospec=True)
     @patch('koiki.client.requests.post', autospec=True)
-    def test_create_delivery_sends_request_with_body(self, post_mock, _logger_mock):
-        shipping = self.order['shipping']
-        billing = self.order['billing']
-
+    def test_create_delivery_sends_request(self, post_mock, _logger_mock):
         response = MagicMock()
         response.text = json.dumps(
             {
@@ -127,44 +124,4 @@ class KoikiTest(TestCase):
 
         Client(self.order, auth_token='xxx').create_delivery()
 
-        post_mock.assert_called_with(
-            'https://testing_host/rekis/api/altaEnvios',
-            json={
-                'token': 'xxx',
-                'formatoEtiqueta': 'PDF',
-                'envios': [
-                    {
-                        'numPedido': self.order['order_key'],
-                        'bultos': 1,
-                        'kilos': 1.0,
-                        'tipoServicio': '',
-                        'reembolso': 0.0,
-                        'observaciones': self.order['customer_note'],
-
-                        'nombreRemi': 'Quèviure',
-                        'apellidoRemi': '6',
-                        'direccionRemi': 'C/ La Zona, 1',
-                        'numeroCalleRemi': '',
-                        'codPostalRemi': '08186',
-                        'poblacionRemi': 'Barcelona',
-                        'provinciaRemi': 'Barcelona',
-                        'paisRemi': 'ES',
-                        'emailRemi': 'lazona@opcions.org',
-                        'telefonoRemi': '518888191',
-
-                        'nombreDesti': shipping['first_name'],
-                        'apellidoDesti': shipping['last_name'],
-                        'direccionDesti': shipping['address_1'],
-                        'direccionAdicionalDesti': shipping['address_2'],
-                        'numeroCalleDesti': '',
-                        'codPostalDesti': shipping['postcode'],
-                        'poblacionDesti': shipping['city'],
-                        'provinciaDesti': shipping['state'],
-                        'paisDesti': shipping['country'],
-
-                        'telefonoDesti': billing['phone'],
-                        'emailDesti': billing['email'],
-                    }
-                ]
-            }
-        )
+        post_mock.assert_called()

@@ -28,6 +28,7 @@ class MetadataSerializer(serializers.Serializer):
 class LineItemSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)
     name = serializers.CharField()
+    quantity = serializers.IntegerField(required=True)
     meta_data = MetadataSerializer(many=True)
 
 

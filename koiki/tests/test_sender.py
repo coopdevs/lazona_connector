@@ -6,18 +6,12 @@ from koiki.sender import Sender
 class SenderTest(TestCase):
 
     def test_to_dict(self):
-        line_item = {
-            'id': 1,
-            'meta_data': [{
-                'display_value': 'Quèviure',
-                'value': '6'
-            }]
-        }
-        sender = Sender(line_item)
+        metadata = { 'display_value': 'Quèviure' }
+        sender = Sender(metadata)
 
         self.assertEqual(sender.to_dict(), {
             'nombreRemi': 'Quèviure',
-            'apellidoRemi': '6',
+            'apellidoRemi': '',
             'direccionRemi': 'C/ La Zona, 1',
             'numeroCalleRemi': '',
             'codPostalRemi': '08186',

@@ -33,6 +33,7 @@ class DeliveryViewTests(TestCase):
             },
             'line_items': [{
                 'id': 17,
+                'quantity': 1,
                 'name': 'Suc Taronja 1l',
                 'meta_data': [{
                     'id': 172,

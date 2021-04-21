@@ -1,10 +1,12 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from koiki.create_delivery import CreateDelivery
 
 
 class CreateDeliveryTest(TestCase):
+
+    maxDiff = None
 
     def setUp(self):
         self.order = {
@@ -27,6 +29,18 @@ class CreateDeliveryTest(TestCase):
             'line_items': [
                 {
                     'id': 1,
+                    'quantity': 1,
+                    'meta_data': [{
+                        'id': 182,
+                        'key': '_vendor_id',
+                        'value': '5',
+                        'display_key': 'Store',
+                        'display_value': 'A granel'
+                    }]
+                },
+                {
+                    'id': 2,
+                    'quantity': 1,
                     'meta_data': [{
                         'id': 172,
                         'key': '_vendor_id',
@@ -36,9 +50,10 @@ class CreateDeliveryTest(TestCase):
                     }]
                 },
                 {
-                    'id': 2,
+                    'id': 3,
+                    'quantity': 1,
                     'meta_data': [{
-                        'id': 182,
+                        'id': 123,
                         'key': '_vendor_id',
                         'value': '5',
                         'display_key': 'Store',
@@ -48,39 +63,109 @@ class CreateDeliveryTest(TestCase):
             ]
         }
 
-    def test_shipment(self):
-        body = CreateDelivery(self.order).body()
-        delivery = body['envios'][0]
+    def test_delivery(self):
+        line_items = [
+            {
+                'quantity': 1,
+                'meta_data': [{
+                    'id': 182,
+                    'key': '_vendor_id',
+                    'value': '5',
+                    'display_key': 'Store',
+                    'display_value': 'A granel'
+                }]
+            },
+            {
+                'quantity': 1,
+                'meta_data': [{
+                    'id': 123,
+                    'key': '_vendor_id',
+                    'value': '5',
+                    'display_key': 'Store',
+                    'display_value': 'A granel'
+                }]
+            }
+        ]
+        vendor_metadata = {
+            'id': 123,
+            'key': '_vendor_id',
+            'value': '5',
+            'display_key': 'Store',
+            'display_value': 'A granel'
+        }
+        delivery = CreateDelivery(self.order)._delivery(line_items, vendor_metadata)
 
-        self.assertDictEqual(self.shipment_attrs(delivery), {
+        self.assertDictContainsSubset({'bultos': 2}, delivery)
+        self.assertDictContainsSubset({'nombreRemi': 'A granel'}, delivery)
+
+    def test_vendor(self):
+        metadata = [
+            {
+                'id': 123,
+                'key': '_vendor_id',
+                'value': '5',
+                'display_key': 'Store',
+                'display_value': 'A granel'
+            }
+        ]
+        vendor = CreateDelivery(self.order)._vendor_id(metadata)
+        self.assertEquals(vendor, '5')
+
+    def test_build_structure(self):
+        by_vendor = CreateDelivery(self.order)._by_vendor()
+
+        self.assertListEqual(by_vendor['5'], [
+            {
+                'id': 1,
+                'quantity': 1,
+                'meta_data': [{
+                    'id': 182,
+                    'key': '_vendor_id',
+                    'value': '5',
+                    'display_key': 'Store',
+                    'display_value': 'A granel'
+                }]
+            },
+            {
+                'id': 3,
+                'quantity': 1,
+                'meta_data': [{
+                    'id': 123,
+                    'key': '_vendor_id',
+                    'value': '5',
+                    'display_key': 'Store',
+                    'display_value': 'A granel'
+                }]
+            }
+        ])
+
+        self.assertListEqual(by_vendor['6'], [
+            {
+                'id': 2,
+                'quantity': 1,
+                'meta_data': [{
+                    'id': 172,
+                    'key': '_vendor_id',
+                    'value': '6',
+                    'display_key': 'Store',
+                    'display_value': 'Quèviure'
+                }]
+            }
+        ])
+
+    def test_deliveries(self):
+        body = CreateDelivery(self.order).body()
+        deliveries = body['envios']
+
+        self.assertDictContainsSubset({
             'numPedido': 'xxx',
-            'bultos': 1,
-            'kilos': 1.0,
+            'bultos': 2,
+            'kilos': 0.0,
             'tipoServicio': '',
             'reembolso': 0.0,
             'observaciones': 'delivery testing',
-        })
-
-    def test_sender(self):
-        body = CreateDelivery(self.order).body()
-        deliveries = body['envios']
-
-        self.assertDictEqual(self.sender_attrs(deliveries[0]), {
-            'nombreRemi': 'Quèviure',
-            'apellidoRemi': '6',
-            'numeroCalleRemi': '',
-            'direccionRemi': 'C/ La Zona, 1',
-            'codPostalRemi': '08186',
-            'poblacionRemi': 'Barcelona',
-            'provinciaRemi': 'Barcelona',
-            'paisRemi': 'ES',
-            'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '+34518888191',
-        })
-
-        self.assertDictEqual(self.sender_attrs(deliveries[1]), {
             'nombreRemi': 'A granel',
-            'apellidoRemi': '5',
+            'apellidoRemi': '',
             'numeroCalleRemi': '',
             'direccionRemi': 'C/ La Zona, 1',
             'codPostalRemi': '08186',
@@ -88,26 +173,27 @@ class CreateDeliveryTest(TestCase):
             'provinciaRemi': 'Barcelona',
             'paisRemi': 'ES',
             'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '+34518888191',
-        })
+            'telefonoRemi': '518888191'
+        }, deliveries[0])
 
-    def test_recipient(self):
-        body = CreateDelivery(self.order).body()
-        deliveries = body['envios']
-
-        self.assertDictEqual(self.recipient_attrs(deliveries[0]), {
-            'nombreDesti': 'James',
-            'apellidoDesti': 'Bond',
-            'direccionDesti': 'Address 1',
-            'direccionAdicionalDesti': 'address 2',
-            'numeroCalleDesti': '',
-            'codPostalDesti': '08025',
-            'poblacionDesti': 'Barcelona',
-            'provinciaDesti': 'Barcelona',
-            'paisDesti': 'ES',
-            'telefonoDesti': '+34666554433',
-            'emailDesti': 'email@example.com',
-        })
+        self.assertDictContainsSubset({
+            'numPedido': 'xxx',
+            'bultos': 1,
+            'kilos': 0.0,
+            'tipoServicio': '',
+            'reembolso': 0.0,
+            'observaciones': 'delivery testing',
+            'nombreRemi': 'Quèviure',
+            'apellidoRemi': '',
+            'numeroCalleRemi': '',
+            'direccionRemi': 'C/ La Zona, 1',
+            'codPostalRemi': '08186',
+            'poblacionRemi': 'Barcelona',
+            'provinciaRemi': 'Barcelona',
+            'paisRemi': 'ES',
+            'emailRemi': 'lazona@opcions.org',
+            'telefonoRemi': '518888191',
+        }, deliveries[1])
 
     @patch('koiki.create_delivery.Sender')
     def test_body_calls_sender(self, MockSender):
@@ -121,27 +207,3 @@ class CreateDeliveryTest(TestCase):
 
     def test_url(self):
         self.assertEqual(CreateDelivery(self.order).url(), '/altaEnvios')
-
-    def shipment_attrs(self, deliveries):
-        other_attrs = {}
-        for key, value in deliveries.items():
-            if not key.endswith('Desti') and not key.endswith('Remi'):
-                other_attrs[key] = value
-
-        return other_attrs
-
-    def recipient_attrs(self, deliveries):
-        recipient_attrs = {}
-        for key, value in deliveries.items():
-            if key.endswith('Desti'):
-                recipient_attrs[key] = value
-
-        return recipient_attrs
-
-    def sender_attrs(self, deliveries):
-        sender_attrs = {}
-        for key, value in deliveries.items():
-            if key.endswith('Remi'):
-                sender_attrs[key] = value
-
-        return sender_attrs
