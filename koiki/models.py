@@ -40,14 +40,6 @@ class Recipient():
             'emailDesti': self.billing.email
         }
 
-    def _address(self):
-        address = self.shipping.address_1
-
-        if self.shipping.address_2:
-            address += ' ' + self.shipping.address_2
-
-        return address
-
 
 class Shipment():
 
