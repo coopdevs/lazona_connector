@@ -32,6 +32,14 @@ class WooocommerceModelsTest(TestCase):
         self.assertEquals(line_item.quantity, 3)
         self.assertEquals(line_item.vendor, Vendor('5', 'A granel'))
 
+    def test_line_item_without_vendor(self):
+        data = {
+            'id': 1,
+            'quantity': 1,
+            'meta_data': []
+        }
+        self.assertRaises(Exception, LineItem, data)
+
     def test_vendor(self):
         vendor = Vendor(1, 'name')
 
