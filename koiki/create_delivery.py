@@ -1,7 +1,5 @@
-from koiki.sender import Sender
-from koiki.recipient import Recipient
-from koiki.shipment import Shipment
-from koiki.line_item import LineItem
+from koiki.models import Sender, Recipient, Shipment
+from koiki.woocommerce.models import LineItem
 
 
 class CreateDelivery():

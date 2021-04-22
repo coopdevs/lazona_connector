@@ -1,12 +1,11 @@
 from unittest import TestCase
 
-from koiki.line_item import LineItem
-from koiki.vendor import Vendor
+from koiki.woocommerce.models import LineItem, Vendor
 
 
-class LineItemTest(TestCase):
+class WooocommerceModelsTest(TestCase):
 
-    def test(self):
+    def test_line_item(self):
         metadata = [
             {
                 'id': 234,
@@ -32,3 +31,9 @@ class LineItemTest(TestCase):
 
         self.assertEquals(line_item.quantity, 3)
         self.assertEquals(line_item.vendor, Vendor('5', 'A granel'))
+
+    def test_vendor(self):
+        vendor = Vendor(1, 'name')
+
+        self.assertEquals(vendor.id, 1)
+        self.assertEquals(vendor.name, 'name')
