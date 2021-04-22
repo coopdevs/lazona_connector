@@ -47,9 +47,7 @@ class CreateDelivery():
 
         return by_vendor
 
-    # A vendor delivery consists of a Sender (which maps to a marketplace vendor) and a Recipient
-    #
-    # Builds a delivery structure from all the line_items, which are sold by the same vendor
+    # Builds a delivery structure from all passed line_items, which are provided by the same vendor
     def _delivery(self, line_items, vendor):
         total_quantity = 0
 
