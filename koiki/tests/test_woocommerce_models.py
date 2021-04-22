@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from koiki.woocommerce.models import LineItem, Vendor
+from koiki.woocommerce.models import LineItem, Vendor, Shipping, Billing
 
 
 class WooocommerceModelsTest(TestCase):
@@ -37,3 +37,36 @@ class WooocommerceModelsTest(TestCase):
 
         self.assertEquals(vendor.id, 1)
         self.assertEquals(vendor.name, 'name')
+
+    def test_shipping(self):
+        data = {
+            'first_name': 'Philip',
+            'last_name': 'Glass',
+            'address_1': 'Pl. de la Vila',
+            'address_2': '1 3',
+            'postcode': '08921',
+            'city': 'Santa Coloma de Gramenet',
+            'state': 'Barcelona',
+            'country': 'Catalunya'
+        }
+        shipping = Shipping(data)
+
+        self.assertEquals(shipping.first_name, 'Philip')
+
+    def test_billing_with_country_code(self):
+        data = {
+            'email': 'email@example.com',
+            'phone': '+34666554433'
+        }
+        billing = Billing(data)
+
+        self.assertEquals(billing.phone, '666554433')
+
+    def test_billing_without_country_code(self):
+        data = {
+            'email': 'email@example.com',
+            'phone': '666554433'
+        }
+        billing = Billing(data)
+
+        self.assertEquals(billing.phone, '666554433')

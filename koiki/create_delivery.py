@@ -1,5 +1,5 @@
 from koiki.models import Sender, Recipient, Shipment
-from koiki.woocommerce.models import LineItem
+from koiki.woocommerce.models import LineItem, Shipping, Billing
 
 
 class CreateDelivery():
@@ -8,9 +8,9 @@ class CreateDelivery():
 
     def __init__(self, order):
         self.order = order
-        self.recipient = Recipient(order)
-        self.line_items = order['line_items']
-        self.by_vendor = self._by_vendor()
+        self.by_vendor = self._by_vendor(order['line_items'])
+        self.shipping = Shipping(order['shipping'])
+        self.billing = Billing(order['billing'])
 
     def body(self):
         return {
@@ -33,10 +33,10 @@ class CreateDelivery():
 
         return deliveries
 
-    def _by_vendor(self):
+    def _by_vendor(self, line_items):
         by_vendor = {}
 
-        for line_item in self.line_items:
+        for line_item in line_items:
             item = LineItem(line_item)
             vendor_id = item.vendor.id
 
@@ -58,6 +58,6 @@ class CreateDelivery():
 
         return {
             **Shipment(self.order, packages=total_quantity).to_dict(),
-            **self.recipient.to_dict(),
+            **Recipient(self.shipping, self.billing).to_dict(),
             **Sender(vendor).to_dict(),
         }

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from koiki.models import Shipment, Sender, Recipient
-from koiki.woocommerce.models import Vendor
+from koiki.woocommerce.models import Vendor, Billing, Shipping
 
 
 class ModelsTest(TestCase):
@@ -56,7 +56,7 @@ class ModelsTest(TestCase):
         })
 
     def test_recipient(self):
-        shipping = {
+        shipping = Shipping({
             'first_name': 'Philip',
             'last_name': 'Glass',
             'address_1': 'Pl. de la Vila',
@@ -65,26 +65,27 @@ class ModelsTest(TestCase):
             'city': 'Santa Coloma de Gramenet',
             'state': 'Barcelona',
             'country': 'Catalunya'
-        }
-        billing = {
+        })
+        billing = Billing({
             'email': 'email@example.com',
             'phone': '+34666554433'
-        }
-        order = {'shipping': shipping, 'billing': billing}
-
-        recipient = Recipient(order)
-
-        self.assertDictEqual(recipient.to_dict(), {
-            'nombreDesti': shipping['first_name'],
-            'apellidoDesti': shipping['last_name'],
-            'direccionDesti': shipping['address_1'],
-            'direccionAdicionalDesti': shipping['address_2'],
-            'numeroCalleDesti': '',
-            'codPostalDesti': shipping['postcode'],
-            'poblacionDesti': shipping['city'],
-            'provinciaDesti': shipping['state'],
-            'paisDesti': shipping['country'],
-
-            'telefonoDesti': billing['phone'],
-            'emailDesti': billing['email']
         })
+
+        recipient = Recipient(shipping, billing)
+
+        self.assertDictContainsSubset({
+            'nombreDesti': shipping.first_name,
+            'apellidoDesti': shipping.last_name,
+            'direccionDesti': shipping.address_1,
+            'direccionAdicionalDesti': shipping.address_2,
+            'numeroCalleDesti': '',
+            'codPostalDesti': shipping.postcode,
+            'poblacionDesti': shipping.city,
+            'provinciaDesti': shipping.state,
+            'paisDesti': shipping.country,
+        }, recipient.to_dict())
+
+        self.assertDictContainsSubset({
+            'telefonoDesti': billing.phone,
+            'emailDesti': billing.email
+        }, recipient.to_dict())
