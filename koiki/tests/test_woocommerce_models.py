@@ -1,4 +1,6 @@
 from unittest import TestCase
+import httpretty
+import json
 
 from koiki.woocommerce.models import LineItem, Vendor, Shipping, Billing
 
@@ -45,6 +47,31 @@ class WooocommerceModelsTest(TestCase):
 
         self.assertEquals(vendor.id, 1)
         self.assertEquals(vendor.name, 'name')
+
+    def test_vendor_get(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/1',
+            status=200,
+            content_type='application/json',
+            body=json.dumps({
+                "store_email": "store@example.com",
+                "phone": "+34666554433",
+                "address": {
+                    "street_1": "Passeig de Gràcia 1",
+                    "street_2": "",
+                    "city": "Barcelona",
+                    "zip": "08092",
+                    "country": "ES",
+                    "state": "Barcelona"
+                }
+            })
+        )
+        vendor = Vendor(1, 'name')
+        vendor.get()
+
+        self.assertEquals(vendor.address, "Passeig de Gràcia 1")
+        self.assertEquals(vendor.zip, "08092")
 
     def test_shipping(self):
         data = {

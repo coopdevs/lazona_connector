@@ -3,6 +3,26 @@ from unittest import TestCase
 from koiki.models import Shipment, Sender, Recipient
 from koiki.woocommerce.models import Vendor, Billing, Shipping
 
+import json
+
+
+class FakeResponse():
+    def __init__(self, body):
+        self.body = body
+
+    def json(self):
+        if isinstance(self.body, dict):
+            return self.body
+        else:
+            return json.loads(self.body)
+
+class FakeClient():
+    def __init__(self, resp_body):
+        self.resp_body = resp_body
+
+    def get(self, _url):
+        return FakeResponse(self.resp_body)
+
 
 class ModelsTest(TestCase):
 
@@ -39,20 +59,33 @@ class ModelsTest(TestCase):
         })
 
     def test_sender(self):
-        vendor = Vendor(id=1, name='Quèviure')
+        fake_client = FakeClient({
+            "store_name": "Quèviure",
+            "store_email": "queviure@lazona.coop",
+            "phone": "",
+            "address": {
+                "street_1": "C/ queviure, 1",
+                "street_2": "",
+                "city": "Barcelona",
+                "zip": "08080",
+                "country": "ES",
+                "state": "Barcelona"
+            }
+        })
+        vendor = Vendor(id=1, name='Quèviure', client=fake_client)
         sender = Sender(vendor)
 
         self.assertDictEqual(sender.to_dict(), {
             'nombreRemi': 'Quèviure',
             'apellidoRemi': '',
-            'direccionRemi': 'C/ La Zona, 1',
+            'direccionRemi': 'C/ queviure, 1',
             'numeroCalleRemi': '',
-            'codPostalRemi': '08186',
+            'codPostalRemi': '08080',
             'poblacionRemi': 'Barcelona',
             'provinciaRemi': 'Barcelona',
             'paisRemi': 'ES',
-            'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '518888191',
+            'emailRemi': 'queviure@lazona.coop',
+            'telefonoRemi': '',
         })
 
     def test_recipient(self):

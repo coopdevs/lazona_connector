@@ -1,4 +1,5 @@
 from unittest import TestCase
+import responses
 
 from koiki.create_delivery import CreateDelivery
 
@@ -71,7 +72,33 @@ class CreateDeliveryTest(TestCase):
             ]
         }
 
+    @responses.activate
     def test_body(self):
+        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/5', status=200, json={
+            "store_email": "detergents@agranel.coop",
+            "phone": "93333333",
+            "address": {
+                "street_1": "Sant Antoni Maria Claret, 175",
+                "street_2": "",
+                "city": "Barcelona",
+                "zip": "08041",
+                "country": "",
+                "state": ""
+            }
+        })
+        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6', status=200, json={
+            "store_email": "queviure@lazona.coop",
+            "phone": "",
+            "address": {
+                "street_1": "",
+                "street_2": "",
+                "city": "",
+                "zip": "",
+                "country": "ES",
+                "state": ""
+            }
+        })
+
         body = CreateDelivery(self.order).body()
         deliveries = body['envios']
 
@@ -87,13 +114,13 @@ class CreateDeliveryTest(TestCase):
             'nombreRemi': 'A granel',
             'apellidoRemi': '',
             'numeroCalleRemi': '',
-            'direccionRemi': 'C/ La Zona, 1',
-            'codPostalRemi': '08186',
+            'direccionRemi': 'Sant Antoni Maria Claret, 175',
+            'codPostalRemi': '08041',
             'poblacionRemi': 'Barcelona',
-            'provinciaRemi': 'Barcelona',
-            'paisRemi': 'ES',
-            'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '518888191'
+            'provinciaRemi': '',
+            'paisRemi': '',
+            'emailRemi': 'detergents@agranel.coop',
+            'telefonoRemi': '93333333'
         }, deliveries[0])
 
         self.assertDictContainsSubset({
@@ -106,13 +133,13 @@ class CreateDeliveryTest(TestCase):
             'nombreRemi': 'Quèviure',
             'apellidoRemi': '',
             'numeroCalleRemi': '',
-            'direccionRemi': 'C/ La Zona, 1',
-            'codPostalRemi': '08186',
-            'poblacionRemi': 'Barcelona',
-            'provinciaRemi': 'Barcelona',
+            'direccionRemi': '',
+            'codPostalRemi': '',
+            'poblacionRemi': '',
+            'provinciaRemi': '',
             'paisRemi': 'ES',
-            'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '518888191',
+            'emailRemi': 'queviure@lazona.coop',
+            'telefonoRemi': '',
         }, deliveries[1])
 
     def test_url(self):

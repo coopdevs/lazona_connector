@@ -1,10 +1,41 @@
 import re
+import requests
 
 
 class Vendor():
-    def __init__(self, id, name):
+    BASE_URL = "http://staging.lazona.coop/wp-json/wcfmmp/v1"
+    PATH = "settings"
+
+    def __init__(self, id, name, client=requests):
+        self.client = client
         self.id = id
         self.name = name
+        self.address = None
+        self.zip = None
+        self.city = None
+        self.state = None
+        self.country = None
+        self.email = None
+        self.phone = None
+
+    def get(self):
+        response = self._request(f"id/{self.id}")
+        self._convert_to_resource(response)
+        return self
+
+    def _request(self, url):
+        return self.client.get(f'{self.BASE_URL}/{self.PATH}/{url}')
+
+    def _convert_to_resource(self, response):
+        body = response.json()
+
+        self.address = body['address']['street_1']
+        self.zip = body['address']['zip']
+        self.city = body['address']['city']
+        self.state = body['address']['state']
+        self.country = body['address']['country']
+        self.email = body['store_email']
+        self.phone = body['phone']
 
     def __eq__(self, other):
         if not isinstance(other, Vendor):

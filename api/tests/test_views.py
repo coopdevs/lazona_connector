@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import httpretty
 import os
+import json
 
 
 class DeliveryViewTests(TestCase):
@@ -52,6 +53,24 @@ class DeliveryViewTests(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_successful_request(self):
+        httpretty.register_uri(
+                httpretty.GET,
+                'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6',
+                status=200,
+                content_type='application/json',
+                body=json.dumps({
+                    "store_email": "queviure@lazona.coop",
+                    "phone": "",
+                    "address": {
+                        "street_1": "",
+                        "street_2": "",
+                        "city": "",
+                        "zip": "",
+                        "country": "ES",
+                        "state": ""
+                    }
+                })
+        )
         httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
 
         token = Token.objects.create(key='test token', user=self.user)
