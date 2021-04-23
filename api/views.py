@@ -1,5 +1,5 @@
 from rest_framework.authentication import TokenAuthentication
-from api.host_authentication import HostAuthentication
+from api.host_authentication import HostAuthentication, SignatureValidation
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +9,7 @@ from koiki.client import Client
 
 
 class DeliveryList(APIView):
-    authentication_classes = [TokenAuthentication, HostAuthentication]
+    authentication_classes = [TokenAuthentication, HostAuthentication, SignatureValidation]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
