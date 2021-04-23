@@ -35,6 +35,9 @@ class HostAuthentication(authentication.BaseAuthentication):
 class SignatureValidation(authentication.BaseAuthentication):
     def authenticate(self, request):
         signature = request.META.get("HTTP_X_WC_WEBHOOK_SIGNATURE")
+        if not signature:
+            return None
+
         generated_signature = generate_woocommerce_signature(
             request.body, os.getenv("WC_WEBHOOK_SECRET")
         )
