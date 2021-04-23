@@ -33,17 +33,18 @@ class HostAuthentication(authentication.BaseAuthentication):
 
 
 class SignatureValidation(authentication.BaseAuthentication):
-
     def authenticate(self, request):
-        signature = request.META.get('HTTP_X_WC_WEBHOOK_SIGNATURE')
-        generated_signature = generate_woocommerce_signature(request.body, os.getenv('WC_WEBHOOK_SECRET'))
+        signature = request.META.get("HTTP_X_WC_WEBHOOK_SIGNATURE")
+        generated_signature = generate_woocommerce_signature(
+            request.body, os.getenv("WC_WEBHOOK_SECRET")
+        )
 
         if signature != generated_signature:
-            raise exceptions.ValidationError('Invalid payload checksum signature')
+            raise exceptions.ValidationError("Invalid payload checksum signature")
 
         try:
-            user = User.objects.get(username='pau')
+            user = User.objects.get(username="pau")
         except User.DoesNotExist:
-            raise exceptions.AuthenticationFailed('No such user')
+            raise exceptions.AuthenticationFailed("No such user")
 
         return (user, None)

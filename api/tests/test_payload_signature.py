@@ -11,7 +11,7 @@ import rest_framework
 class PayloadSignatureTests(TestCase):
     def setUp(self):
         os.environ["WC_WEBHOOK_SECRET"] = "testcase"
-        self.original_payload = '{"id":6177,"parent_id":0,"status":"pending","currency":"EUR","version":"5.0.0"}'
+        self.original_payload = '{"id":6177,"parent_id":0}'
 
         self.user = User(username="pau")
         self.user.save()
@@ -31,7 +31,7 @@ class PayloadSignatureTests(TestCase):
 
     def test_payload_signature_is_valid(self):
         # calculated via https://www.devglan.com/online-tools/hmac-sha256-online
-        expected_wc_signature = "HfbFpdP8Je5naosPVWiBwEdAcLtNrxsPuDzOJMPafGM="
+        expected_wc_signature = "JCicmc8VmC44Vv4ZTlhb/sbupvZ/oVixfQqceSXYHWo="
 
         request = RequestFactory().post(
             "/path/", self.original_payload, content_type="application/json"
