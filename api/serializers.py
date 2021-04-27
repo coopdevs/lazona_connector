@@ -17,8 +17,24 @@ class BillingSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-class DeliverySerializer(serializers.Serializer):
+class MetadataSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    key = serializers.CharField(required=True)
+    value = serializers.CharField(required=True)
+    display_key = serializers.CharField(required=True)
+    display_value = serializers.CharField(required=True)
+
+
+class LineItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    name = serializers.CharField()
+    quantity = serializers.IntegerField(required=True)
+    meta_data = MetadataSerializer(many=True)
+
+
+class OrderSerializer(serializers.Serializer):
     order_key = serializers.CharField(required=True)
     customer_note = serializers.CharField(max_length=100, allow_blank=True)
     shipping = ShippingSerializer()
     billing = BillingSerializer()
+    line_items = LineItemSerializer(many=True)
