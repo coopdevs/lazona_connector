@@ -25,10 +25,8 @@ class CreateDelivery():
     def _deliveries(self):
         deliveries = []
 
-        for vendor_id in self.by_vendor.keys():
-            line_items = self.by_vendor[vendor_id]
+        for vendor_id, line_items in self.by_vendor.items():
             vendor = line_items[0].vendor
-
             deliveries.append(self._delivery(line_items, vendor))
 
         return deliveries
