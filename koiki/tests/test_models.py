@@ -7,25 +7,6 @@ from koiki.woocommerce.models import Vendor, Billing, Shipping
 import json
 
 
-class FakeResponse():
-    def __init__(self, body):
-        self.body = body
-
-    def json(self):
-        if isinstance(self.body, dict):
-            return self.body
-        else:
-            return json.loads(self.body)
-
-
-class FakeClient():
-    def __init__(self, resp_body):
-        self.resp_body = resp_body
-
-    def get(self, _url):
-        return FakeResponse(self.resp_body)
-
-
 class ModelsTest(TestCase):
 
     maxDiff = None
@@ -61,19 +42,6 @@ class ModelsTest(TestCase):
         })
 
     def test_sender(self):
-        fake_client = FakeClient({
-            "store_name": "Quèviure",
-            "store_email": "queviure@lazona.coop",
-            "phone": "",
-            "address": {
-                "street_1": "C/ queviure, 1",
-                "street_2": "",
-                "city": "Barcelona",
-                "zip": "08080",
-                "country": "ES",
-                "state": "Barcelona"
-            }
-        })
         vendor = Vendor(
             id=1,
             name='Quèviure',
@@ -83,8 +51,7 @@ class ModelsTest(TestCase):
             country='ES',
             city='Barcelona',
             state='Barcelona',
-            phone='+34666554433',
-            client=fake_client
+            phone='+34666554433'
         )
         sender = Sender(vendor)
 

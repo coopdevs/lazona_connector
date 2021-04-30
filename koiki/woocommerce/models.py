@@ -1,23 +1,6 @@
+from koiki.woocommerce.wcfmmp import APIClient
+
 import re
-import requests
-import logging
-
-
-class APIClient():
-    API_PATH = "wp-json/wcfmmp/v1"
-    PATH = "settings"
-
-    def __init__(self, logger):
-        self.client = requests
-        api_base = "http://staging.lazona.coop"
-        self.api_url = f'{api_base}/{self.API_PATH}'
-        self.logger = logger
-
-    def request(self, url):
-        abs_url = f'{self.api_url}/{self.PATH}/{url}'
-        self.logger.info(f'Wcfmpp request. url={abs_url}')
-
-        return self.client.get(abs_url)
 
 
 class Vendor():
@@ -31,11 +14,9 @@ class Vendor():
         state=None,
         country=None,
         email=None,
-        phone=None,
-        client=requests,
-        logger=logging.getLogger('django.server')
+        phone=None
     ):
-        self.client = APIClient(logger)
+        self.client = APIClient()
 
         self.id = id
         self.name = name

@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import httpretty
 import json
 
@@ -49,8 +49,7 @@ class WooocommerceModelsTest(TestCase):
         self.assertEquals(vendor.id, 1)
         self.assertEquals(vendor.name, 'name')
 
-    @patch('koiki.woocommerce.models.logging', autospec=True)
-    def test_vendor_get(self, mock_logger):
+    def test_vendor_get(self):
         httpretty.register_uri(
             httpretty.GET,
             'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/1',
@@ -70,15 +69,11 @@ class WooocommerceModelsTest(TestCase):
             })
         )
 
-        mock_logger = MagicMock()
-        vendor = Vendor(1, 'name', logger=mock_logger)
+        vendor = Vendor(1, 'name')
         vendor.get()
 
         self.assertEquals(vendor.address, "Passeig de Gràcia 1")
         self.assertEquals(vendor.zip, "08092")
-
-        mock_logger.info.assert_called_once_with(
-            'Wcfmpp request. url=http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/1')
 
     def test_shipping(self):
         data = {
