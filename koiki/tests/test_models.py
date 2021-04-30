@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import MagicMock
 
 from koiki.models import Shipment, Sender, Recipient
 from koiki.woocommerce.models import Vendor, Billing, Shipping
@@ -73,7 +74,18 @@ class ModelsTest(TestCase):
                 "state": "Barcelona"
             }
         })
-        vendor = Vendor(id=1, name='Quèviure', client=fake_client)
+        vendor = Vendor(
+            id=1,
+            name='Quèviure',
+            address='C/ queviure, 1',
+            zip='08080',
+            email='queviure@lazona.coop',
+            country='ES',
+            city='Barcelona',
+            state='Barcelona',
+            phone='+34666554433',
+            client=fake_client
+        )
         sender = Sender(vendor)
 
         self.assertDictEqual(sender.to_dict(), {
@@ -86,7 +98,7 @@ class ModelsTest(TestCase):
             'provinciaRemi': 'Barcelona',
             'paisRemi': 'ES',
             'emailRemi': 'queviure@lazona.coop',
-            'telefonoRemi': '',
+            'telefonoRemi': '+34666554433',
         })
 
     def test_recipient(self):

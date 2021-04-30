@@ -3,33 +3,54 @@ import requests
 import logging
 
 
-class Vendor():
-    API_URL = "http://staging.lazona.coop/wp-json/wcfmmp/v1"
+class APIClient():
+    API_PATH = "wp-json/wcfmmp/v1"
     PATH = "settings"
 
-    def __init__(self, id, name, client=requests, logger=logging.getLogger('django.server')):
-        self.client = client
+    def __init__(self, logger):
+        self.client = requests
+        api_base = "http://staging.lazona.coop"
+        self.api_url = f'{api_base}/{self.API_PATH}'
         self.logger = logger
+
+    def request(self, url):
+        abs_url = f'{self.api_url}/{self.PATH}/{url}'
+        self.logger.info(f'Wcfmpp request. url={abs_url}')
+
+        return self.client.get(abs_url)
+
+
+class Vendor():
+    def __init__(
+        self,
+        id,
+        name,
+        address=None,
+        zip=None,
+        city=None,
+        state=None,
+        country=None,
+        email=None,
+        phone=None,
+        client=requests,
+        logger=logging.getLogger('django.server')
+    ):
+        self.client = APIClient(logger)
 
         self.id = id
         self.name = name
-        self.address = None
-        self.zip = None
-        self.city = None
-        self.state = None
-        self.country = None
-        self.email = None
-        self.phone = None
+        self.address = address
+        self.zip = zip
+        self.city = city
+        self.state = state
+        self.country = country
+        self.email = email
+        self.phone = phone
 
     def get(self):
-        response = self._request(f"id/{self.id}")
+        response = self.client.request(f"id/{self.id}")
         self._convert_to_resource(response)
         return self
-
-    def _request(self, url):
-        abs_url = f'{self.API_URL}/{self.PATH}/{url}'
-        self.logger.info(f'Wcfmpp request. url={abs_url}')
-        return self.client.get(abs_url)
 
     def _convert_to_resource(self, response):
         body = response.json()

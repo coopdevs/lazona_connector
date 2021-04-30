@@ -3,7 +3,6 @@ class Sender():
     # Note telefonoRemi can only have 9 digits.
     def __init__(self, vendor):
         self.vendor = vendor
-        self.vendor.get()
 
     def to_dict(self):
 
