@@ -59,39 +59,44 @@ class KoikiTest(TestCase):
             ],
         }
 
-        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/5', status=200, json={
-            "store_email": "detergents@agranel.coop",
-            "phone": "93333333",
-            "address": {
-                "street_1": "Sant Antoni Maria Claret, 175",
-                "street_2": "",
-                "city": "Barcelona",
-                "zip": "08041",
-                "country": "",
-                "state": ""
-            }
-        })
-        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6', status=200, json={
-            "store_email": "queviure@lazona.coop",
-            "phone": "",
-            "address": {
-                "street_1": "",
-                "street_2": "",
-                "city": "",
-                "zip": "",
-                "country": "ES",
-                "state": ""
-            }
-        })
+        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/5',
+                      status=200,
+                      json={
+                        "store_email": "detergents@agranel.coop",
+                        "phone": "93333333",
+                        "address": {
+                            "street_1": "Sant Antoni Maria Claret, 175",
+                            "street_2": "",
+                            "city": "Barcelona",
+                            "zip": "08041",
+                            "country": "",
+                            "state": ""
+                        }
+                      })
+        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6',
+                      status=200,
+                      json={
+                        "store_email": "queviure@lazona.coop",
+                        "phone": "",
+                        "address": {
+                            "street_1": "",
+                            "street_2": "",
+                            "city": "",
+                            "zip": "",
+                            "country": "ES",
+                            "state": ""
+                        }
+                      })
 
     @responses.activate
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_successful_response(self, mock_logger):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200, json={
-            'respuesta': '101',
-            'mensaje': 'OK',
-            'envios': [{'numPedido': '123', 'codBarras': 'yyy', 'etiqueta': 'abcd'}]
-        })
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
+                      json={
+                        'respuesta': '101',
+                        'mensaje': 'OK',
+                        'envios': [{'numPedido': '123', 'codBarras': 'yyy', 'etiqueta': 'abcd'}]
+                      })
 
         delivery = Client(self.order).create_delivery()
 
@@ -114,8 +119,8 @@ class KoikiTest(TestCase):
 
     @responses.activate
     def test_create_delivery_succesful_code_failed_response(self):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200, json={
-            'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []})
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
+                      json={'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []})
 
         mock_logger = MagicMock()
 

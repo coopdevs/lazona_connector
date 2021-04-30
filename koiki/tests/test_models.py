@@ -16,6 +16,7 @@ class FakeResponse():
         else:
             return json.loads(self.body)
 
+
 class FakeClient():
     def __init__(self, resp_body):
         self.resp_body = resp_body

@@ -74,30 +74,34 @@ class CreateDeliveryTest(TestCase):
 
     @responses.activate
     def test_body(self):
-        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/5', status=200, json={
-            "store_email": "detergents@agranel.coop",
-            "phone": "93333333",
-            "address": {
-                "street_1": "Sant Antoni Maria Claret, 175",
-                "street_2": "",
-                "city": "Barcelona",
-                "zip": "08041",
-                "country": "",
-                "state": ""
-            }
-        })
-        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6', status=200, json={
-            "store_email": "queviure@lazona.coop",
-            "phone": "",
-            "address": {
-                "street_1": "",
-                "street_2": "",
-                "city": "",
-                "zip": "",
-                "country": "ES",
-                "state": ""
-            }
-        })
+        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/5',
+                      status=200,
+                      json={
+                        "store_email": "detergents@agranel.coop",
+                        "phone": "93333333",
+                        "address": {
+                            "street_1": "Sant Antoni Maria Claret, 175",
+                            "street_2": "",
+                            "city": "Barcelona",
+                            "zip": "08041",
+                            "country": "",
+                            "state": ""
+                        }
+                      })
+        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6',
+                      status=200,
+                      json={
+                        "store_email": "queviure@lazona.coop",
+                        "phone": "",
+                        "address": {
+                            "street_1": "",
+                            "street_2": "",
+                            "city": "",
+                            "zip": "",
+                            "country": "ES",
+                            "state": ""
+                        }
+                      })
 
         body = CreateDelivery(self.order).body()
         deliveries = body['envios']
