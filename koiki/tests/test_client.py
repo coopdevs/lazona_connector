@@ -59,7 +59,7 @@ class KoikiTest(TestCase):
             ],
         }
 
-        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/5',
+        responses.add(responses.GET, 'https://wcfmmp_testing_host/wp-json/wcfmmp/v1/settings/id/5',
                       status=200,
                       json={
                         "store_email": "detergents@agranel.coop",
@@ -73,7 +73,7 @@ class KoikiTest(TestCase):
                             "state": ""
                         }
                       })
-        responses.add(responses.GET, 'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/6',
+        responses.add(responses.GET, 'https://wcfmmp_testing_host/wp-json/wcfmmp/v1/settings/id/6',
                       status=200,
                       json={
                         "store_email": "queviure@lazona.coop",

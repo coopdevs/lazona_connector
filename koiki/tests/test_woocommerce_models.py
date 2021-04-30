@@ -52,7 +52,7 @@ class WooocommerceModelsTest(TestCase):
     def test_vendor_get(self):
         httpretty.register_uri(
             httpretty.GET,
-            'http://staging.lazona.coop/wp-json/wcfmmp/v1/settings/id/1',
+            'https://wcfmmp_testing_host/wp-json/wcfmmp/v1/settings/id/1',
             status=200,
             content_type='application/json',
             body=json.dumps({
