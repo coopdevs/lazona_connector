@@ -1,13 +1,16 @@
 import re
 import requests
+import logging
 
 
 class Vendor():
-    BASE_URL = "http://staging.lazona.coop/wp-json/wcfmmp/v1"
+    API_URL = "http://staging.lazona.coop/wp-json/wcfmmp/v1"
     PATH = "settings"
 
-    def __init__(self, id, name, client=requests):
+    def __init__(self, id, name, client=requests, logger=logging.getLogger('django.server')):
         self.client = client
+        self.logger = logger
+
         self.id = id
         self.name = name
         self.address = None
@@ -24,7 +27,9 @@ class Vendor():
         return self
 
     def _request(self, url):
-        return self.client.get(f'{self.BASE_URL}/{self.PATH}/{url}')
+        abs_url = f'{self.API_URL}/{self.PATH}/{url}'
+        self.logger.info(f'Wcfmpp request. url={abs_url}')
+        return self.client.get(abs_url)
 
     def _convert_to_resource(self, response):
         body = response.json()
