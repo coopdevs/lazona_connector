@@ -56,7 +56,7 @@ class LineItem():
         self.quantity = line_item['quantity']
         self.metadata = line_item['meta_data']
         vendor = self._find_vendor()
-        self.vendor = Vendor(vendor[0], vendor[1])
+        self.vendor = Vendor(id=vendor[0], name=vendor[1])
 
     # Finds the vendor attributes from all the metadata entries
     def _find_vendor(self):

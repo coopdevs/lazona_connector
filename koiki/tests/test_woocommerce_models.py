@@ -33,7 +33,7 @@ class WooocommerceModelsTest(TestCase):
         line_item = LineItem(line_item)
 
         self.assertEquals(line_item.quantity, 3)
-        self.assertEquals(line_item.vendor, Vendor('5', 'A granel'))
+        self.assertEquals(line_item.vendor, Vendor(id='5', name='A granel'))
 
     def test_line_item_without_vendor(self):
         data = {
@@ -44,7 +44,7 @@ class WooocommerceModelsTest(TestCase):
         self.assertRaises(Exception, LineItem, data)
 
     def test_vendor(self):
-        vendor = Vendor(1, 'name')
+        vendor = Vendor(id=1, name='name')
 
         self.assertEquals(vendor.id, 1)
         self.assertEquals(vendor.name, 'name')
@@ -69,7 +69,7 @@ class WooocommerceModelsTest(TestCase):
             })
         )
 
-        vendor = Vendor(1, 'name')
+        vendor = Vendor(id=1, name='name')
         vendor.get()
 
         self.assertEquals(vendor.address, "Passeig de Gràcia 1")
