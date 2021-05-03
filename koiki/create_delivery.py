@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from koiki.models import Sender, Recipient, Shipment
 from koiki.woocommerce.models import LineItem, Shipping, Billing
 
@@ -32,16 +34,11 @@ class CreateDelivery():
         return deliveries
 
     def _by_vendor(self, line_items):
-        by_vendor = {}
+        by_vendor = defaultdict(list)
 
         for line_item in line_items:
             item = LineItem(line_item)
-            vendor_id = item.vendor.id
-
-            if vendor_id in by_vendor.keys():
-                by_vendor[vendor_id].append(item)
-            else:
-                by_vendor[vendor_id] = [item]
+            by_vendor[item.vendor.id].append(item)
 
         return by_vendor
 
