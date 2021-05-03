@@ -7,6 +7,8 @@ from rest_framework.test import APIClient
 import httpretty
 import json
 
+import koiki
+
 
 class DeliveryViewTests(TestCase):
 
@@ -52,7 +54,7 @@ class DeliveryViewTests(TestCase):
     def test_successful_request(self):
         httpretty.register_uri(
                 httpretty.GET,
-                'https://wcfmmp_testing_host/wp-json/wcfmmp/v1/settings/id/6',
+                f'{koiki.wcfmmp_api_base}/wp-json/wcfmmp/v1/settings/id/6',
                 status=200,
                 content_type='application/json',
                 body=json.dumps({
