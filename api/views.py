@@ -1,5 +1,5 @@
 from rest_framework.authentication import TokenAuthentication
-from api.host_authentication import HostAuthentication, SignatureValidation
+from api.authentication import HostAuthentication, SignatureValidation
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView

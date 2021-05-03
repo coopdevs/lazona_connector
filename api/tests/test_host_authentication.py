@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 
-from api.host_authentication import HostAuthentication
+from api.authentication import HostAuthentication
 import rest_framework
 
 
