@@ -1,5 +1,4 @@
 import requests
-import logging
 import os
 import json
 import copy
@@ -15,8 +14,7 @@ API_PATH = '/rekis/api'
 
 class Client():
 
-    def __init__(self, order, auth_token=os.getenv('KOIKI_AUTH_TOKEN'),
-                 logger=logging.getLogger('django.server')):
+    def __init__(self, order, auth_token=os.getenv('KOIKI_AUTH_TOKEN'), logger=koiki.logger):
         self.order = order
         self.auth_token = auth_token
         self.host = koiki.host
@@ -33,7 +31,7 @@ class Client():
         response_body = json.loads(response.text)
 
         if self._is_errored(response_body):
-            self._log(response.status_code, response.text, logger='error')
+            self._log(response.status_code, response.text, level='error')
             return Error(response_body)
         else:
             self._log(response.status_code, self._masked_body(response_body))
@@ -56,9 +54,10 @@ class Client():
     def _is_errored(self, response_body):
         return response_body.get('respuesta', '') != '101'
 
-    def _log(self, code, msg, logger='info'):
+    def _log(self, code, msg, level='info'):
         log_line = "Koiki response. status={}, body={}".format(code, msg)
-        if logger == 'info':
+
+        if level == 'info':
             self.logger.info(log_line)
         else:
             self.logger.error(log_line)

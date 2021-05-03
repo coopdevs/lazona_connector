@@ -73,7 +73,7 @@ class KoikiTest(TestCase):
                       })
 
     @responses.activate
-    @patch('koiki.client.logging', autospec=True)
+    @patch('koiki.logger', autospec=True)
     def test_create_delivery_successful_response(self, mock_logger):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
                       json={
@@ -88,7 +88,7 @@ class KoikiTest(TestCase):
         self.assertEqual(delivery.to_dict(), {'number': '123', 'barcode': 'yyy', 'label': 'abcd'})
 
     @responses.activate
-    @patch('koiki.client.logging', autospec=True)
+    @patch('koiki.logger', autospec=True)
     def test_create_delivery_failed_response(self, mock_logger):
         responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=400,
                       json={'error': 'Bad Request'})
@@ -116,7 +116,7 @@ class KoikiTest(TestCase):
         self.assertEqual(delivery.to_dict(), {'error': 'TOKEN NOT FOUND'})
 
     @responses.activate
-    @patch('koiki.client.logging', autospec=True)
+    @patch('koiki.logger', autospec=True)
     @patch('koiki.client.requests.post', autospec=True)
     def test_create_delivery_sends_request(self, post_mock, _logger_mock):
         response = MagicMock()
