@@ -1,10 +1,7 @@
 from unittest import TestCase
-from unittest.mock import MagicMock
 
 from koiki.models import Shipment, Sender, Recipient
 from koiki.woocommerce.models import Vendor, Billing, Shipping
-
-import json
 
 
 class ModelsTest(TestCase):
