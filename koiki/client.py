@@ -8,6 +8,8 @@ from koiki.create_delivery import CreateDelivery
 from koiki.delivery import Delivery
 from koiki.error import Error
 
+import koiki
+
 API_PATH = '/rekis/api'
 
 
@@ -17,7 +19,7 @@ class Client():
                  logger=logging.getLogger('django.server')):
         self.order = order
         self.auth_token = auth_token
-        self.host = os.getenv('KOIKI_HOST')
+        self.host = koiki.host
         self.logger = logger
 
     def create_delivery(self):

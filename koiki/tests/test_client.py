@@ -2,7 +2,6 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 import responses
 import json
-import os
 
 from koiki.client import Client
 
@@ -10,8 +9,6 @@ from koiki.client import Client
 class KoikiTest(TestCase):
 
     def setUp(self):
-        os.environ['KOIKI_HOST'] = 'https://testing_host'
-
         self.order = {
             'order_key': 'xxx',
             'customer_note': 'delivery testing',
