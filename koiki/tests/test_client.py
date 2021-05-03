@@ -57,7 +57,7 @@ class KoikiTest(TestCase):
             ],
         }
 
-        responses.add(responses.GET, f'{koiki.wcfmmp_api_base}/wp-json/wcfmmp/v1/settings/id/6',
+        responses.add(responses.GET, f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
                       status=200,
                       json={
                         "store_email": "queviure@lazona.coop",

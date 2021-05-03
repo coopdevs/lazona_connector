@@ -5,12 +5,11 @@ import koiki
 
 
 class APIClient():
-    API_PATH = "wp-json/wcfmmp/v1"
+    api_path = "wp-json/wcfmmp/v1"
+    api_url = f'{koiki.wcfmmp_host}/{api_path}'
 
     def __init__(self, client=requests, logger=logging.getLogger('django.server')):
         self.client = client
-        api_base = koiki.wcfmmp_api_base
-        self.api_url = f'{api_base}/{self.API_PATH}'
         self.logger = logger
 
     def request(self, path):
