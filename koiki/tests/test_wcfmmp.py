@@ -18,7 +18,7 @@ class APIClientTest(TestCase):
         self.mock_client.get.assert_called_once_with(
                 'https://wcfmmp_testing_host/wp-json/wcfmmp/v1/endpoint')
 
-    @patch('koiki.woocommerce.wcfmmp.logging', autospec=True)
+    @patch('koiki.logger', autospec=True)
     def test_request_logging(self, mock_logger):
         api_client = APIClient(self.mock_client, mock_logger)
         api_client.request('endpoint')
