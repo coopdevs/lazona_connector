@@ -52,7 +52,7 @@ class WooocommerceModelsTest(TestCase):
     def test_vendor_fetch(self):
         httpretty.register_uri(
             httpretty.GET,
-            f'{koiki.wcfmmp_api_base}/wp-json/wcfmmp/v1/settings/id/1',
+            f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1',
             status=200,
             content_type='application/json',
             body=json.dumps({
