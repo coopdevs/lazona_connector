@@ -31,7 +31,7 @@ class Client():
         response_body = json.loads(response.text)
 
         if self._is_errored(response_body):
-            self._log(response.status_code, response.text, logger='error')
+            self._log(response.status_code, response.text, level='error')
             return Error(response_body)
         else:
             self._log(response.status_code, self._masked_body(response_body))
@@ -54,9 +54,10 @@ class Client():
     def _is_errored(self, response_body):
         return response_body.get('respuesta', '') != '101'
 
-    def _log(self, code, msg, logger='info'):
+    def _log(self, code, msg, level='info'):
         log_line = "Koiki response. status={}, body={}".format(code, msg)
-        if logger == 'info':
+
+        if level == 'info':
             self.logger.info(log_line)
         else:
             self.logger.error(log_line)
