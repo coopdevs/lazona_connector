@@ -28,6 +28,24 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ["lazona-connector-staging.herokuapp.com", "127.0.0.1", ".ngrok.io"]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'null': {
+            'level': 'INFO',
+            'class': 'logging.NullHandler',
+        },
+    },
+    'loggers': {
+        'django.tests': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    }
+}
+
 
 # Application definition
 
