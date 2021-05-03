@@ -48,7 +48,7 @@ class WooocommerceModelsTest(TestCase):
         self.assertEquals(vendor.id, 1)
         self.assertEquals(vendor.name, 'name')
 
-    def test_vendor_get(self):
+    def test_vendor_fetch(self):
         httpretty.register_uri(
             httpretty.GET,
             'https://wcfmmp_testing_host/wp-json/wcfmmp/v1/settings/id/1',
@@ -69,7 +69,7 @@ class WooocommerceModelsTest(TestCase):
         )
 
         vendor = Vendor(id=1, name='name')
-        vendor.get()
+        vendor.fetch()
 
         self.assertEquals(vendor.address, "Passeig de Gràcia 1")
         self.assertEquals(vendor.zip, "08092")

@@ -45,7 +45,7 @@ class CreateDelivery():
     # Builds a delivery structure from all passed line_items, which are provided by the same vendor
     def _delivery(self, line_items, vendor):
         total_quantity = 0
-        vendor.get()
+        vendor.fetch()
 
         for line_item in line_items:
             total_quantity += line_item.quantity

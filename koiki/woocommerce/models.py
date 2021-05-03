@@ -28,7 +28,7 @@ class Vendor():
         self.email = email
         self.phone = phone
 
-    def get(self):
+    def fetch(self):
         response = self.client.request(f"settings/id/{self.id}")
         self._convert_to_resource(response)
         return self
