@@ -8,11 +8,6 @@ from rest_framework import authentication
 from rest_framework import exceptions
 
 
-def generate_woocommerce_signature(body, secret):
-    digest = hmac.new(secret.encode('utf-8'), body, hashlib.sha256).digest()
-    return base64.b64encode(digest).decode()
-
-
 class HostAuthentication(authentication.BaseAuthentication):
 
     def authenticate(self, request):
@@ -23,30 +18,32 @@ class HostAuthentication(authentication.BaseAuthentication):
         if 'staging.lazona.coop' not in source:
             raise exceptions.AuthenticationFailed('Invalid source host')
 
-        try:
-            user = User.objects.get(username='pau')
-        except User.DoesNotExist:
+        user = User.objects.filter(is_superuser=True).first()
+        if not user:
             raise exceptions.AuthenticationFailed('No such user')
 
         return (user, None)
 
 
 class SignatureValidation(authentication.BaseAuthentication):
+    def generate_woocommerce_signature(self, body, secret):
+        digest = hmac.new(secret.encode('utf-8'), body, hashlib.sha256).digest()
+        return base64.b64encode(digest).decode()
+
     def authenticate(self, request):
         signature = request.META.get("HTTP_X_WC_WEBHOOK_SIGNATURE")
         if not signature:
             return None
 
-        generated_signature = generate_woocommerce_signature(
+        generated_signature = self.generate_woocommerce_signature(
             request.body, os.getenv("WC_WEBHOOK_SECRET")
         )
 
         if signature != generated_signature:
-            raise exceptions.ValidationError("Invalid payload checksum signature")
+            raise exceptions.AuthenticationFailed("Invalid payload checksum signature")
 
-        try:
-            user = User.objects.get(username="pau")
-        except User.DoesNotExist:
-            raise exceptions.AuthenticationFailed("No such user")
+        user = User.objects.filter(is_superuser=True).first()
+        if not user:
+            raise exceptions.AuthenticationFailed('No such user')
 
         return (user, None)

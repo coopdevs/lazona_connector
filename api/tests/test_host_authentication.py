@@ -32,7 +32,7 @@ class HostAuthenticationTests(TestCase):
                 request)
 
     def test_user_exists(self):
-        user = User(username='pau')
+        user = User(username="pau", is_superuser=True)
         user.save()
 
         request = RequestFactory().post('')

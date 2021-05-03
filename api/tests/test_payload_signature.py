@@ -11,10 +11,8 @@ import rest_framework
 class PayloadSignatureTests(TestCase):
     def setUp(self):
         os.environ["WC_WEBHOOK_SECRET"] = "testcase"
-        self.original_payload = '{"id":6177,"parent_id":0}'
-
-        self.user = User(username="pau")
-        self.user.save()
+        self.original_payload = '{"test": 1 }'
+        self.expected_wc_signature = "UyKdg7msIA67rxmmf7JcLMUkzMKGLvfptk2NaSuyRQM="
 
     def test_payload_signature_is_invalid(self):
         invalid_wc_signature = "AAAA"
@@ -24,19 +22,33 @@ class PayloadSignatureTests(TestCase):
         )
         request.META["HTTP_X_WC_WEBHOOK_SIGNATURE"] = invalid_wc_signature
         self.assertRaises(
-            rest_framework.exceptions.ValidationError,
+            rest_framework.exceptions.AuthenticationFailed,
             SignatureValidation().authenticate,
             request,
         )
 
     def test_payload_signature_is_valid(self):
+        user = User(username="pau", is_superuser=True)
+        user.save()
         # calculated via https://www.devglan.com/online-tools/hmac-sha256-online
-        expected_wc_signature = "JCicmc8VmC44Vv4ZTlhb/sbupvZ/oVixfQqceSXYHWo="
 
         request = RequestFactory().post(
             "/path/", self.original_payload, content_type="application/json"
         )
-        request.META["HTTP_X_WC_WEBHOOK_SIGNATURE"] = expected_wc_signature
+        request.META["HTTP_X_WC_WEBHOOK_SIGNATURE"] = self.expected_wc_signature
 
         result = SignatureValidation().authenticate(request)
-        self.assertEqual(result, (self.user, None))
+        self.assertEqual(result, (user, None))
+
+    def test_payload_signature_valid_without_user(self):
+
+        request = RequestFactory().post(
+            "/path/", self.original_payload, content_type="application/json"
+        )
+        request.META["HTTP_X_WC_WEBHOOK_SIGNATURE"] = self.expected_wc_signature
+
+        self.assertRaises(
+            rest_framework.exceptions.AuthenticationFailed,
+            SignatureValidation().authenticate,
+            request,
+        )
