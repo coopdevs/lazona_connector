@@ -29,7 +29,7 @@ class Vendor():
         self.phone = phone
 
     def get(self):
-        response = self.client.request(f"id/{self.id}")
+        response = self.client.request(f"settings/id/{self.id}")
         self._convert_to_resource(response)
         return self
 
