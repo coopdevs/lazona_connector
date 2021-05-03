@@ -2,16 +2,14 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 import responses
 import json
-import os
 
 from koiki.client import Client
+import koiki
 
 
 class KoikiTest(TestCase):
 
     def setUp(self):
-        os.environ['KOIKI_HOST'] = 'https://testing_host'
-
         self.order = {
             'order_key': 'xxx',
             'customer_note': 'delivery testing',
@@ -59,16 +57,30 @@ class KoikiTest(TestCase):
             ],
         }
 
+        responses.add(responses.GET, f'{koiki.wcfmmp_api_base}/wp-json/wcfmmp/v1/settings/id/6',
+                      status=200,
+                      json={
+                        "store_email": "queviure@lazona.coop",
+                        "phone": "",
+                        "address": {
+                            "street_1": "",
+                            "street_2": "",
+                            "city": "",
+                            "zip": "",
+                            "country": "ES",
+                            "state": ""
+                        }
+                      })
+
     @responses.activate
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_successful_response(self, mock_logger):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
                       json={
                         'respuesta': '101',
                         'mensaje': 'OK',
                         'envios': [{'numPedido': '123', 'codBarras': 'yyy', 'etiqueta': 'abcd'}]
-                      },
-                      status=200)
+                      })
 
         delivery = Client(self.order).create_delivery()
 
@@ -78,8 +90,9 @@ class KoikiTest(TestCase):
     @responses.activate
     @patch('koiki.client.logging', autospec=True)
     def test_create_delivery_failed_response(self, mock_logger):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
-                      json={'error': 'Bad Request'}, status=400)
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=400,
+                      json={'error': 'Bad Request'})
+
         mock_logger = MagicMock()
 
         delivery = Client(self.order, logger=mock_logger).create_delivery()
@@ -90,9 +103,9 @@ class KoikiTest(TestCase):
 
     @responses.activate
     def test_create_delivery_succesful_code_failed_response(self):
-        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios',
-                      json={'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []},
-                      status=200)
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
+                      json={'respuesta': '102', 'mensaje': 'TOKEN NOT FOUND', 'envios': []})
+
         mock_logger = MagicMock()
 
         delivery = Client(self.order, logger=mock_logger).create_delivery()
@@ -102,6 +115,7 @@ class KoikiTest(TestCase):
         )
         self.assertEqual(delivery.to_dict(), {'error': 'TOKEN NOT FOUND'})
 
+    @responses.activate
     @patch('koiki.client.logging', autospec=True)
     @patch('koiki.client.requests.post', autospec=True)
     def test_create_delivery_sends_request(self, post_mock, _logger_mock):

@@ -39,20 +39,30 @@ class ModelsTest(TestCase):
         })
 
     def test_sender(self):
-        vendor = Vendor(id=1, name='Quèviure')
+        vendor = Vendor(
+            id=1,
+            name='Quèviure',
+            address='C/ queviure, 1',
+            zip='08080',
+            email='queviure@lazona.coop',
+            country='ES',
+            city='Barcelona',
+            state='Barcelona',
+            phone='+34666554433'
+        )
         sender = Sender(vendor)
 
         self.assertDictEqual(sender.to_dict(), {
             'nombreRemi': 'Quèviure',
             'apellidoRemi': '',
-            'direccionRemi': 'C/ La Zona, 1',
+            'direccionRemi': 'C/ queviure, 1',
             'numeroCalleRemi': '',
-            'codPostalRemi': '08186',
+            'codPostalRemi': '08080',
             'poblacionRemi': 'Barcelona',
             'provinciaRemi': 'Barcelona',
             'paisRemi': 'ES',
-            'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '518888191',
+            'emailRemi': 'queviure@lazona.coop',
+            'telefonoRemi': '+34666554433',
         })
 
     def test_recipient(self):

@@ -1,6 +1,9 @@
 from unittest import TestCase
+import httpretty
+import json
 
 from koiki.woocommerce.models import LineItem, Vendor, Shipping, Billing
+import koiki
 
 
 class WooocommerceModelsTest(TestCase):
@@ -30,7 +33,7 @@ class WooocommerceModelsTest(TestCase):
         line_item = LineItem(line_item)
 
         self.assertEquals(line_item.quantity, 3)
-        self.assertEquals(line_item.vendor, Vendor('5', 'A granel'))
+        self.assertEquals(line_item.vendor, Vendor(id='5', name='A granel'))
 
     def test_line_item_without_vendor(self):
         data = {
@@ -41,10 +44,36 @@ class WooocommerceModelsTest(TestCase):
         self.assertRaises(Exception, LineItem, data)
 
     def test_vendor(self):
-        vendor = Vendor(1, 'name')
+        vendor = Vendor(id=1, name='name')
 
         self.assertEquals(vendor.id, 1)
         self.assertEquals(vendor.name, 'name')
+
+    def test_vendor_fetch(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            f'{koiki.wcfmmp_api_base}/wp-json/wcfmmp/v1/settings/id/1',
+            status=200,
+            content_type='application/json',
+            body=json.dumps({
+                "store_email": "store@example.com",
+                "phone": "+34666554433",
+                "address": {
+                    "street_1": "Passeig de Gràcia 1",
+                    "street_2": "",
+                    "city": "Barcelona",
+                    "zip": "08092",
+                    "country": "ES",
+                    "state": "Barcelona"
+                }
+            })
+        )
+
+        vendor = Vendor(id=1, name='name')
+        vendor.fetch()
+
+        self.assertEquals(vendor.address, "Passeig de Gràcia 1")
+        self.assertEquals(vendor.zip, "08092")
 
     def test_shipping(self):
         data = {

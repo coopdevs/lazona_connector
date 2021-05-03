@@ -1,10 +1,48 @@
+from koiki.woocommerce.wcfmmp import APIClient
+
 import re
 
 
 class Vendor():
-    def __init__(self, id, name):
+    def __init__(
+        self,
+        id,
+        name,
+        address=None,
+        zip=None,
+        city=None,
+        state=None,
+        country=None,
+        email=None,
+        phone=None
+    ):
+        self.client = APIClient()
+
         self.id = id
         self.name = name
+        self.address = address
+        self.zip = zip
+        self.city = city
+        self.state = state
+        self.country = country
+        self.email = email
+        self.phone = phone
+
+    def fetch(self):
+        response = self.client.request(f"settings/id/{self.id}")
+        self._convert_to_resource(response)
+        return self
+
+    def _convert_to_resource(self, response):
+        body = response.json()
+
+        self.address = body['address']['street_1']
+        self.zip = body['address']['zip']
+        self.city = body['address']['city']
+        self.state = body['address']['state']
+        self.country = body['address']['country']
+        self.email = body['store_email']
+        self.phone = body['phone']
 
     def __eq__(self, other):
         if not isinstance(other, Vendor):
@@ -18,7 +56,7 @@ class LineItem():
         self.quantity = line_item['quantity']
         self.metadata = line_item['meta_data']
         vendor = self._find_vendor()
-        self.vendor = Vendor(vendor[0], vendor[1])
+        self.vendor = Vendor(id=vendor[0], name=vendor[1])
 
     # Finds the vendor attributes from all the metadata entries
     def _find_vendor(self):

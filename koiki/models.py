@@ -5,17 +5,18 @@ class Sender():
         self.vendor = vendor
 
     def to_dict(self):
+
         return {
             'nombreRemi': self.vendor.name,
             'apellidoRemi': '',
             'numeroCalleRemi': '',
-            'direccionRemi': 'C/ La Zona, 1',
-            'codPostalRemi': '08186',
-            'poblacionRemi': 'Barcelona',
-            'provinciaRemi': 'Barcelona',
-            'paisRemi': 'ES',
-            'emailRemi': 'lazona@opcions.org',
-            'telefonoRemi': '518888191',
+            'direccionRemi': self.vendor.address,
+            'codPostalRemi': self.vendor.zip,
+            'poblacionRemi': self.vendor.city,
+            'provinciaRemi': self.vendor.state,
+            'paisRemi': self.vendor.country,
+            'emailRemi': self.vendor.email,
+            'telefonoRemi': self.vendor.phone,
         }
 
 

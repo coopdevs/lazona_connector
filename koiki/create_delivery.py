@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from koiki.models import Sender, Recipient, Shipment
 from koiki.woocommerce.models import LineItem, Shipping, Billing
 
@@ -25,31 +27,25 @@ class CreateDelivery():
     def _deliveries(self):
         deliveries = []
 
-        for vendor_id in self.by_vendor.keys():
-            line_items = self.by_vendor[vendor_id]
+        for vendor_id, line_items in self.by_vendor.items():
             vendor = line_items[0].vendor
-
             deliveries.append(self._delivery(line_items, vendor))
 
         return deliveries
 
     def _by_vendor(self, line_items):
-        by_vendor = {}
+        by_vendor = defaultdict(list)
 
         for line_item in line_items:
             item = LineItem(line_item)
-            vendor_id = item.vendor.id
-
-            if vendor_id in by_vendor.keys():
-                by_vendor[vendor_id].append(item)
-            else:
-                by_vendor[vendor_id] = [item]
+            by_vendor[item.vendor.id].append(item)
 
         return by_vendor
 
     # Builds a delivery structure from all passed line_items, which are provided by the same vendor
     def _delivery(self, line_items, vendor):
         total_quantity = 0
+        vendor.fetch()
 
         for line_item in line_items:
             total_quantity += line_item.quantity
