@@ -1,5 +1,4 @@
 import requests
-import os
 import json
 import copy
 
@@ -14,7 +13,7 @@ API_PATH = '/rekis/api'
 
 class Client():
 
-    def __init__(self, order, auth_token=os.getenv('KOIKI_AUTH_TOKEN'), logger=koiki.logger):
+    def __init__(self, order, auth_token=koiki.auth_token, logger=koiki.logger):
         self.order = order
         self.auth_token = auth_token
         self.host = koiki.host
