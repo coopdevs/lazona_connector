@@ -15,6 +15,7 @@ class APIClient():
         abs_url = f'{self.api_url}/{path}'
         self.logger.info(f'Wcfmpp request. url={abs_url}')
 
-        response = self.client.get(abs_url)
+        response = self.client.get(abs_url, auth=(koiki.wcfmmp_user, koiki.wcfmmp_password))
         response.raise_for_status()
+
         return response
