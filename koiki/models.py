@@ -1,3 +1,10 @@
+def full_format(value):
+    if value == 'B':
+        return 'Barcelona'
+    else:
+        return value
+
+
 class Sender():
 
     # Note telefonoRemi can only have 9 digits.
@@ -13,11 +20,17 @@ class Sender():
             'direccionRemi': self.vendor.address,
             'codPostalRemi': self.vendor.zip,
             'poblacionRemi': self.vendor.city,
-            'provinciaRemi': self.vendor.state,
-            'paisRemi': self.vendor.country,
+            'provinciaRemi': full_format(self.vendor.state),
+            'paisRemi': self._country(self.vendor.country),
             'emailRemi': self.vendor.email,
             'telefonoRemi': self.vendor.phone,
         }
+
+    def _country(self, value):
+        if value == '':
+            return 'ES'
+        else:
+            return value
 
 
 class Recipient():
@@ -35,7 +48,7 @@ class Recipient():
             'numeroCalleDesti': '',
             'codPostalDesti': self.shipping.postcode,
             'poblacionDesti': self.shipping.city,
-            'provinciaDesti': self.shipping.state,
+            'provinciaDesti': full_format(self.shipping.state),
             'paisDesti': self.shipping.country,
             'telefonoDesti': self.billing.phone,
             'emailDesti': self.billing.email

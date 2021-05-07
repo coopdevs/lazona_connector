@@ -17,7 +17,8 @@ class DeliveryList(APIView):
         if serializer.is_valid():
             order = serializer.validated_data
 
-            Client(order).create_delivery()
+            delivery = Client(order).create_delivery()
+            delivery.print_pdf()
 
             return Response(order, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
