@@ -7,10 +7,12 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
+from unittest.mock import patch, MagicMock
 import httpretty
 import json
 
 import koiki
+from koiki.error import Error
 
 
 class DeliveryViewTests(TestCase):
@@ -75,7 +77,17 @@ class DeliveryViewTests(TestCase):
                     }
                 })
         )
-        httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
+        httpretty.register_uri(
+                httpretty.POST, self.api_url, status=200, content_type='text/json',
+                body=json.dumps({
+                    'respuesta': '101',
+                    'envios': [{
+                        'numPedido': 'abc',
+                        'etiqueta': 'ZXRpcXVldGE=',
+                        'codBarras': '123'
+                    }]
+                })
+        )
 
         token = Token.objects.create(key='test token', user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -83,10 +95,24 @@ class DeliveryViewTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_unsuccessful_request(self):
+    def test_invalid_request(self):
         response = self.client.post(self.url, {})
 
         self.assertEqual(response.data['order_key'][0].code, 'required')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch('api.views.Client', autospec=True)
+    def test_unsuccessful_request(self, mock_client):
+        client = MagicMock()
+        client.create_delivery.return_value = Error({'mensaje': 'ERROR IN THE RECEIVED DATA'})
+        mock_client.return_value = client
+
+        token = Token.objects.create(key='test token', user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        response = self.client.post(self.url, self.data, format='json')
+
+        self.assertEqual(response.data, {'error': 'ERROR IN THE RECEIVED DATA'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unauthenticated_request(self):
@@ -96,3 +122,18 @@ class DeliveryViewTests(TestCase):
         self.assertEqual(response.content,
                          b'{"detail":"Authentication credentials were not provided."}')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    @patch('api.views.Client', autospec=True)
+    def test_pdf_persistance(self, mock_client):
+        mock_delivery = MagicMock(name='delivery')
+        client = MagicMock(name='client')
+        client.create_delivery.return_value = mock_delivery
+        mock_delivery.print_pdf.return_value = MagicMock()
+
+        mock_client.return_value = client
+
+        token = Token.objects.create(key='test token', user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client.post(self.url, self.data, format='json')
+
+        mock_delivery.print_pdf.assert_called_once()
