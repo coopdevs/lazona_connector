@@ -62,6 +62,9 @@ class Client():
             self.logger.error(log_line)
 
     def _masked_body(self, body):
+        if not koiki.mask_logs:
+            return body
+
         masked_body = copy.deepcopy(body)
         for delivery in masked_body['envios']:
             delivery['etiqueta'] = f"{delivery['etiqueta'][:10]}..."
