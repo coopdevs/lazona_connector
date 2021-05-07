@@ -47,7 +47,7 @@ class ModelsTest(TestCase):
             email='queviure@lazona.coop',
             country='ES',
             city='Barcelona',
-            state='Barcelona',
+            state='B',
             phone='+34666554433'
         )
         sender = Sender(vendor)
@@ -74,7 +74,7 @@ class ModelsTest(TestCase):
             'postcode': '08921',
             'city': 'Santa Coloma de Gramenet',
             'state': 'Barcelona',
-            'country': 'Catalunya'
+            'country': 'ES'
         })
         billing = Billing({
             'email': 'email@example.com',

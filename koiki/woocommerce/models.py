@@ -1,4 +1,5 @@
 from koiki.woocommerce.wcfmmp import APIClient
+from koiki.woocommerce.state import State
 
 import re
 
@@ -23,7 +24,7 @@ class Vendor():
         self.address = address
         self.zip = zip
         self.city = city
-        self.state = state
+        self.state = self._build_state(state)
         self.country = country
         self.email = email
         self.phone = phone
@@ -39,7 +40,7 @@ class Vendor():
         self.address = body['address']['street_1']
         self.zip = body['address']['zip']
         self.city = body['address']['city']
-        self.state = body['address']['state']
+        self.state = self._build_state(body['address']['state'])
         self.country = body['address']['country']
         self.email = body['store_email']
         self.phone = body['phone']
@@ -49,6 +50,12 @@ class Vendor():
             return NotImplemented
 
         return self.id == other.id and self.name == other.name
+
+    def _build_state(self, value):
+        if value is None or value == '':
+            return value
+        else:
+            return str(State(value))
 
 
 class LineItem():
