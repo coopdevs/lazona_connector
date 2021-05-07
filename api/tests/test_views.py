@@ -1,9 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
+
 import httpretty
 import json
 
@@ -13,6 +16,8 @@ import koiki
 class DeliveryViewTests(TestCase):
 
     def setUp(self):
+        settings.CELERY_ALWAYS_EAGER = True
+
         self.url = reverse('deliveries:create')
         self.data = {
             'order_key': 'xxx',
