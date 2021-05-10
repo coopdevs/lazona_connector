@@ -41,7 +41,7 @@ class Vendor():
         self.zip = body['address']['zip']
         self.city = body['address']['city']
         self.state = self._build_state(body['address']['state'])
-        self.country = body['address']['country']
+        self.country = self._build_country(body['address']['country'])
         self.email = body['store_email']
         self.phone = body['phone']
 
@@ -56,6 +56,12 @@ class Vendor():
             return value
         else:
             return str(State(value))
+
+    def _build_country(self, value):
+        if value is None or value == '':
+            return 'ES'
+        else:
+            return value
 
 
 class LineItem():
