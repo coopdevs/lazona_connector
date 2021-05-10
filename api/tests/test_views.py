@@ -81,7 +81,6 @@ class DeliveryViewTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = self.client.post(self.url, self.data, format='json')
 
-        self.assertEqual(response.data['order_key'], self.data['order_key'])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_unsuccessful_request(self):

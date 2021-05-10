@@ -20,5 +20,5 @@ class DeliveryList(APIView):
 
             create_delivery.delay(order)
 
-            return Response(order, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
