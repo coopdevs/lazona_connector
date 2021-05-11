@@ -17,8 +17,8 @@ class DeliveryList(APIView):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             order = serializer.validated_data
-
             create_delivery.delay(order)
 
             return Response(status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

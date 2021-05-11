@@ -85,7 +85,7 @@ class CreateDeliveryTest(TestCase):
                               "street_2": "",
                               "city": "Barcelona",
                               "zip": "08041",
-                              "country": "",
+                              "country": "ES",
                               "state": ""
                               }
                           })
@@ -124,7 +124,7 @@ class CreateDeliveryTest(TestCase):
             'codPostalRemi': '08041',
             'poblacionRemi': 'Barcelona',
             'provinciaRemi': '',
-            'paisRemi': '',
+            'paisRemi': 'ES',
             'emailRemi': 'detergents@agranel.coop',
             'telefonoRemi': '93333333'
         }, deliveries[0])

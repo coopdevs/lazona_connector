@@ -4,4 +4,10 @@ from lazona_connector.celery import app
 
 @app.task
 def create_delivery(order):
-    Client(order).create_delivery()
+    delivery = Client(order).create_delivery()
+
+    if type(delivery).__name__ == 'Error':
+        return delivery.to_dict()
+    else:
+        delivery.print_pdf()
+        return {'success': 'all good'}

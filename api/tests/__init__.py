@@ -1,5 +1,6 @@
 import httpretty
 import logging
+from django.conf import settings
 
 import koiki
 
@@ -13,3 +14,5 @@ koiki.wcfmmp_password = 'test_wcfmmp_password'
 
 koiki.logger = logging.getLogger('django.tests')
 koiki.auth_token = 'testing_auth_token'
+
+settings.CELERY_ALWAYS_EAGER = True

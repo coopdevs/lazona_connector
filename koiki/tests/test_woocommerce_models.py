@@ -75,6 +75,31 @@ class WooocommerceModelsTest(TestCase):
         self.assertEquals(vendor.address, "Passeig de Gràcia 1")
         self.assertEquals(vendor.zip, "08092")
 
+    def test_vendor_without_country(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1',
+            status=200,
+            content_type='application/json',
+            body=json.dumps({
+                "store_email": "store@example.com",
+                "phone": "+34666554433",
+                "address": {
+                    "street_1": "Passeig de Gràcia 1",
+                    "street_2": "",
+                    "city": "Barcelona",
+                    "zip": "08092",
+                    "country": "",
+                    "state": "Barcelona"
+                }
+            })
+        )
+
+        vendor = Vendor(id=1, name='name')
+        vendor.fetch()
+
+        self.assertEquals(vendor.country, 'ES')
+
     def test_shipping(self):
         data = {
             'first_name': 'Philip',

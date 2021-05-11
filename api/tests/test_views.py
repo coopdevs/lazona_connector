@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.conf import settings
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -16,8 +15,6 @@ import koiki
 class DeliveryViewTests(TestCase):
 
     def setUp(self):
-        settings.CELERY_ALWAYS_EAGER = True
-
         self.url = reverse('deliveries:create')
         self.data = {
             'order_key': 'xxx',
@@ -75,7 +72,17 @@ class DeliveryViewTests(TestCase):
                     }
                 })
         )
-        httpretty.register_uri(httpretty.POST, self.api_url, status=200, content_type='text/json')
+        httpretty.register_uri(
+                httpretty.POST, self.api_url, status=200, content_type='text/json',
+                body=json.dumps({
+                    'respuesta': '101',
+                    'envios': [{
+                        'numPedido': 'abc',
+                        'etiqueta': 'ZXRpcXVldGE=',
+                        'codBarras': '123'
+                    }]
+                })
+        )
 
         token = Token.objects.create(key='test token', user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -83,7 +90,7 @@ class DeliveryViewTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_unsuccessful_request(self):
+    def test_invalid_request(self):
         response = self.client.post(self.url, {})
 
         self.assertEqual(response.data['order_key'][0].code, 'required')
