@@ -7,6 +7,7 @@ delivery and distribution provider.
 
 * Python 3.8.3
 * PostgreSQL
+* Redis
 * [direnv](https://direnv.net/)
 
 ## Setup
@@ -32,6 +33,16 @@ Where `<your_user>` is your current user's name.
 
 [pyenv]: https://github.com/pyenv/pyenv
 [pyenv-virtualenv]: pyenv-virtualenv
+
+### Redis
+
+We use Celery with Redis as broker. The quickest way to set it up locally is:
+
+```sh
+$ docker run -p 6379:6379 redis
+```
+
+Alternatively, you can install the appropriate Redis package for your OS.
 
 ### Direnv
 
