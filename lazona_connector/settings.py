@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ["lazona-connector-staging.herokuapp.com", "127.0.0.1", ".ngrok.io"]
+ALLOWED_HOSTS = ["lazona-connector-staging.herokuapp.com", "127.0.0.1", ".ngrok.io", "0.0.0.0"]
 
 LOGGING = {
     'version': 1,
