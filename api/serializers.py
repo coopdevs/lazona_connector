@@ -38,3 +38,10 @@ class OrderSerializer(serializers.Serializer):
     shipping = ShippingSerializer()
     billing = BillingSerializer()
     line_items = LineItemSerializer(many=True)
+
+
+class CustomerSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    email = serializers.CharField(max_length=100)
+    username = serializers.CharField(max_length=100)
+    role = serializers.CharField(max_length=100)
