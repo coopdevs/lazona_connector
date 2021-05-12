@@ -33,6 +33,6 @@ class CustomerList(APIView):
             customer = serializer.validated_data
             check_customer_is_partner.delay(customer)
 
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
