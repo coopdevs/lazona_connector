@@ -13,19 +13,7 @@ class SugarCrmAPI:
         encode = hashlib.md5(password.encode("utf-8"))
         encodedPassword = encode.hexdigest()
         args = {"user_auth": {"user_name": username, "password": encodedPassword}}
-        data = json.dumps(args)
-        args = {
-            "method": "login",
-            "input_type": "json",
-            "response_type": "json",
-            "rest_data": data,
-        }
-        self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
-        params = urllib.parse.urlencode(args).encode("utf-8")
-        response = urllib.request.urlopen(self.rest_url, params).read().strip()
-        self.logger.debug("SugarCRM response: {}".format(response))
-        if not response:
-            raise sugarcrm.CrmError("No HTTP Response from login")
+        response = self._api_request("login", args)
         result = json.loads(response.decode("utf-8"))
 
         if "id" in result:
@@ -33,23 +21,27 @@ class SugarCrmAPI:
         else:
             raise sugarcrm.CrmError("CRM Invalid Authentication")
 
-    def search_email(self, email=""):
-        args = [self.session_id, email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
+    def _api_request(self, method, args):
         data = json.dumps(args)
         args = {
-            "method": "search_by_module",
+            "method": method,
             "input_type": "json",
             "response_type": "json",
             "rest_data": data,
         }
-        self.logger.info("SugarCRM searching email: {}".format(email))
         self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
         params = urllib.parse.urlencode(args).encode("utf-8")
-        response = urllib.request.urlopen(self.rest_url, params).read().strip()
-        self.logger.debug("SugarCRM response: {}".format(response))
+        response = urllib.request.urlopen(self.rest_url, params)
         if not response:
-            raise sugarcrm.CrmError("No HTTP Response from search_by_module")
+            raise sugarcrm.CrmError("No HTTP Response from {}".format(method))
+        response = response.read().strip()
+        self.logger.debug("SugarCRM response: {}".format(response))
+        return response
 
+    def search_email(self, email):
+        args = [self.session_id, email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
+        self.logger.info("SugarCRM searching email: {}".format(email))
+        response = self._api_request("search_by_module", args)
         result = json.loads(response.decode("utf-8"))
 
         if "entry_list" not in result:
@@ -68,18 +60,7 @@ class SugarCrmAPI:
 
     def get_field(self, module, object_id, field):
         args = [self.session_id, module, object_id, [], [], False]
-        data = json.dumps(args)
-        args = {
-            "method": "get_entry",
-            "input_type": "json",
-            "response_type": "json",
-            "rest_data": data,
-        }
-        self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
-        params = urllib.parse.urlencode(args).encode("utf-8")
-        response = urllib.request.urlopen(self.rest_url, params).read().strip()
-        if not response:
-            raise sugarcrm.CrmError("No HTTP Response from get_entry")
+        response = self._api_request("get_entry", args)
         result = json.loads(response.decode("utf-8"))
         self.logger.debug("SugarCRM response: {}".format(response))
         if "entry_list" not in result:
