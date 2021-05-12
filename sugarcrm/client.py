@@ -25,8 +25,8 @@ class Client:
         if '' in crm_roles:
             crm_roles.remove('')
         self.logger.info("Found roles in CRM: {}".format(crm_roles))
+        # if the user in the crm has a role that it is considered as a LaZona partner/membership
         for role in crm_roles:
-            # if the user in the crm has a role that it is considered as a LaZona partner/membership
             if role in sugarcrm.membership_roles:
                 self.logger.info("{} has the partner role in the CRM".format(customer_email))
                 return True
