@@ -12,6 +12,7 @@ class PayloadSignatureTests(TestCase):
     def setUp(self):
         os.environ["WC_WEBHOOK_SECRET"] = "testcase"
         self.original_payload = '{"test": 1 }'
+        # calculated via https://www.devglan.com/online-tools/hmac-sha256-online
         self.expected_wc_signature = "UyKdg7msIA67rxmmf7JcLMUkzMKGLvfptk2NaSuyRQM="
 
     def test_payload_signature_is_invalid(self):
@@ -30,7 +31,6 @@ class PayloadSignatureTests(TestCase):
     def test_payload_signature_is_valid(self):
         user = User(username="pau", is_superuser=True)
         user.save()
-        # calculated via https://www.devglan.com/online-tools/hmac-sha256-online
 
         request = RequestFactory().post(
             "/path/", self.original_payload, content_type="application/json"
