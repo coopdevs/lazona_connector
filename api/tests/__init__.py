@@ -16,3 +16,4 @@ koiki.logger = logging.getLogger('django.tests')
 koiki.auth_token = 'testing_auth_token'
 
 settings.CELERY_ALWAYS_EAGER = True
+settings.WC_WEBHOOK_USER = 'test_user'

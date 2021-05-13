@@ -3,6 +3,7 @@ import os
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from api.authentication import SignatureValidation
 import rest_framework
@@ -28,7 +29,7 @@ class SignatureValidationTests(TestCase):
         )
 
     def test_payload_signature_is_valid(self):
-        user = User(username="pau", is_superuser=True)
+        user = User(username=settings.WC_WEBHOOK_USER)
         user.save()
         # calculated via https://www.devglan.com/online-tools/hmac-sha256-online
 
