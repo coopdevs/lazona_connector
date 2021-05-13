@@ -8,7 +8,7 @@ from api.authentication import SignatureValidation
 import rest_framework
 
 
-class PayloadSignatureTests(TestCase):
+class SignatureValidationTests(TestCase):
     def setUp(self):
         os.environ["WC_WEBHOOK_SECRET"] = "testcase"
         self.original_payload = '{"test": 1 }'
