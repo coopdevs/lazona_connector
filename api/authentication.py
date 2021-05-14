@@ -4,6 +4,7 @@ import hashlib
 import os
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from rest_framework import authentication
 from rest_framework import exceptions
 
@@ -42,7 +43,7 @@ class SignatureValidation(authentication.BaseAuthentication):
         if signature != generated_signature:
             raise exceptions.AuthenticationFailed("Invalid payload checksum signature")
 
-        user = User.objects.filter(is_superuser=True).first()
+        user = User.objects.filter(username=settings.WC_WEBHOOK_USER).first()
         if not user:
             raise exceptions.AuthenticationFailed('No such user')
 

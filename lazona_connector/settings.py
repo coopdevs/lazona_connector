@@ -176,3 +176,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 #  STATIC_URL = '/static/'
+
+WC_WEBHOOK_USER = os.getenv('WC_WEBHOOK_USER')
