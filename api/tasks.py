@@ -1,6 +1,7 @@
 from koiki.client import Client
-from sugarcrm.client import Client as CrmClient
-from sugarcrm import CrmError
+
+import sugarcrm
+from sugarcrm.customer import Customer
 from lazona_connector.celery import app
 
 
@@ -16,19 +17,20 @@ def create_delivery(order):
 
 
 @app.task
-def check_customer_is_partner(customer, created=True):
-    crm_client = CrmClient()
-    try:
-        is_partner = crm_client.check_customer_is_partner(customer)
-    except CrmError:
-        return {"error": "Error connecting to CRM", "customer": customer}
-
-    if is_partner:
+def update_customer_if_is_partner(email):
+    if check_customer_is_partner(email):
         # here will come the code to update the Wordpress user role.
         pass
 
-    # in case we will do daily cronjobs from the wordpress users to update to false their role
-    # if their partner status has been removed from the CRM
-    if not created:
-        pass
-    return {"is_partner": is_partner}
+
+def check_customer_is_partner(email):
+    customer = Customer()
+    customer.fetch(email)
+    # if the user in the crm has a role that it is considered as a LaZona partner/membership
+    for role in customer.roles:
+        if role in sugarcrm.membership_roles:
+            customer.logger.info("{} has the membership role in the CRM".format(email))
+            return True
+    customer.logger.info("{} does not have the membership role in the CRM".format(email))
+
+    return False

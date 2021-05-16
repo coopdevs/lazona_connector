@@ -2,24 +2,24 @@ import urllib.request
 import json
 import hashlib
 import sugarcrm
+from sugarcrm.error import CrmError
 
 
-class SugarCrmAPI:
-    def __init__(self, rest_url, username, password, logger=sugarcrm.logger):
+class APIClient:
+    def __init__(self, logger=sugarcrm.logger):
         self.session_id = None
-        self.rest_url = rest_url
+        self.rest_url = sugarcrm.rest_url
         self.logger = logger
-
-        encode = hashlib.md5(password.encode("utf-8"))
+        encode = hashlib.md5(sugarcrm.password.encode("utf-8"))
         encodedPassword = encode.hexdigest()
-        args = {"user_auth": {"user_name": username, "password": encodedPassword}}
+        args = {"user_auth": {"user_name": sugarcrm.username, "password": encodedPassword}}
         response = self._api_request("login", args)
         result = json.loads(response.decode("utf-8"))
 
         if "id" in result:
             self.session_id = result["id"]
         else:
-            raise sugarcrm.CrmError("CRM Invalid Authentication")
+            raise CrmError("CRM Invalid Authentication")
 
     def _api_request(self, method, args):
         data = json.dumps(args)
@@ -33,7 +33,7 @@ class SugarCrmAPI:
         params = urllib.parse.urlencode(args).encode("utf-8")
         response = urllib.request.urlopen(self.rest_url, params)
         if not response:
-            raise sugarcrm.CrmError("No HTTP Response from {}".format(method))
+            raise CrmError("No HTTP Response from {}".format(method))
         response = response.read().strip()
         self.logger.debug("SugarCRM response: {}".format(response))
         return response
@@ -45,7 +45,7 @@ class SugarCrmAPI:
         result = json.loads(response.decode("utf-8"))
 
         if "entry_list" not in result:
-            raise sugarcrm.CrmError("Unexpected Response: {}".format(response))
+            raise CrmError("Unexpected Response: {}".format(response))
         else:
             account_records = result["entry_list"][0]["records"]
             contact_records = result["entry_list"][1]["records"]
@@ -64,7 +64,7 @@ class SugarCrmAPI:
         result = json.loads(response.decode("utf-8"))
         self.logger.debug("SugarCRM response: {}".format(response))
         if "entry_list" not in result:
-            raise sugarcrm.CrmError("Unexpected Response: {}".format(response))
+            raise CrmError("Unexpected Response: {}".format(response))
         else:
             roles = result["entry_list"][0]["name_value_list"][field]["value"]
             return roles

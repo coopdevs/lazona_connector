@@ -31,7 +31,7 @@ class CustomerList(APIView):
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             customer = serializer.validated_data
-            check_customer_is_partner.delay(customer)
+            check_customer_is_partner.delay(customer['email'])
 
             return Response(status=status.HTTP_200_OK)
 

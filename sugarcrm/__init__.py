@@ -8,7 +8,3 @@ membership_roles = os.getenv("SUGARCRM_MEMBERSHIP_ROLES")
 if membership_roles:
     membership_roles = membership_roles.split(",")
 logger = logging.getLogger("django.server")
-
-
-class CrmError(Exception):
-    pass
