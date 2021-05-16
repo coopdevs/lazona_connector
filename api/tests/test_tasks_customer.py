@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 
 from api.serializers import CustomerSerializer
 from api.tasks import check_customer_is_partner
-from sugarcrm.error import CrmError
+from sugarcrm.error import CrmAuthenticationError
 
 
 class TasksCustomerTests(TestCase):
@@ -50,11 +50,11 @@ class TasksCustomerTests(TestCase):
 
     @patch("api.tasks.Customer", autospec=True)
     def test_failure(self, mock_client):
-        mock_client.fetch.side_effect = CrmError
+        mock_client.fetch.side_effect = CrmAuthenticationError
         serializer = CustomerSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
         customer = serializer.validated_data
-        with self.assertRaises(CrmError):
+        with self.assertRaises(CrmAuthenticationError):
             mock_client.fetch(customer["email"])
 
     @patch("api.tasks.Customer", autospec=True)

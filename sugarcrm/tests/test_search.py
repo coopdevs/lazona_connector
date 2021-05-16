@@ -28,7 +28,6 @@ class SearchTest(TestCase):
             }
         ).encode("utf-8")
         account_id, contact_id = api_client.search_email(self.email)
-        print(type(mock_logger.info.call_args_list[0]))
         mock_logger.info.assert_has_calls(
             [
                 call("SugarCRM searching email: {}".format(self.email)),
