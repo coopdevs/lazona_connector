@@ -24,8 +24,7 @@ def update_customer_if_is_partner(email):
 
 
 def check_customer_is_partner(email):
-    customer = Customer()
-    customer.fetch(email)
+    customer = Customer().fetch(email)
     # if the user in the crm has a role that it is considered as a LaZona partner/membership
     for role in customer.roles:
         if role in sugarcrm.membership_roles:

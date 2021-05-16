@@ -6,8 +6,8 @@ import sugarcrm
 
 httpretty.enable(allow_net_connect=False)
 
-sugarcrm.host = 'https://test_sugarcrm_host'
-sugarcrm.user = 'test_sugarcrm_user'
+sugarcrm.rest_url = 'https://test_sugarcrm_host'
+sugarcrm.username = 'test_sugarcrm_user'
 sugarcrm.password = 'test_sugarcrm_password'
 sugarcrm.membership_roles = ["^member^", "^is_partner^"]
 

@@ -50,7 +50,7 @@ class TasksTests(TestCase):
         mock_client.return_value = client
 
         serializer = OrderSerializer(data=self.data)
-        serializer.is_valid()
+        self.assertTrue(serializer.is_valid())
         order = serializer.validated_data
         create_delivery(order)
 
@@ -63,7 +63,7 @@ class TasksTests(TestCase):
         mock_client.return_value = client
 
         serializer = OrderSerializer(data=self.data)
-        serializer.is_valid()
+        self.assertTrue(serializer.is_valid())
         order = serializer.validated_data
         result = create_delivery(order)
 
@@ -76,7 +76,7 @@ class TasksTests(TestCase):
         mock_client.return_value = client
 
         serializer = OrderSerializer(data=self.data)
-        serializer.is_valid()
+        self.assertTrue(serializer.is_valid())
         order = serializer.validated_data
         result = create_delivery(order)
 

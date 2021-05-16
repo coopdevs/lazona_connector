@@ -5,7 +5,7 @@ from sugarcrm.client import APIClient
 class Customer:
     def __init__(self, logger=sugarcrm.logger):
         self.logger = logger
-        self.roles = []
+        self.roles = set()
         self.api_client = APIClient()
 
     def fetch(self, email):
@@ -25,3 +25,5 @@ class Customer:
         if "" in self.roles:
             self.roles.remove("")
         self.logger.debug("Customer {} has the following roles {}".format(email, self.roles))
+
+        return self

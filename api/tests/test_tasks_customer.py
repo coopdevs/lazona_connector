@@ -3,13 +3,13 @@ from unittest.mock import patch, MagicMock
 
 from api.serializers import CustomerSerializer
 from api.tasks import check_customer_is_partner
-from sugarcrm import CrmError
+from sugarcrm.error import CrmError
 
 
 class TasksCustomerTests(TestCase):
     def setUp(self):
         self.data = {
-            "id": "xxx",
+            "id": 1,
             "date_created": "2021-05-06T13:06:18",
             "date_created_gmt": "2021-05-06T11:06:18",
             "date_modified": "2021-05-06T13:06:18",
@@ -48,23 +48,20 @@ class TasksCustomerTests(TestCase):
             "meta_data": [{"id": 1, "key": "shipping_method"}],
         }
 
-    @patch("api.tasks.CrmClient", autospec=True)
+    @patch("api.tasks.Customer", autospec=True)
     def test_failure(self, mock_client):
-        mock_client.check_customer_is_partner.side_effect = CrmError
-
+        mock_client.fetch.side_effect = CrmError
         serializer = CustomerSerializer(data=self.data)
-        serializer.is_valid()
+        self.assertTrue(serializer.is_valid())
         customer = serializer.validated_data
         with self.assertRaises(CrmError):
-            mock_client.check_customer_is_partner(customer)
+            mock_client.fetch(customer["email"])
 
-    @patch("api.tasks.CrmClient", autospec=True)
+    @patch("api.tasks.Customer", autospec=True)
     def test_success(self, mock_client):
-        mock_client.check_customer_is_partner.return_value = MagicMock()
-
+        mock_client.fetch.return_value = MagicMock()
         serializer = CustomerSerializer(data=self.data)
-        serializer.is_valid()
+        self.assertTrue(serializer.is_valid())
         customer = serializer.validated_data
-        result = check_customer_is_partner(customer)
 
-        self.assertIn("is_partner", result)
+        self.assertFalse(check_customer_is_partner(customer["email"]))

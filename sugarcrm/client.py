@@ -1,12 +1,13 @@
-import urllib.request
+import urllib
 import json
 import hashlib
 import sugarcrm
-from sugarcrm.error import CrmError
+from sugarcrm.error import CrmError, CrmErrorAuthentication
 
 
 class APIClient:
-    def __init__(self, logger=sugarcrm.logger):
+    def __init__(self, client=urllib.request, logger=sugarcrm.logger):
+        self.client = client
         self.session_id = None
         self.rest_url = sugarcrm.rest_url
         self.logger = logger
@@ -15,11 +16,10 @@ class APIClient:
         args = {"user_auth": {"user_name": sugarcrm.username, "password": encodedPassword}}
         response = self._api_request("login", args)
         result = json.loads(response.decode("utf-8"))
-
         if "id" in result:
             self.session_id = result["id"]
         else:
-            raise CrmError("CRM Invalid Authentication")
+            raise CrmErrorAuthentication("CRM Invalid Authentication")
 
     def _api_request(self, method, args):
         data = json.dumps(args)
@@ -31,7 +31,7 @@ class APIClient:
         }
         self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
         params = urllib.parse.urlencode(args).encode("utf-8")
-        response = urllib.request.urlopen(self.rest_url, params)
+        response = self.client.urlopen(self.rest_url, params)
         if not response:
             raise CrmError("No HTTP Response from {}".format(method))
         response = response.read().strip()
