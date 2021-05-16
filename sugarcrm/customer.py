@@ -1,5 +1,5 @@
 import sugarcrm
-from sugarcrm.api import APIClient
+from sugarcrm.client import APIClient
 
 
 class Customer:
