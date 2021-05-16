@@ -4,7 +4,7 @@ import urllib
 import hashlib
 import json
 from sugarcrm.client import APIClient
-from sugarcrm.error import CrmErrorAuthentication
+from sugarcrm.error import CrmAuthenticationError
 
 
 class APIClientTest(TestCase):
@@ -43,7 +43,7 @@ class APIClientTest(TestCase):
         http_mock_response = MagicMock()
         self.mock_client.urlopen = http_mock_response
         http_mock_response.return_value.read.return_value = json.dumps({}).encode("utf-8")
-        with self.assertRaises(CrmErrorAuthentication) as exception_context_manager:
+        with self.assertRaises(CrmAuthenticationError) as exception_context_manager:
             APIClient(self.mock_client)
         exception = exception_context_manager.exception
         self.assertEqual(exception.args, ("CRM Invalid Authentication",))

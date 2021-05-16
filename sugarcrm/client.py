@@ -2,7 +2,7 @@ import urllib
 import json
 import hashlib
 import sugarcrm
-from sugarcrm.error import CrmError, CrmErrorAuthentication
+from sugarcrm.error import CrmAuthenticationError, CrmResponseError
 
 
 class APIClient:
@@ -19,7 +19,7 @@ class APIClient:
         if "id" in result:
             self.session_id = result["id"]
         else:
-            raise CrmErrorAuthentication("CRM Invalid Authentication")
+            raise CrmAuthenticationError("CRM Invalid Authentication")
 
     def _api_request(self, method, args):
         data = json.dumps(args)
@@ -33,7 +33,7 @@ class APIClient:
         params = urllib.parse.urlencode(args).encode("utf-8")
         response = self.client.urlopen(self.rest_url, params)
         if not response:
-            raise CrmError("No HTTP Response from {}".format(method))
+            raise CrmResponseError("No HTTP Response from {}".format(method))
         response = response.read().strip()
         self.logger.debug("SugarCRM response: {}".format(response))
         return response
@@ -45,7 +45,7 @@ class APIClient:
         result = json.loads(response.decode("utf-8"))
 
         if "entry_list" not in result:
-            raise CrmError("Unexpected Response: {}".format(response))
+            raise CrmResponseError("Unexpected Response: {}".format(response))
         else:
             account_records = result["entry_list"][0]["records"]
             contact_records = result["entry_list"][1]["records"]
@@ -64,7 +64,7 @@ class APIClient:
         result = json.loads(response.decode("utf-8"))
         self.logger.debug("SugarCRM response: {}".format(response))
         if "entry_list" not in result:
-            raise CrmError("Unexpected Response: {}".format(response))
+            raise CrmResponseError("Unexpected Response: {}".format(response))
         else:
             roles = result["entry_list"][0]["name_value_list"][field]["value"]
             return roles

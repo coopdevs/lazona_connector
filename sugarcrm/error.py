@@ -1,6 +1,6 @@
-class CrmError(Exception):
+class CrmAuthenticationError(Exception):
     pass
 
 
-class CrmErrorAuthentication(CrmError):
+class CrmResponseError(Exception):
     pass
