@@ -18,12 +18,12 @@ def create_delivery(order):
 
 @app.task
 def update_customer_if_is_partner(email):
-    if check_customer_is_partner(email):
+    if _check_customer_is_partner(email):
         # here will come the code to update the Wordpress user role.
         pass
 
 
-def check_customer_is_partner(email):
+def _check_customer_is_partner(email):
     customer = Customer().fetch(email)
     # if the user in the crm has a role that it is considered as a LaZona partner/membership
     for role in customer.roles:
