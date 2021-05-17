@@ -10,7 +10,7 @@ class Customer:
 
     def fetch(self, email):
         # In SugarCRM personal individuals are in Accounts module and organizations in Contacts
-
+        self.api_client.login()
         account_id, contact_id = self.api_client.search_email(email)
         roles_as_account = roles_as_contact = ""
         if account_id:
@@ -24,6 +24,5 @@ class Customer:
         self.roles = set(roles_as_account.split(",") + roles_as_contact.split(","))
         if "" in self.roles:
             self.roles.remove("")
-        self.logger.debug("Customer {} has the following roles {}".format(email, self.roles))
 
         return self

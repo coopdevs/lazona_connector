@@ -5,7 +5,7 @@ from rest_framework import status
 
 from api.authentication import SignatureValidation
 from api.serializers import OrderSerializer, CustomerSerializer
-from api.tasks import create_delivery, check_customer_is_partner
+from api.tasks import create_delivery, update_customer_if_is_partner
 
 
 class DeliveryList(APIView):
@@ -31,7 +31,7 @@ class CustomerList(APIView):
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             customer = serializer.validated_data
-            check_customer_is_partner.delay(customer['email'])
+            update_customer_if_is_partner.delay(customer['email'])
 
             return Response(status=status.HTTP_200_OK)
 

@@ -11,15 +11,6 @@ class APIClient:
         self.session_id = None
         self.rest_url = sugarcrm.rest_url
         self.logger = logger
-        encode = hashlib.md5(sugarcrm.password.encode("utf-8"))
-        encodedPassword = encode.hexdigest()
-        args = {"user_auth": {"user_name": sugarcrm.username, "password": encodedPassword}}
-        response = self._api_request("login", args)
-        result = json.loads(response.decode("utf-8"))
-        if "id" in result:
-            self.session_id = result["id"]
-        else:
-            raise CrmAuthenticationError("CRM Invalid Authentication")
 
     def _api_request(self, method, args):
         data = json.dumps(args)
@@ -32,11 +23,20 @@ class APIClient:
         self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
         params = urllib.parse.urlencode(args).encode("utf-8")
         response = self.client.urlopen(self.rest_url, params)
-        if not response:
-            raise CrmResponseError("No HTTP Response from {}".format(method))
         response = response.read().strip()
         self.logger.debug("SugarCRM response: {}".format(response))
         return response
+
+    def login(self):
+        encode = hashlib.md5(sugarcrm.password.encode("utf-8"))
+        encodedPassword = encode.hexdigest()
+        args = {"user_auth": {"user_name": sugarcrm.username, "password": encodedPassword}}
+        response = self._api_request("login", args)
+        result = json.loads(response.decode("utf-8"))
+        if "id" in result:
+            self.session_id = result["id"]
+        else:
+            raise CrmAuthenticationError("CRM Invalid Authentication")
 
     def search_email(self, email):
         args = [self.session_id, email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
@@ -47,6 +47,7 @@ class APIClient:
         if "entry_list" not in result:
             raise CrmResponseError("Unexpected Response: {}".format(response))
         else:
+
             account_records = result["entry_list"][0]["records"]
             contact_records = result["entry_list"][1]["records"]
 
@@ -55,6 +56,7 @@ class APIClient:
                 account_id = account_records[0]["id"]["value"]
             if contact_records:
                 contact_id = contact_records[0]["id"]["value"]
+
             self.logger.info("Found account_id: {}, contact_id: {}".format(account_id, contact_id))
             return account_id, contact_id
 

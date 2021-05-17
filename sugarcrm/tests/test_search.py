@@ -14,7 +14,6 @@ class SearchTest(TestCase):
     def test_success_search_request(self, mock_logger):
         http_mock_response = MagicMock()
         self.mock_client.urlopen = http_mock_response
-        http_mock_response.return_value.read.return_value = json.dumps({"id": 111}).encode("utf-8")
         api_client = APIClient(self.mock_client, mock_logger)
         http_mock_response.return_value.read.return_value = json.dumps(
             {
@@ -41,7 +40,6 @@ class SearchTest(TestCase):
     def test_wrong_search_request(self):
         http_mock_response = MagicMock()
         self.mock_client.urlopen = http_mock_response
-        http_mock_response.return_value.read.return_value = json.dumps({"id": 111}).encode("utf-8")
         api_client = APIClient(self.mock_client)
 
         http_mock_response.return_value.read.return_value = json.dumps({}).encode("utf-8")
