@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import dj_database_url
 
+from django.conf import global_settings
+
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -172,6 +174,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+# Security
+
+SECURE_SSL_REDIRECT = bool(os.getenv('SECURE_SSL_REDIRECT', global_settings.SECURE_SSL_REDIRECT))
+CSRF_COOKIE_SECURE = bool(os.getenv('CSRF_COOKIE_SECURE', global_settings.CSRF_COOKIE_SECURE))
+SESSION_COOKIE_SECURE = bool(os.getenv('SESSION_COOKIE_SECURE',
+                             global_settings.SESSION_COOKIE_SECURE))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
