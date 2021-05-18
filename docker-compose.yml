@@ -19,7 +19,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db/postgres
       - DATABASE_DISABLE_SSL=true
-      - CELERY_BROKER_URL=redis://redis
+      - REDIS_URL=rediss://redis
     volumes:
       - .:/code
     ports:
@@ -38,7 +38,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db/postgres
       - DATABASE_DISABLE_SSL=true
-      - CELERY_BROKER_URL=redis://redis
+      - REDIS_URL=rediss://redis
     volumes:
       - .:/code
     depends_on:

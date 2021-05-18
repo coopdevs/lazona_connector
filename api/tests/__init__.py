@@ -1,5 +1,6 @@
 import httpretty
 import logging
+import os
 from django.conf import settings
 
 import koiki
@@ -17,3 +18,5 @@ koiki.auth_token = 'testing_auth_token'
 
 settings.CELERY_ALWAYS_EAGER = True
 settings.WC_WEBHOOK_USER = 'test_user'
+
+os.environ['REDIS_URL'] = 'rediss://test'
