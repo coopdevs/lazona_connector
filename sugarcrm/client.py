@@ -1,4 +1,4 @@
-import urllib
+import requests
 import json
 import hashlib
 import sugarcrm
@@ -6,7 +6,7 @@ from sugarcrm.error import CrmAuthenticationError, CrmResponseError
 
 
 class APIClient:
-    def __init__(self, client=urllib.request, logger=sugarcrm.logger):
+    def __init__(self, client=requests, logger=sugarcrm.logger):
         self.client = client
         self.session_id = None
         self.rest_url = sugarcrm.rest_url
@@ -21,9 +21,8 @@ class APIClient:
             "rest_data": data,
         }
         self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
-        params = urllib.parse.urlencode(args).encode("utf-8")
-        response = self.client.urlopen(self.rest_url, params)
-        response = response.read().strip()
+        response = self.client.get(self.rest_url, args)
+        response = response.content
         self.logger.debug("SugarCRM response: {}".format(response))
         return response
 
