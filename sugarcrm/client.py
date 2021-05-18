@@ -22,8 +22,7 @@ class APIClient:
         }
         self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
         response = self.client.get(self.rest_url, args)
-        response = response.content
-        self.logger.debug("SugarCRM response: {}".format(response))
+        self.logger.debug("SugarCRM response: {}".format(response.content))
         return response
 
     def login(self):
@@ -31,7 +30,7 @@ class APIClient:
         encodedPassword = encode.hexdigest()
         args = {"user_auth": {"user_name": sugarcrm.username, "password": encodedPassword}}
         response = self._api_request("login", args)
-        result = json.loads(response.decode("utf-8"))
+        result = response.json()
         if "id" in result:
             self.session_id = result["id"]
         else:
@@ -41,10 +40,10 @@ class APIClient:
         args = [self.session_id, email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
         self.logger.info("SugarCRM searching email: {}".format(email))
         response = self._api_request("search_by_module", args)
-        result = json.loads(response.decode("utf-8"))
+        result = response.json()
 
         if "entry_list" not in result:
-            raise CrmResponseError("Unexpected Response: {}".format(response))
+            raise CrmResponseError("Unexpected Response: {}".format(response.content))
         else:
 
             account_records = result["entry_list"][0]["records"]
@@ -62,10 +61,10 @@ class APIClient:
     def get_field(self, module, object_id, field):
         args = [self.session_id, module, object_id, [], [], False]
         response = self._api_request("get_entry", args)
-        result = json.loads(response.decode("utf-8"))
-        self.logger.debug("SugarCRM response: {}".format(response))
+        result = response.json()
+        self.logger.debug("SugarCRM response: {}".format(response.content))
         if "entry_list" not in result:
-            raise CrmResponseError("Unexpected Response: {}".format(response))
+            raise CrmResponseError("Unexpected Response: {}".format(response.content))
         else:
             roles = result["entry_list"][0]["name_value_list"][field]["value"]
             return roles

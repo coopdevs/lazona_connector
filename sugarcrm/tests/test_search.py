@@ -13,10 +13,9 @@ class SearchTest(TestCase):
     @patch("sugarcrm.logger", autospec=True)
     def test_success_search_request(self, mock_logger):
         http_mock_response = MagicMock()
-        self.mock_client.urlopen = http_mock_response
+        self.mock_client.get = http_mock_response
         api_client = APIClient(self.mock_client, mock_logger)
-        http_mock_response.return_value.read.return_value = json.dumps(
-            {
+        http_mock_response.return_value.json.return_value = {
                 "entry_list": [
                     {"name": "Accounts", "records": []},
                     {
@@ -24,8 +23,8 @@ class SearchTest(TestCase):
                         "records": [{"id": {"name": "id", "value": "CONTACT_RECORD_ID"}}],
                     },
                 ]
-            }
-        ).encode("utf-8")
+        }
+
         account_id, contact_id = api_client.search_email(self.email)
         mock_logger.info.assert_has_calls(
             [
@@ -39,9 +38,9 @@ class SearchTest(TestCase):
 
     def test_wrong_search_request(self):
         http_mock_response = MagicMock()
-        self.mock_client.urlopen = http_mock_response
+        self.mock_client.get = http_mock_response
         api_client = APIClient(self.mock_client)
 
-        http_mock_response.return_value.read.return_value = json.dumps({}).encode("utf-8")
+        http_mock_response.return_value.json.return_value = {}
         with self.assertRaises(CrmResponseError):
             _, _ = api_client.search_email(self.email)

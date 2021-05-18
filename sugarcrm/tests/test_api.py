@@ -14,8 +14,8 @@ class APIClientTest(TestCase):
     @patch("sugarcrm.logger", autospec=True)
     def test_success_login_request(self, mock_logger):
         http_mock_response = MagicMock()
-        self.mock_client.urlopen = http_mock_response
-        http_mock_response.return_value.read.return_value = json.dumps({"id": 111}).encode("utf-8")
+        self.mock_client.get = http_mock_response
+        http_mock_response.return_value.json.return_value = {"id": 111}
         api_client = APIClient(self.mock_client, mock_logger)
         api_client.login()
 
@@ -36,15 +36,14 @@ class APIClientTest(TestCase):
             "rest_data": data,
         }
 
-        params = urllib.parse.urlencode(args).encode("utf-8")
-        http_mock_response.assert_called_once_with("https://test_sugarcrm_host", params)
+        http_mock_response.assert_called_once_with("https://test_sugarcrm_host", args)
         self.assertEqual(api_client.session_id, 111)
         self.assertEqual(mock_logger.debug.call_count, 2)
 
     def test_wrong_login_request(self):
         http_mock_response = MagicMock()
-        self.mock_client.urlopen = http_mock_response
-        http_mock_response.return_value.read.return_value = json.dumps({}).encode("utf-8")
+        self.mock_client.get = http_mock_response
+        http_mock_response.return_value.json.return_value = {}
         with self.assertRaises(CrmAuthenticationError) as exception_context_manager:
             APIClient(self.mock_client).login()
         exception = exception_context_manager.exception
