@@ -66,5 +66,5 @@ class APIClient:
         if "entry_list" not in result:
             raise CrmResponseError("Unexpected Response: {}".format(response.content))
         else:
-            roles = result["entry_list"][0]["name_value_list"][field]["value"]
-            return roles
+            value = result["entry_list"][0]["name_value_list"][field]["value"]
+            return value
