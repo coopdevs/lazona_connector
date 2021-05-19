@@ -1,11 +1,10 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock, call
-import json
 from sugarcrm.client import APIClient
 from sugarcrm.error import CrmResponseError
 
 
-class SearchTest(TestCase):
+class GetFieldTest(TestCase):
     def setUp(self):
         self.mock_client = MagicMock()
         self.email = "test@test.com"
