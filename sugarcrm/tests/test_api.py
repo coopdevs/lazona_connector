@@ -1,6 +1,5 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
-import urllib
 import hashlib
 import json
 from sugarcrm.client import APIClient
