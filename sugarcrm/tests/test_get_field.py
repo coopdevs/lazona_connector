@@ -1,6 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock, call
-import json
+from unittest.mock import MagicMock
 from sugarcrm.client import APIClient
 from sugarcrm.error import CrmResponseError
 
