@@ -26,3 +26,11 @@ class Customer:
             self.roles.remove("")
 
         return self
+
+    def check_is_partner(self):
+        for role in self.roles:
+            if role in sugarcrm.membership_roles:
+                self.logger.info("Customer has partner role in the CRM")
+                return True
+        self.logger.info("Customer does not have partner role in the CRM")
+        return False

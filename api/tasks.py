@@ -1,6 +1,5 @@
 from koiki.client import Client
 
-import sugarcrm
 from sugarcrm.customer import Customer
 from lazona_connector.celery import app
 
@@ -19,17 +18,10 @@ def create_delivery(order):
 @app.task
 def update_customer_if_is_partner(email):
     if _check_customer_is_partner(email):
-        # here will come the code to update the Wordpress user role.
+        # update_user(email) method with celery task from a following api/tasks/woocommerce.py
         pass
 
 
 def _check_customer_is_partner(email):
     customer = Customer().fetch(email)
-    # if the user in the crm has a role that it is considered as a LaZona partner/membership
-    for role in customer.roles:
-        if role in sugarcrm.membership_roles:
-            customer.logger.info("{} has the membership role in the CRM".format(email))
-            return True
-    customer.logger.info("{} does not have the membership role in the CRM".format(email))
-
-    return False
+    return customer.check_is_partner()
