@@ -27,8 +27,8 @@ class APIClient:
 
     def login(self):
         encode = hashlib.md5(sugarcrm.password.encode("utf-8"))
-        encodedPassword = encode.hexdigest()
-        args = {"user_auth": {"user_name": sugarcrm.username, "password": encodedPassword}}
+        encoded_password = encode.hexdigest()
+        args = {"user_auth": {"user_name": sugarcrm.username, "password": encoded_password}}
         response = self._api_request("login", args)
         result = response.json()
         if "id" in result:
