@@ -10,7 +10,7 @@ from unittest.mock import patch
 from api.serializers import CustomerSerializer
 
 
-class DeliveryViewTests(TestCase):
+class CustomerViewTests(TestCase):
     def setUp(self):
         self.url = reverse("deliveries:update_customer_if_partner")
         self.data = {
