@@ -16,15 +16,14 @@ class APIClientTest(TestCase):
         self.mock_client.get = http_mock_response
         http_mock_response.return_value.json.return_value = {"id": 111}
         api_client = APIClient(self.mock_client, mock_logger)
-        api_client.login()
 
         encode = hashlib.md5("test_sugarcrm_password".encode("utf-8"))
-        encodedPassword = encode.hexdigest()
+        encoded_password = encode.hexdigest()
         data = json.dumps(
             {
                 "user_auth": {
                     "user_name": "test_sugarcrm_user",
-                    "password": encodedPassword,
+                    "password": encoded_password,
                 }
             }
         )
@@ -35,6 +34,7 @@ class APIClientTest(TestCase):
             "rest_data": data,
         }
 
+        api_client._login()
         http_mock_response.assert_called_once_with("https://test_sugarcrm_host", args)
         self.assertEqual(api_client.session_id, 111)
         self.assertEqual(mock_logger.debug.call_count, 2)
@@ -44,6 +44,6 @@ class APIClientTest(TestCase):
         self.mock_client.get = http_mock_response
         http_mock_response.return_value.json.return_value = {}
         with self.assertRaises(CrmAuthenticationError) as exception_context_manager:
-            APIClient(self.mock_client).login()
+            APIClient(self.mock_client).search_email("email@email.es")
         exception = exception_context_manager.exception
         self.assertEqual(exception.args, ("CRM Invalid Authentication",))

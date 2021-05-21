@@ -4,7 +4,7 @@ from sugarcrm.client import APIClient
 from sugarcrm.error import CrmResponseError
 
 
-class SearchTest(TestCase):
+class GetFieldTest(TestCase):
     def setUp(self):
         self.mock_client = MagicMock()
         self.object_id = "CONTACT_RECORD_ID"
@@ -15,6 +15,7 @@ class SearchTest(TestCase):
         http_mock_response = MagicMock()
         self.mock_client.get = http_mock_response
         api_client = APIClient(self.mock_client)
+        api_client.session_id = 1
         http_mock_response.return_value.json.return_value = {
                 "entry_list": [
                     {
@@ -30,6 +31,7 @@ class SearchTest(TestCase):
         http_mock_response = MagicMock()
         self.mock_client.get = http_mock_response
         api_client = APIClient(self.mock_client)
+        api_client.session_id = 1
 
         http_mock_response.return_value.json.return_value = {}
         with self.assertRaises(CrmResponseError):

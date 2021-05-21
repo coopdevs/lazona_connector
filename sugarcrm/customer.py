@@ -3,14 +3,13 @@ from sugarcrm.client import APIClient
 
 
 class Customer:
-    def __init__(self, logger=sugarcrm.logger):
+    def __init__(self, api_client=APIClient(), logger=sugarcrm.logger):
         self.logger = logger
         self.roles = set()
-        self.api_client = APIClient()
+        self.api_client = api_client
 
     def fetch(self, email):
         # In SugarCRM personal individuals are in Accounts module and organizations in Contacts
-        self.api_client.login()
         account_id, contact_id = self.api_client.search_email(email)
         roles_as_account = roles_as_contact = ""
         if account_id:

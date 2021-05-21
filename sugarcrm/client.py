@@ -13,6 +13,9 @@ class APIClient:
         self.logger = logger
 
     def _api_request(self, method, args):
+        if not self.session_id and method != "login":
+            self._login()
+
         data = json.dumps(args)
         args = {
             "method": method,
@@ -25,7 +28,7 @@ class APIClient:
         self.logger.debug("SugarCRM response: {}".format(response.content))
         return response
 
-    def login(self):
+    def _login(self):
         encode = hashlib.md5(sugarcrm.password.encode("utf-8"))
         encoded_password = encode.hexdigest()
         args = {"user_auth": {"user_name": sugarcrm.username, "password": encoded_password}}
