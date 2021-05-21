@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from api.authentication import SignatureValidation
-from api.serializers import OrderSerializer
-from api.tasks import create_delivery
+from api.serializers import OrderSerializer, CustomerSerializer
+from api.tasks import create_delivery, update_customer_if_is_partner
 
 
 class DeliveryList(APIView):
@@ -19,5 +19,20 @@ class DeliveryList(APIView):
             create_delivery.delay(order)
 
             return Response(status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomerList(APIView):
+    authentication_classes = [SignatureValidation]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = CustomerSerializer(data=request.data)
+        if serializer.is_valid():
+            customer = serializer.validated_data
+            update_customer_if_is_partner.delay(customer['email'])
+
+            return Response(status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
