@@ -1,6 +1,5 @@
 import wordpress
 from wordpress.client import APIClient
-import urllib.parse
 
 
 class WPUser:
@@ -13,7 +12,6 @@ class WPUser:
         self.user_id = None
 
     def fetch(self, email):
-        email = urllib.parse.quote_plus(email)
         response = self.client.get_request(f'users/?search={email}')
         body = response.json()
         if len(body):
