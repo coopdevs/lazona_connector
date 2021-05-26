@@ -3,13 +3,15 @@ from wordpress.client import APIClient
 
 
 class WPUser:
+    email = None
+    roles = None
+    user_id = None
+    
     def __init__(self, client=APIClient(), logger=wordpress.logger):
         self.logger = logger
         self.roles = set()
         self.client = client
-        self.email = None
-        self.roles = None
-        self.user_id = None
+
 
     def fetch(self, email):
         response = self.client.get_request(f'users/?search={email}')
