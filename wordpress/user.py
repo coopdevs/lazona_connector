@@ -3,39 +3,30 @@ from wordpress.client import APIClient
 
 
 class WPUser:
-    email = None
-    roles = None
-    user_id = None
-    
+
     def __init__(self, client=APIClient(), logger=wordpress.logger):
         self.logger = logger
         self.roles = set()
         self.client = client
-
+        self.email = None
+        self.user_id = None
+        self.roles = None
 
     def fetch(self, email):
-        response = self.client.get_request(f'users/?search={email}')
-        body = response.json()
+        body = self.client.get_request(f'users/?search={email}')
         if len(body):
             user_id = body[0]['id']
-            response = self.client.post_request(f'users/{user_id}')
-            body = response.json()
-            email_profile = body['email']
-            if email == email_profile:
-                self._convert_to_resource(response)
+            body = self.client.get_request(f'users/{user_id}', "context=edit")
+            self._convert_to_resource(body)
 
         return self
 
-    def _convert_to_resource(self, response):
-        body = response.json()
+    def _convert_to_resource(self, body):
         self.roles = body['roles']
         self.username = body['username']
         self.email = body['email']
         self.user_id = body['id']
 
-    def update_as_partner(self):
-        if wordpress.wp_partner_role not in self.roles:
-            new_roles = ",".join(self.roles + wordpress.wp_partner_role)
-            response = self.client.post_request(f'users/{self.user_id}', data={'roles': new_roles})
-            response.raise_for_status()
-            self.roles.append(wordpress.wp_partner_role)
+    def update(self, **kwargs):
+        body = self.client.post_request(f'users/{self.user_id}', data=kwargs)
+        self._convert_to_resource(body)

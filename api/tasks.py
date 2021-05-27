@@ -1,6 +1,6 @@
 from koiki.client import Client
-
 from sugarcrm.customer import Customer
+import wordpress
 from wordpress.user import WPUser
 from lazona_connector.celery import app
 
@@ -31,4 +31,5 @@ def _check_customer_is_partner(email):
 @app.task
 def update_user_as_partner(email):
     wp_user = WPUser().fetch(email)
-    wp_user.update_as_partner()
+    if "customer" in wp_user.roles:
+        wp_user.update(roles=wordpress.wp_partner_role)
