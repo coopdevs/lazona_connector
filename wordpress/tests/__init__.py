@@ -1,7 +1,7 @@
 import httpretty
 import logging
 from django.conf import settings
-
+import os
 import wordpress
 
 httpretty.enable(allow_net_connect=False)
@@ -14,3 +14,5 @@ wordpress.wp_partner_role = "test_partner_role"
 wordpress.logger = logging.getLogger('django.tests')
 
 settings.CELERY_ALWAYS_EAGER = True
+
+os.environ['REDIS_URL'] = 'rediss://test'

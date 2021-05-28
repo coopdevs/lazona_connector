@@ -11,6 +11,7 @@ class WPUser:
         self.email = None
         self.user_id = None
         self.roles = None
+        self.username = None
 
     def fetch(self, email):
         body = self.client.get_request(f'users/?search={email}')

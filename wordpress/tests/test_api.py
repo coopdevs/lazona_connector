@@ -24,8 +24,6 @@ class APIClientTest(TestCase):
             auth=("test_wp_user", "test_wp_password"),
         )
 
-
-
     @patch("wordpress.logger", autospec=True)
     def test_post_request(self, mock_logger):
         api_client = APIClient(self.mock_client, mock_logger)
