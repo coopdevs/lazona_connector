@@ -15,7 +15,7 @@ class APIClient:
     def get_request(self, path, params={}):
         abs_url = f'{self.api_url}/{path}'
 
-        self.logger.info(f'WP GET request. url={abs_url}')
+        self.logger.info(f'WP GET request. url={abs_url}. params={params}')
 
         response = self.client.get(abs_url, params=params, auth=(self.user, self.password))
         response.raise_for_status()
