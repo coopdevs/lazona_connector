@@ -31,7 +31,8 @@ class APIClientTest(TestCase):
         api_client.post_request("endpoint", test_data)
 
         mock_logger.debug.assert_called_once_with(
-            "WP POST request. url=https://test_wp_host/wp-json/wp/v2/endpoint. data={'field': 'data'}"
+            "WP POST request. url=https://test_wp_host/wp-json/wp/v2/endpoint."
+            " data={'field': 'data'}"
         )
 
         self.mock_client.post.assert_called_once_with(
