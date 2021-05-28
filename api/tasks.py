@@ -1,6 +1,7 @@
 from koiki.client import Client
-
 from sugarcrm.customer import Customer
+import wordpress
+from wordpress.user import WPUser
 from lazona_connector.celery import app
 
 
@@ -18,10 +19,17 @@ def create_delivery(order):
 @app.task
 def update_customer_if_is_partner(email):
     if _check_customer_is_partner(email):
-        # update_user(email) method with celery task from a following api/tasks/woocommerce.py
+        update_user_as_partner.delay(email)
         pass
 
 
 def _check_customer_is_partner(email):
     customer = Customer().fetch(email)
     return customer.check_is_partner()
+
+
+@app.task
+def update_user_as_partner(email):
+    wp_user = WPUser().fetch(email)
+    if "customer" in wp_user.roles:
+        wp_user.update(roles=wordpress.wp_partner_role)
