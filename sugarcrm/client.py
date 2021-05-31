@@ -16,6 +16,9 @@ class APIClient:
         if not self.session_id and method != "login":
             self._login()
 
+        if self.session_id:
+            args.insert(0, self.session_id)
+
         data = json.dumps(args)
         args = {
             "method": method,
@@ -40,7 +43,7 @@ class APIClient:
             raise CrmAuthenticationError("CRM Invalid Authentication")
 
     def search_email(self, email):
-        args = [self.session_id, email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
+        args = [email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
         self.logger.info("SugarCRM searching email: {}".format(email))
         response = self._api_request("search_by_module", args)
         result = response.json()
@@ -62,7 +65,7 @@ class APIClient:
             return account_id, contact_id
 
     def get_field(self, module, object_id, field):
-        args = [self.session_id, module, object_id, [], [], False]
+        args = [module, object_id, [], [], False]
         response = self._api_request("get_entry", args)
         result = response.json()
         self.logger.debug("SugarCRM response: {}".format(response.content))
