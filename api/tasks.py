@@ -20,7 +20,6 @@ def create_delivery(order):
 def update_customer_if_is_partner(email):
     if _check_customer_is_partner(email):
         update_user_as_partner.delay(email)
-        pass
 
 
 def _check_customer_is_partner(email):
@@ -31,5 +30,5 @@ def _check_customer_is_partner(email):
 @app.task
 def update_user_as_partner(email):
     wp_user = WPUser().fetch(email)
-    if "customer" in wp_user.roles:
+    if wp_user.roles and "customer" in wp_user.roles:
         wp_user.update(roles=wordpress.wp_partner_role)
