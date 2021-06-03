@@ -34,7 +34,8 @@ class Client():
             return Error(response_body)
         else:
             self._log(response.status_code, self._masked_body(response_body))
-            return Delivery(response_body['envios'][0])
+            deliveries = [Delivery(d) for d in response_body['envios']]
+            return deliveries
 
     def _url(self, endpoint_req):
         return f'{self.host}{API_PATH}{endpoint_req.url()}'

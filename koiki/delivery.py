@@ -1,5 +1,6 @@
 import base64
 
+#TODO: convert this class into Django Model in order to link Koiki's shipping, with WC purchase and PDF
 
 class Delivery():
 
