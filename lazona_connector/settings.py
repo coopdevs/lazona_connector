@@ -174,6 +174,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Mail settings
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT', global_settings.EMAIL_PORT)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = bool(os.getenv('EMAIL_USE_TLS', global_settings.EMAIL_USE_TLS))
+EMAIL_USE_SSL = bool(os.getenv('EMAIL_USE_SSL', global_settings.EMAIL_USE_SSL))
 
 # Security
 
