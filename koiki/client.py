@@ -4,6 +4,7 @@ import copy
 
 from koiki.create_delivery import CreateDelivery
 from koiki.delivery import Delivery
+from koiki.order import Order
 from koiki.error import Error
 
 import koiki
@@ -21,21 +22,30 @@ class Client():
 
     def create_delivery(self):
         endpoint_req = CreateDelivery(self.order)
+        order = Order(self.order)
         req_body = self._authentication(endpoint_req)
 
         url = self._url(endpoint_req)
+        vendors = endpoint_req._vendors()
         self.logger.info('Koiki request to {}. body={}'.format(url, req_body))
 
         response = requests.post(url, json=req_body)
         response_body = json.loads(response.text)
 
-        if self._is_errored(response_body):
-            self._log(response.status_code, response.text, level='error')
-            return Error(response_body)
-        else:
-            self._log(response.status_code, self._masked_body(response_body))
-            deliveries = [Delivery(d) for d in response_body['envios']]
-            return deliveries
+        # TODO: check errors per Envio, not from general response,
+        # in case some are ok in a multiple vendor case.
+        deliveries = []
+        for n, d in enumerate(response_body['envios']):
+            d['wc_order_id'] = order.number
+            # d['vendor_id'] = endpoint_req.
+            if self._is_errored(d):
+                self._log(response.status_code, response.text, level='error')
+                deliveries.append(Error(d))
+            else:
+                self._log(response.status_code, self._masked_body(response_body))
+                vendor = vendors[n]
+                deliveries.append(Delivery(d, vendor))
+        return deliveries
 
     def _url(self, endpoint_req):
         return f'{self.host}{API_PATH}{endpoint_req.url()}'

@@ -4,17 +4,19 @@ import wordpress
 from wordpress.user import WPUser
 from lazona_connector.celery import app
 
-
 @app.task
 def create_delivery(order):
     deliveries_by_vendor = Client(order).create_delivery()
+    deliveries_success = []
+    deliveries_error = []
     for delivery in deliveries_by_vendor:
         if type(delivery).__name__ == 'Error':
-            return delivery.to_dict()
+            # TODO: logger info about the error
+            deliveries_error.append(delivery)
         else:
-            delivery.print_pdf()
-    return {'success': 'all good'}
-
+            deliveries_success.append(delivery)
+            delivery.send_mail_to_vendor()
+    return {'success': [deliveries_success], 'error': [deliveries_error]}
 
 @app.task
 def update_customer_if_is_partner(email):

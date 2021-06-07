@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 from koiki.models import Sender, Recipient, Shipment
 from koiki.woocommerce.models import LineItem, Shipping, Billing
@@ -10,7 +10,7 @@ class CreateDelivery():
 
     def __init__(self, order):
         self.order = order
-        self.by_vendor = self._by_vendor(order['line_items'])
+        self.by_vendor = OrderedDict(self._by_vendor(order['line_items']))
         self.shipping = Shipping(order['shipping'])
         self.billing = Billing(order['billing'])
 
@@ -32,6 +32,12 @@ class CreateDelivery():
             deliveries.append(self._delivery(line_items, vendor))
 
         return deliveries
+
+    def _vendors(self):
+        vendors = []
+        for _, line_items in self.by_vendor.items():
+            vendors.append(line_items[0].vendor)
+        return vendors
 
     def _by_vendor(self, line_items):
         by_vendor = defaultdict(list)
