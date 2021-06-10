@@ -12,6 +12,7 @@ def create_delivery(order):
         if not delivery._is_errored():
             delivery.send_mail_to_vendor()
 
+
 @app.task
 def update_customer_if_is_partner(email):
     if _check_customer_is_partner(email):

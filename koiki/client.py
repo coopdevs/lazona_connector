@@ -31,7 +31,7 @@ class Client():
         deliveries = []
         for num, delivery_data in enumerate(response_body['envios']):
             vendor = self.order.vendors[num]
-            delivery_data['wc_order_id'] = self.order.data['order_key']
+            delivery_data['order_id'] = self.order.order_id
             delivery = Delivery(delivery_data, vendor)
             if delivery._is_errored():
                 self._log(delivery.data.get('respuesta'), delivery.data, level='error')

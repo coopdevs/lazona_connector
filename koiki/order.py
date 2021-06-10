@@ -6,6 +6,7 @@ class Order():
 
     def __init__(self, data):
         self.data = data
+        self.order_id = data['id']
         self.number = data['order_key']
         self.note = data.get('customer_note', '')
         self.vendors = []
@@ -22,7 +23,6 @@ class Order():
         }
 
     def _by_vendor(self, line_items):
-        print('line_items', line_items)
         by_vendor = defaultdict(list)
         vendors = []
 
