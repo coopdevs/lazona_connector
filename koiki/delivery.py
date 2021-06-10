@@ -18,6 +18,9 @@ class Delivery():
             'label': self.data['etiqueta']
         }
 
+    def _is_errored(self):
+        return self.data.get('respuesta', '') != '101'
+
     def print_pdf(self):
         content = base64.b64decode(self.data['etiqueta'])
 
