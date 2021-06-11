@@ -4,6 +4,7 @@ import os
 # TODO: convert this class into Django Model in order to link Koiki's shipping, with WC purchase and PDF
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.utils.translation import gettext as _
 from koiki import wcfmmp_host, logger
 
 
@@ -21,6 +22,7 @@ class Delivery:
             "number": self.data["numPedido"],
             "barcode": self.data["codBarras"],
             "label": self.data["etiqueta"],
+            "order_id": self.data["order_id"]
         }
 
     def _is_errored(self):
@@ -44,7 +46,7 @@ class Delivery:
         logger.info('Sending Koiki pdf to email {}'.format(self.vendor.email))
         message = render_to_string('contact_template.txt', context)
         send_mail = EmailMessage(
-            f"Enviament Koiki per a la comanda: {self.order_id}",
+            _("Enviament Koiki per a la comanda: {}").format(self.order_id),
             message,
             to=[self.vendor.email]
         )
