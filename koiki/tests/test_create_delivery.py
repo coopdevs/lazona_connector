@@ -1,6 +1,6 @@
 from unittest import TestCase
 import responses
-
+from koiki.order import Order
 from koiki.create_delivery import CreateDelivery
 import koiki
 
@@ -11,6 +11,7 @@ class CreateDeliveryTest(TestCase):
 
     def setUp(self):
         self.order = {
+            'id': 33,
             'order_key': 'xxx',
             'customer_note': 'delivery testing',
             'shipping': {
@@ -128,7 +129,7 @@ class CreateDeliveryTest(TestCase):
                 }
         )
 
-        body = CreateDelivery(self.order).body()
+        body = CreateDelivery(Order(self.order)).body()
         deliveries = body['envios']
 
         self.assertEquals(len(deliveries), 2)
@@ -172,4 +173,4 @@ class CreateDeliveryTest(TestCase):
         }, deliveries[1])
 
     def test_url(self):
-        self.assertEqual(CreateDelivery(self.order).url(), '/altaEnvios')
+        self.assertEqual(CreateDelivery(Order(self.order)).url(), '/altaEnvios')
