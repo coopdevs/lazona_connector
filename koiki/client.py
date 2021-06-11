@@ -1,3 +1,4 @@
+from rest_framework import status
 import requests
 import json
 import copy
@@ -29,16 +30,17 @@ class Client():
         response_body = json.loads(response.text)
 
         deliveries = []
-        for num, delivery_data in enumerate(response_body['envios']):
-            vendor = self.order.vendors[num]
-            delivery_data['order_id'] = self.order.order_id
-            delivery = Delivery(delivery_data, vendor)
-            if delivery._is_errored():
-                self._log(delivery.data.get('respuesta'), delivery.data, level='error')
-            else:
-                self._log(delivery.data.get('respuesta'), self._masked_body(delivery_data))
+        if response.status_code == status.HTTP_200_OK:
+            for num, delivery_data in enumerate(response_body['envios']):
+                vendor = self.order.vendors[num]
+                delivery_data['order_id'] = self.order.order_id
+                delivery = Delivery(delivery_data, vendor)
+                if delivery._is_errored():
+                    self._log(delivery.data.get('respuesta'), delivery.data, level='error')
+                else:
+                    self._log(delivery.data.get('respuesta'), self._masked_body(delivery_data))
 
-            deliveries.append(delivery)
+                deliveries.append(delivery)
 
         return deliveries
 
