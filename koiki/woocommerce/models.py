@@ -1,6 +1,6 @@
 from koiki.woocommerce.wcfmmp import APIClient
 from koiki.woocommerce.state import State
-
+from wordpress.user import WPUser
 import re
 
 
@@ -32,7 +32,12 @@ class Vendor():
     def fetch(self):
         response = self.client.request(f"settings/id/{self.id}")
         self._convert_to_resource(response)
+        self.fetch_email()
         return self
+
+    def fetch_email(self):
+        wp_user = WPUser().get(self.id)
+        self.email = wp_user.email
 
     def _convert_to_resource(self, response):
         body = response.json()
@@ -42,7 +47,6 @@ class Vendor():
         self.city = body['address']['city']
         self.state = self._build_state(body['address']['state'])
         self.country = self._build_country(body['address']['country'])
-        self.email = body['store_email']
         self.phone = body['phone']
 
     def __eq__(self, other):

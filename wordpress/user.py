@@ -17,9 +17,12 @@ class WPUser:
         body = self.client.get_request(f'users/?search={email}')
         if len(body):
             user_id = body[0]['id']
-            body = self.client.get_request(f'users/{user_id}', "context=edit")
-            self._convert_to_resource(body)
+            self.get(user_id)
+        return self
 
+    def get(self, user_id):
+        body = self.client.get_request(f'users/{user_id}?context=edit')
+        self._convert_to_resource(body)
         return self
 
     def _convert_to_resource(self, body):
