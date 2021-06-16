@@ -1,7 +1,10 @@
 # La Zona connector
 
-This Django app aims to integrate Lazona's Woocommerce site to Koiki's API, its
-delivery and distribution provider.
+This Django app aims to integrate Lazona's Woocommerce site to other services.
+So far, Koiki's API, its delivery and distribution provider and the CRM, Sugar
+CRM.
+
+This is implemented using Django and Celery with Webhooks and API calls.
 
 ## Requirements
 
@@ -11,6 +14,11 @@ delivery and distribution provider.
 * [direnv](https://direnv.net/)
 
 ## Setup
+
+### Docker
+
+You can have the project up & running locally just with a command:
+`docker-compose up`. Check out each section below for details.
 
 ### Python
 
