@@ -60,7 +60,6 @@ class KoikiTest(TestCase):
         responses.add(responses.GET, f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
                       status=200,
                       json={
-                        "store_email": "queviure@lazona.coop",
                         "phone": "",
                         "address": {
                             "street_1": "",
@@ -71,6 +70,19 @@ class KoikiTest(TestCase):
                             "state": ""
                         }
                       })
+
+        responses.add(
+                responses.GET,
+                'https://wp_testing_host/wp-json/wp/v2/users/6?context=edit',
+                status=200,
+                content_type='application/json',
+                json={
+                    "id": 6,
+                    "username": "Queviure",
+                    "email": "queviure@lazona.coop",
+                    "roles": ["testrole"],
+                }
+        )
 
     @responses.activate
     @patch('koiki.logger', autospec=True)

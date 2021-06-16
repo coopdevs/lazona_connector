@@ -56,7 +56,6 @@ class WooocommerceModelsTest(TestCase):
             status=200,
             content_type='application/json',
             body=json.dumps({
-                "store_email": "store@example.com",
                 "phone": "+34666554433",
                 "address": {
                     "street_1": "Passeig de Gràcia 1",
@@ -67,6 +66,18 @@ class WooocommerceModelsTest(TestCase):
                     "state": "Barcelona"
                 }
             })
+        )
+        httpretty.register_uri(
+                httpretty.GET,
+                'https://wp_testing_host/wp-json/wp/v2/users/1?context=edit',
+                status=200,
+                content_type='application/json',
+                body=json.dumps({
+                    "id": 1,
+                    "username": "Store",
+                    "email": "store@example.com",
+                    "roles": ["testrole"],
+                })
         )
 
         vendor = Vendor(id=1, name='name')

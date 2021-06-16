@@ -47,7 +47,6 @@ class DeliveryViewTests(TestCase):
             }]
         }
         self.api_url = 'https://testing_host/rekis/api/altaEnvios'
-
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'pass')
 
         self.client = APIClient()
@@ -60,7 +59,6 @@ class DeliveryViewTests(TestCase):
                 status=200,
                 content_type='application/json',
                 body=json.dumps({
-                    "store_email": "queviure@lazona.coop",
                     "phone": "",
                     "address": {
                         "street_1": "",
@@ -70,6 +68,18 @@ class DeliveryViewTests(TestCase):
                         "country": "ES",
                         "state": ""
                     }
+                })
+        )
+        httpretty.register_uri(
+                httpretty.GET,
+                'https://wp_testing_host/wp-json/wp/v2/users/6?context=edit',
+                status=200,
+                content_type='application/json',
+                body=json.dumps({
+                    "id": 6,
+                    "username": "Queviure",
+                    "email": "queviure@lazona.coop",
+                    "roles": ["testrole"],
                 })
         )
         httpretty.register_uri(

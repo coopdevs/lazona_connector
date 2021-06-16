@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 
 import koiki
+import wordpress
 
 httpretty.enable(allow_net_connect=False)
 
@@ -15,6 +16,10 @@ koiki.wcfmmp_password = 'test_wcfmmp_password'
 
 koiki.logger = logging.getLogger('django.tests')
 koiki.auth_token = 'testing_auth_token'
+
+wordpress.wp_host = 'https://wp_testing_host'
+wordpress.wp_user = 'test_wp_user'
+wordpress.wp_password = 'test_wp_password'
 
 settings.CELERY_ALWAYS_EAGER = True
 settings.WC_WEBHOOK_USER = 'test_user'
