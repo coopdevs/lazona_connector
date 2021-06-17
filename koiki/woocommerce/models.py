@@ -32,11 +32,11 @@ class Vendor():
     def fetch(self):
         response = self.client.request(f"settings/id/{self.id}")
         self._convert_to_resource(response)
-        self.fetch_email()
+        self._fetch_email()
         return self
 
-    def fetch_email(self):
-        wp_user = WPUser().get(self.id)
+    def _fetch_email(self):
+        wp_user = WPUser().fetch_by_email(self.id)
         self.email = wp_user.email
 
     def _convert_to_resource(self, response):
