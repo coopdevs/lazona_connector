@@ -1,3 +1,4 @@
+{% load i18n %}
 {% blocktranslate %}Hola, la teva tenda ha rebut la comanda: {{wcfmmp_host}}area-privada/orders-details/{{wc_order_id}}
 
 Adjuntem el PDF per a imprimir i pegar al paquet a enviar.
