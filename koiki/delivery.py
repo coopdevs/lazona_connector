@@ -1,7 +1,8 @@
 import base64
 import os
 
-# TODO: convert this class into Django Model in order to link Koiki's shipping, with WC purchase and PDF
+# TODO: convert this class into Django Model in order to link Koiki's shipping,
+# with WC purchase and PDF
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _

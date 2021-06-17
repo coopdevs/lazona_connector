@@ -10,8 +10,6 @@ import koiki
 from koiki.delivery import Delivery
 
 
-
-
 class TasksTests(TestCase):
 
     def setUp(self):
