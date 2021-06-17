@@ -41,6 +41,8 @@ class Client():
                     self._log(delivery.data.get('respuesta'), self._masked_body(delivery_data))
 
                 deliveries.append(delivery)
+        else:
+            self._log(response.status_code, response_body, level='error')
 
         return deliveries
 
