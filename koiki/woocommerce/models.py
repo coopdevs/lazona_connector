@@ -36,7 +36,7 @@ class Vendor():
         return self
 
     def _fetch_email(self):
-        wp_user = WPUser().fetch_by_email(self.id)
+        wp_user = WPUser().fetch_by_id(self.id)
         self.email = wp_user.email
 
     def _convert_to_resource(self, response):

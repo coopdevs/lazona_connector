@@ -13,14 +13,14 @@ class WPUser:
         self.roles = None
         self.username = None
 
-    def fetch(self, email):
+    def fetch_by_email(self, email):
         body = self.client.get_request(f'users/?search={email}')
         if len(body):
             user_id = body[0]['id']
-            self.fetch_by_email(user_id)
+            self.fetch_by_id(user_id)
         return self
 
-    def fetch_by_email(self, user_id):
+    def fetch_by_id(self, user_id):
         body = self.client.get_request(f'users/{user_id}?context=edit')
         self._convert_to_resource(body)
         return self
