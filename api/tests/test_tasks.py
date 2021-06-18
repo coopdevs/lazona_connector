@@ -1,7 +1,6 @@
 from unittest.mock import patch, MagicMock
 import responses
 from django.template.loader import render_to_string
-from django.utils.translation import gettext as _
 from django.test import TestCase
 
 from api.serializers import OrderSerializer
@@ -119,11 +118,8 @@ class TasksTests(TestCase):
         }
 
         message = render_to_string('contact_template.txt', context)
+        self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)
         create_delivery(order)
         mock_logger.info.assert_called_once_with(
             "Sending Koiki pdf to email test@test.es")
-        mock_email.assert_called_once_with(
-            _("Enviament Koiki per a la comanda: {}").format(33),
-            message,
-            to=["test@test.es"]
-        )
+        self.assertIn({'to': ['test@test.es']}, mock_email.call_args)
