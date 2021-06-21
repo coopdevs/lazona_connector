@@ -1,6 +1,5 @@
 from unittest.mock import patch, MagicMock
 import responses
-from django.template.loader import render_to_string
 from django.test import TestCase
 
 from api.serializers import OrderSerializer
