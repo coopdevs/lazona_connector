@@ -37,7 +37,7 @@ class WPUserTest(TestCase):
             },
         )
 
-        wp_user.fetch(self.email)
+        wp_user.fetch_by_email(self.email)
 
         self.assertEqual(wp_user.roles, ["testrole"])
         self.assertEqual(wp_user.email, self.email)
@@ -71,9 +71,9 @@ class WPUserTest(TestCase):
     @patch("api.tasks.WPUser", autospec=True)
     def test_tasks_check_customer_is_not_partner(self, mock_wp_user):
         mock_wp_user.return_value = self.mock_client
-        self.mock_client.fetch.return_value = self.mock_client
+        self.mock_client.fetch_by_email.return_value = self.mock_client
         self.mock_client.roles = ["customer"]
 
         update_user_as_partner(self.email)
-        self.mock_client.fetch.assert_called_once_with(self.email)
+        self.mock_client.fetch_by_email.assert_called_once_with(self.email)
         self.mock_client.update.assert_called_once_with(roles="test_partner_role")
