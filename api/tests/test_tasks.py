@@ -96,9 +96,7 @@ class TasksTests(TestCase):
             "respuesta": "102",
             "mensaje": "ERROR IN THE RECEIVED DATA", "numPedido": "test", "order_id": 33},
             vendor)
-        client.create_delivery.return_value = [
-            delivery
-        ]
+        client.create_delivery.return_value = [delivery]
         mock_client.return_value = client
 
         serializer = OrderSerializer(data=self.data)
@@ -124,14 +122,10 @@ class TasksTests(TestCase):
         order = serializer.validated_data
 
         mock_email.send.return_value = True
-        context = {
-            'wcfmmp_host': koiki.wcfmmp_host,
-            'wc_order_id': 33,
-        }
 
-        message = render_to_string('contact_template.txt', context)
-        self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)
         create_delivery(order)
         mock_logger.info.assert_called_once_with(
             "Sending Koiki pdf to email test@test.es")
         self.assertIn({'to': ['test@test.es']}, mock_email.call_args)
+        message = mock_email.call_args[0][1]
+        self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)

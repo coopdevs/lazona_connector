@@ -41,8 +41,7 @@ class Delivery:
     def send_mail_to_vendor(self):
         self.print_pdf()
         context = {
-            'wcfmmp_host': wcfmmp_host,
-            'wc_order_id': self.order_id,
+            'url_comanda': f'{wcfmmp_host}area-privada/orders-details/{self.order_id}'
         }
         logger.info('Sending Koiki pdf to email {}'.format(self.vendor.email))
         message = render_to_string('contact_template.txt', context)
