@@ -7,8 +7,21 @@ class OrderTest(TestCase):
 
     def setUp(self):
         self.data = {
+            'id': 33,
             'order_key': '123x',
-            'customer_note': 'dummy customer note'
+            'customer_note': 'dummy customer note',
+            'line_items': [{
+                'id': 17,
+                'quantity': 1,
+                'name': 'Suc Taronja 1l',
+                'meta_data': [{
+                    'id': 172,
+                    'key': '_vendor_id',
+                    'value': '6',
+                    'display_key': 'Store',
+                    'display_value': 'Quèviure'
+                }]
+            }]
         }
 
     def test_to_dict(self):

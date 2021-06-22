@@ -165,7 +165,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
+LOCALE_PATHS = [os.path.join(BASE_DIR, "i18n")]
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -174,7 +174,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+# Mail settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT', global_settings.EMAIL_PORT)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = bool(int(os.getenv('EMAIL_USE_TLS', global_settings.EMAIL_USE_TLS)))
+EMAIL_USE_SSL = bool(int(os.getenv('EMAIL_USE_SSL', global_settings.EMAIL_USE_SSL)))
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 # Security
 
 SECURE_SSL_REDIRECT = bool(os.getenv('SECURE_SSL_REDIRECT', global_settings.SECURE_SSL_REDIRECT))

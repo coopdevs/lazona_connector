@@ -7,13 +7,10 @@ from lazona_connector.celery import app
 
 @app.task
 def create_delivery(order):
-    delivery = Client(order).create_delivery()
-
-    if type(delivery).__name__ == 'Error':
-        return delivery.to_dict()
-    else:
-        delivery.print_pdf()
-        return {'success': 'all good'}
+    deliveries_by_vendor = Client(order).create_delivery()
+    for delivery in deliveries_by_vendor:
+        if not delivery._is_errored():
+            delivery.send_mail_to_vendor()
 
 
 @app.task

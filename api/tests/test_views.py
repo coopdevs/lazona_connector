@@ -17,6 +17,7 @@ class DeliveryViewTests(TestCase):
     def setUp(self):
         self.url = reverse('deliveries:create')
         self.data = {
+            'id': 33,
             'order_key': 'xxx',
             'customer_note': '',
             'shipping': {

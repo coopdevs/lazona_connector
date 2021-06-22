@@ -11,6 +11,7 @@ class KoikiTest(TestCase):
 
     def setUp(self):
         self.order = {
+            'id': 33,
             'order_key': 'xxx',
             'customer_note': 'delivery testing',
             'shipping': {
@@ -94,10 +95,11 @@ class KoikiTest(TestCase):
                         'envios': [{'numPedido': '123', 'codBarras': 'yyy', 'etiqueta': 'abcd'}]
                       })
 
-        delivery = Client(self.order).create_delivery()
+        deliveries = Client(self.order).create_delivery()
 
         mock_logger.error.assert_not_called()
-        self.assertEqual(delivery.to_dict(), {'number': '123', 'barcode': 'yyy', 'label': 'abcd'})
+        self.assertEqual(deliveries[0].to_dict(), {'number': '123', 'barcode': 'yyy',
+                                                   'label': 'abcd', 'order_id': 33})
 
     @responses.activate
     @patch('koiki.logger', autospec=True)
@@ -107,11 +109,11 @@ class KoikiTest(TestCase):
 
         mock_logger = MagicMock()
 
-        delivery = Client(self.order, logger=mock_logger).create_delivery()
+        deliveries = Client(self.order, logger=mock_logger).create_delivery()
 
         mock_logger.error.assert_called_once_with(
-            'Koiki response. status=400, body={"error": "Bad Request"}')
-        self.assertEqual(delivery.to_dict(), {'error': 'Bad Request'})
+            "Koiki response. status=400, body={'error': 'Bad Request'}")
+        self.assertEqual(len(deliveries), 0)
 
     @responses.activate
     def test_create_delivery_succesful_code_failed_response(self):
@@ -120,12 +122,9 @@ class KoikiTest(TestCase):
 
         mock_logger = MagicMock()
 
-        delivery = Client(self.order, logger=mock_logger).create_delivery()
+        deliveries = Client(self.order, logger=mock_logger).create_delivery()
 
-        mock_logger.error.assert_called_once_with(
-            'Koiki response. status=200, body={"respuesta": "102", "mensaje": "TOKEN NOT FOUND", "envios": []}'  # noqa: E501
-        )
-        self.assertEqual(delivery.to_dict(), {'error': 'TOKEN NOT FOUND'})
+        self.assertEqual(len(deliveries), 0)
 
     @responses.activate
     @patch('koiki.logger', autospec=True)
