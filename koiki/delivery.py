@@ -6,15 +6,16 @@ import os
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
-from koiki import wcfmmp_host, logger
+from koiki import wcfmmp_host, logger, error_mail_recipients
 
 
 class Delivery:
     pdf_folder = "pdf_barcodes"
 
-    def __init__(self, data, vendor):
+    def __init__(self, data, vendor, req_body):
         self.data = data
         self.vendor = vendor
+        self.req_body = req_body
         self.shipment_id = data["numPedido"]
         self.order_id = data["order_id"]
 
@@ -52,5 +53,22 @@ class Delivery:
         )
         pdf = open(os.path.join(self.pdf_folder, f"{self.shipment_id}.pdf"), "rb")
         send_mail.attach(f"{self.shipment_id}.pdf", pdf.read(), "application/pdf")
+
+        send_mail.send(fail_silently=False)
+
+    def send_error_mail_to_admin(self):
+
+        context = {
+            'url_wc_order': f'{wcfmmp_host}area-privada/orders-details/{self.order_id}',
+            'req_body': self.req_body,
+            'error_returned': self.data.get("mensaje", ""),
+        }
+        logger.info('Sending Koiki error to admins for order {}'.format(self.order_id))
+        message = render_to_string('error_template.txt', context)
+        send_mail = EmailMessage(
+            _("Error enviament Koiki per a la comanda: {}").format(self.order_id),
+            message,
+            to=error_mail_recipients
+        )
 
         send_mail.send(fail_silently=False)

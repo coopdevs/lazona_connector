@@ -9,3 +9,4 @@ wcfmmp_password = os.getenv('WCFMMP_PASSWORD')
 
 logger = logging.getLogger('django.server')
 auth_token = os.getenv('KOIKI_AUTH_TOKEN')
+error_mail_recipients = os.getenv("KOIKI_ERROR_MAIL_RECIPIENTS").split(",")

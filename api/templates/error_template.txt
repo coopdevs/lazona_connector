@@ -1,0 +1,9 @@
+S'ha rebut un error de KOIKI per a la comanda: {{url_wc_order}}
+
+{% autoescape off %}
+Data enviada:
+{{req_body}}
+
+Error rebut:
+{{error_returned}}
+{% endautoescape %}

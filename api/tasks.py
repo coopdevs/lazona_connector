@@ -11,6 +11,8 @@ def create_delivery(order):
     for delivery in deliveries_by_vendor:
         if not delivery._is_errored():
             delivery.send_mail_to_vendor()
+        else:
+            delivery.send_error_mail_to_admin()
 
 
 @app.task
