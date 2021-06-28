@@ -123,8 +123,53 @@ class TasksTests(TestCase):
         mock_email.send.return_value = True
 
         create_delivery(order)
-        mock_logger.info.assert_called_once_with(
-            "Sending Koiki pdf to email test@test.es")
+        mock_logger.info.assert_called_once_with("Sending Koiki pdf to email test@test.es")
         self.assertIn({'to': ['test@test.es']}, mock_email.call_args)
         message = mock_email.call_args[0][1]
         self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)
+
+    @responses.activate
+    @patch('koiki.delivery.EmailMessage', autospec=True)
+    @patch('koiki.delivery.logger', autospec=True)
+    def test_create_delivery_sends_error_email(self, mock_logger, mock_email):
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
+                      json={
+                        'respuesta': '102',
+                        'mensaje': 'ERROR',
+                        'envios': [{'numPedido': '124', 'respuesta': '102',
+                                    'mensaje': 'Missing field X'}]
+                      })
+
+        serializer = OrderSerializer(data=self.data)
+        self.assertTrue(serializer.is_valid())
+        order = serializer.validated_data
+
+        mock_email.send.return_value = True
+
+        create_delivery(order)
+        mock_logger.info.assert_called_once_with("Sending Koiki error to admins for order 33")
+        self.assertIn({'to': ['admin@email.com']}, mock_email.call_args)
+        message = mock_email.call_args[0][1]
+        self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)
+        self.assertIn("Missing field X", message)
+
+    @responses.activate
+    @patch('koiki.delivery.EmailMessage', autospec=True)
+    @patch('koiki.delivery.logger', autospec=True)
+    def test_create_delivery_sends_error_email_default_error(self, mock_logger, mock_email):
+        responses.add(responses.POST, 'https://testing_host/rekis/api/altaEnvios', status=200,
+                      json={
+                        'respuesta': '102',
+                        'mensaje': 'ERROR',
+                        'envios': [{'numPedido': '124', 'respuesta': '102',
+                                    'mensaje': ''}]
+                      })
+
+        serializer = OrderSerializer(data=self.data)
+        self.assertTrue(serializer.is_valid())
+        order = serializer.validated_data
+        mock_email.send.return_value = True
+
+        create_delivery(order)
+        message = mock_email.call_args[0][1]
+        self.assertIn("Missatge d'error no proporcionat", message)
