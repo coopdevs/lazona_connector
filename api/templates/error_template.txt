@@ -1,9 +1,11 @@
-S'ha rebut un error de KOIKI per a la comanda: {{url_wc_order}}
-
+La notificació a l'empresa d'enviament (Koiki) de la comanda {{url_wc_order}} ha fallat amb el següent error:
 {% autoescape off %}
-Data enviada:
-{{req_body}}
-
-Error rebut:
 {{error_returned}}
+
+
+La comanda romandrà en estat "S'està processant" i no serà enviada al client fins que no s'actualitzen els detalls de la comanda que provoquen l'error en Koiki.
+
+Detalls de l'enviament a Koiki:
+
+{{req_body| pprint}}
 {% endautoescape %}

@@ -12,7 +12,7 @@ from koiki import wcfmmp_host, logger, error_mail_recipients
 class Delivery:
     pdf_folder = "pdf_barcodes"
 
-    def __init__(self, data, vendor, req_body):
+    def __init__(self, data, vendor, req_body={}):
         self.data = data
         self.vendor = vendor
         self.req_body = req_body
@@ -42,7 +42,7 @@ class Delivery:
     def send_mail_to_vendor(self):
         self.print_pdf()
         context = {
-            'url_comanda': f'{wcfmmp_host}area-privada/orders-details/{self.order_id}'
+            'url_wc_order': f'{wcfmmp_host}area-privada/orders-details/{self.order_id}'
         }
         logger.info('Sending Koiki pdf to email {}'.format(self.vendor.email))
         message = render_to_string('contact_template.txt', context)
@@ -61,7 +61,7 @@ class Delivery:
         context = {
             'url_wc_order': f'{wcfmmp_host}area-privada/orders-details/{self.order_id}',
             'req_body': self.req_body,
-            'error_returned': self.data.get("mensaje", ""),
+            'error_returned': self.data.get("mensaje", "missatge d'error no proporcionat"),
         }
         logger.info('Sending Koiki error to admins for order {}'.format(self.order_id))
         message = render_to_string('error_template.txt', context)
