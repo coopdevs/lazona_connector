@@ -3,7 +3,7 @@ La notificació a l'empresa d'enviament (Koiki) de la comanda {{url_wc_order}} h
 {{error_returned}}
 
 
-La comanda romandrà en estat "S'està processant" i no serà enviada al client fins que no s'actualitzen els detalls de la comanda que provoquen l'error en Koiki.
+La comanda romandrà en estat "S'està processant" i no serà enviada al client fins que no s'actualitzen els detalls de la comanda que provoquen l'error a Koiki.
 
 Detalls de l'enviament a Koiki:
 
