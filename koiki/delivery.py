@@ -57,11 +57,13 @@ class Delivery:
         send_mail.send(fail_silently=False)
 
     def send_error_mail_to_admin(self):
-
+        error_returned = self.data.get("mensaje")
+        if not error_returned:
+            error_returned = "Missatge d'error no proporcionat"
         context = {
             'url_wc_order': f'{wcfmmp_host}area-privada/orders-details/{self.order_id}',
             'req_body': self.req_body,
-            'error_returned': self.data.get("mensaje", "missatge d'error no proporcionat"),
+            'error_returned': error_returned,
         }
         logger.info('Sending Koiki error to admins for order {}'.format(self.order_id))
         message = render_to_string('error_template.txt', context)
