@@ -1,4 +1,5 @@
 from koiki.client import Client
+from koiki.email import FailedDeliveryMail, SuccessDeliveryMail
 from sugarcrm.customer import Customer
 import wordpress
 from wordpress.user import WPUser
@@ -10,9 +11,11 @@ def create_delivery(order):
     deliveries_by_vendor = Client(order).create_delivery()
     for delivery in deliveries_by_vendor:
         if not delivery._is_errored():
-            delivery.send_mail_to_vendor()
+            email = SuccessDeliveryMail(delivery)
+            email.send()
         else:
-            delivery.send_error_mail_to_admin()
+            email = FailedDeliveryMail(delivery)
+            email.send()
 
 
 @app.task
