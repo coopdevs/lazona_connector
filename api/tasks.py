@@ -10,17 +10,17 @@ from lazona_connector.celery import app
 def create_delivery(order):
     deliveries_by_vendor = Client(order).create_delivery()
     for delivery in deliveries_by_vendor:
-        if not delivery._is_errored():
-            SuccessDeliveryMail(
-                pdf_path=delivery.print_pdf(),
-                recipient=delivery.vendor.email,
-                order_id=delivery.order_id
-            ).send()
-        else:
+        if delivery._is_errored():
             FailedDeliveryMail(
                 order_id=delivery.order_id,
                 error_returned=delivery.data.get("mensaje"),
                 req_body=delivery.req_body
+            ).send()
+        else:
+            SuccessDeliveryMail(
+                pdf_path=delivery.print_pdf(),
+                recipient=delivery.vendor.email,
+                order_id=delivery.order_id
             ).send()
 
 
