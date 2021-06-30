@@ -11,11 +11,17 @@ def create_delivery(order):
     deliveries_by_vendor = Client(order).create_delivery()
     for delivery in deliveries_by_vendor:
         if not delivery._is_errored():
-            email = SuccessDeliveryMail(delivery)
-            email.send()
+            SuccessDeliveryMail(
+                pdf_path=delivery.print_pdf(),
+                recipient=delivery.vendor.email,
+                order_id=delivery.order_id
+            ).send()
         else:
-            email = FailedDeliveryMail(delivery)
-            email.send()
+            FailedDeliveryMail(
+                order_id=delivery.order_id,
+                error_returned=delivery.data.get("mensaje"),
+                req_body=delivery.req_body
+            ).send()
 
 
 @app.task
