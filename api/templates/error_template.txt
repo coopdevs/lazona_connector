@@ -1,0 +1,11 @@
+La notificació a l'empresa d'enviament (Koiki) de la comanda {{url_wc_order}} ha fallat amb el següent error:
+{% autoescape off %}
+{{error_returned}}
+
+
+La comanda romandrà en estat "S'està processant" i no serà enviada al client fins que no s'actualitzen els detalls de la comanda que provoquen l'error a Koiki.
+
+Detalls de l'enviament a Koiki:
+
+{{req_body| pprint}}
+{% endautoescape %}

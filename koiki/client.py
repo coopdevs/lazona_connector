@@ -33,8 +33,9 @@ class Client():
         if response.status_code == status.HTTP_200_OK:
             for num, delivery_data in enumerate(response_body['envios']):
                 vendor = self.order.vendors[num]
+                req_body_shipping = req_body['envios'][num]
                 delivery_data['order_id'] = self.order.order_id
-                delivery = Delivery(delivery_data, vendor)
+                delivery = Delivery(delivery_data, vendor, req_body_shipping)
                 if delivery._is_errored():
                     self._log(delivery.data.get('respuesta'), delivery.data, level='error')
                 else:
