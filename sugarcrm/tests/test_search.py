@@ -26,9 +26,13 @@ class SearchTest(TestCase):
         }
 
         account_id, contact_id = api_client.search_email(self.email)
+        mock_logger.debug.assert_has_calls(
+            [
+                call("SugarCRM searching email in CRM: {}".format(self.email))
+            ]
+        )
         mock_logger.info.assert_has_calls(
             [
-                call("SugarCRM searching email: {}".format(self.email)),
                 call("Found account_id: None, contact_id: CONTACT_RECORD_ID"),
             ]
         )
