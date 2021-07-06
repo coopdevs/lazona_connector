@@ -15,17 +15,34 @@ This is implemented using Django and Celery with Webhooks and API calls.
 
 ## Setup
 
-### Docker
+You have to options to work on the project. To run the docker containers or to run the project manually.
+
+### Run Docker
 
 You can have the project up & running locally just with a command:
-`docker-compose up`. Check out each section below for details.
+`docker-compose up`. 
 
-### Python
+You need to have a .env file cerated. Check our .env.example to see the minimum variables to define.
+
+Check out each section below for details.
+
+### Run manually
+
+#### Python
 
 First, install the Python versions listed above. We strongly recommend [pyenv]
 with its [pyenv-virtualenv] plugin.
 
-### Database
+[pyenv]: https://github.com/pyenv/pyenv
+[pyenv-virtualenv]: pyenv-virtualenv
+
+#### Database
+
+We need to create lazona_connector database on PostgreSQL. Login to PostgreSQL using psql and create it.
+
+```
+CREATE DATABASE lazona_connector;
+```
 
 The app relies on PostgreSQL peer authentication to work with a simple database
 configuration. To enable that add a new entry to the bottom of your pg_hba.conf,
@@ -39,10 +56,7 @@ local   lazona_connector  <your_user>                             peer
 
 Where `<your_user>` is your current user's name.
 
-[pyenv]: https://github.com/pyenv/pyenv
-[pyenv-virtualenv]: pyenv-virtualenv
-
-### Redis
+#### Redis
 
 We use Celery with Redis as broker. The quickest way to set it up locally is:
 
@@ -52,12 +66,24 @@ $ docker run -p 6379:6379 redis
 
 Alternatively, you can install the appropriate Redis package for your OS.
 
-### Direnv
+#### Direnv
 
 We keep required config environment variables in `.envrc` which is managed by
 [direnv](https://direnv.net/). Any time you modify that file, you'll need to run
 `direnv allow`. You'll see an error message telling you so when cd-ing into the
 project's directory.
+
+You need to have a .envrc file cerated. Check our .envrc.example to see the minimum variables to define.
+
+#### Django
+
+Once all previous points are setup run migration to create the necessary tables on django
+
+```
+python manage.py makemigration
+python manage.py migrate
+
+```
 
 ## Usage
 
