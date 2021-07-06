@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from .models import PersistentDelivery
+from .models import Shipment
 
 
-@admin.register(PersistentDelivery)
-class PersistentDeliveryAdmin(admin.ModelAdmin):
+@admin.register(Shipment)
+class ShipmentAdmin(admin.ModelAdmin):
 
-    list_display = ("shippment", "status", "order", "vendor")
+    list_display = ("shipment", "status", "order", "vendor")
     list_filter = ("status",)
-    search_fields = ("shippment",)
-    readonly_fields = ("shippment", "order", "vendor")
+    search_fields = ("shipment",)
+    readonly_fields = ("shipment", "order", "vendor")

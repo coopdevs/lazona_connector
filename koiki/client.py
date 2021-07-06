@@ -6,7 +6,6 @@ import copy
 from koiki.create_delivery import CreateDelivery
 from koiki.delivery import Delivery
 from koiki.order import Order
-from api.models import PersistentDelivery, DeliveryStatus
 import koiki
 
 API_PATH = "/rekis/api"
@@ -35,26 +34,13 @@ class Client:
                 req_body_shipping = req_body["envios"][num]
                 delivery_data["order_id"] = self.order.order_id
                 delivery = Delivery(delivery_data, vendor, req_body_shipping)
-                delivery_pdf = None
 
                 if delivery._is_errored():
                     self._log(delivery.data.get("respuesta"), delivery.data, level="error")
-                    status_delivery = DeliveryStatus.ERROR
                 else:
                     self._log(delivery.data.get("respuesta"), self._masked_body(delivery_data))
-                    status_delivery = DeliveryStatus.SUCCESS
-                    delivery_pdf = delivery.print_pdf()
 
                 deliveries.append(delivery)
-                PersistentDelivery(
-                    shipment=delivery_data["numPedido"],
-                    order=int(delivery_data["order_id"]),
-                    vendor=int(vendor),
-                    pdf=delivery_pdf,
-                    req_body=req_body_shipping,
-                    req_response=delivery_data.get("mensaje"),
-                    status=status_delivery,
-                )
 
         else:
             self._log(response.status_code, response_body, level="error")
