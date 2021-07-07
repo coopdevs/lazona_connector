@@ -13,14 +13,14 @@ def create_delivery(order):
     for delivery in deliveries_by_vendor:
         label_url = ""
         if delivery._is_errored():
-            status_delivery = DeliveryStatus.ERROR_FROM_BODY
+            delivery_status = DeliveryStatus.ERROR_FROM_BODY
             FailedDeliveryMail(
                 order_id=delivery.order_id,
                 error_returned=delivery.data.get("mensaje"),
                 req_body=delivery.req_body
             ).send()
         else:
-            status_delivery = DeliveryStatus.LABEL_SENT
+            delivery_status = DeliveryStatus.LABEL_SENT
             label_url = delivery.print_pdf()
             SuccessDeliveryMail(
                 pdf_path=label_url,
@@ -31,9 +31,9 @@ def create_delivery(order):
         Shipment(
             shipment=delivery.data.get("codBarras"),
             order=int(delivery.order_id),
-            vendor=int(delivery.vendor.id),
+            vendor_id=int(delivery.vendor.id),
             label_url=label_url,
-            status=status_delivery,
+            status=delivery_status,
         )
 
 

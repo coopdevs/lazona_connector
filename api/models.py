@@ -9,9 +9,9 @@ class DeliveryStatus(models.TextChoices):
 
 
 class Shipment(models.Model):
-    shipment = models.CharField(max_length=100, null=False, blank=False)
-    order = models.IntegerField(null=False, blank=False)
-    vendor = models.IntegerField(null=False, blank=False)
+    delivery_id = models.CharField(max_length=100, null=False, blank=False, unique=True)
+    order_id = models.IntegerField(null=False, blank=False)
+    vendor_id = models.IntegerField(null=False, blank=False)
     label_url = models.CharField(max_length=200, blank=True)
 
     status = models.CharField(
@@ -23,4 +23,4 @@ class Shipment(models.Model):
     )
 
     def __str__(self):
-        return self.shipment
+        return self.delivery_id
