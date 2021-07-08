@@ -1,4 +1,4 @@
-from koiki.models import Sender, Recipient, Shipment
+from koiki.resources import Sender, Recipient, Shipment
 from koiki.woocommerce.models import Shipping, Billing
 
 
