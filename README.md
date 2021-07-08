@@ -109,7 +109,9 @@ The API we expose for Woocommerce to send its webhook uses a signature mechanism
 ### Sending a request to the connector
 
 We'll our woocommerce instance to send requests to the connector.
+
 First of all, define the webhook on WooCommerce / Ajustes / Avanzado / Webhooks
+
 Afterwards, depending on the webhook defined, actions applied to Woocommerce orders will turn into API requests to the connector.
 
 
