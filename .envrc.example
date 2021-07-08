@@ -15,3 +15,4 @@ export REDIS_URL="http://0.0.0.0:6379"
 
 # wordpress woocomerce secret used on webhooks
 export WC_WEBHOOK_SECRET="your_secret"
+export WC_WEBHOOK_USER="woocommerce"
