@@ -92,10 +92,9 @@ python manage.py createsuperuser --username woocommerce --email woocommerce@exam
 ```
 
 
-Once all previous points are setup run migration to create the necessary tables on django
+Once all previous points are setup run migrations to create the necessary tables on django
 
 ```
-python manage.py makemigration
 python manage.py migrate
 
 ```
