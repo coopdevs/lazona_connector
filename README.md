@@ -85,7 +85,7 @@ Edit the variables on .envrc adding the real data.
 
 #### Django
 
-Create a superuser to interact with django
+Create a superuser to authenticate Woocommerce's webhook requests:
 
 ```
 python manage.py createsuperuser --username woocommerce --email woocommerce@example.com
