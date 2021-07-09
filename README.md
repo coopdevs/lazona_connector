@@ -22,7 +22,7 @@ You have to options to work on the project. To run the docker containers or to r
 You can have the project up & running locally just with a command:
 `docker-compose up`. 
 
-You need to have a .env file created. Check our .env.example to see the minimum variables to define and their pourpose. Run:
+You need to have an .env file created. Check the .env.example to see the required variables and their purpose. Run:
 
 ```
 cp .env.example .env
