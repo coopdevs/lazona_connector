@@ -73,11 +73,11 @@ class TasksTests(TestCase):
     @patch('koiki.email.SuccessDeliveryMail.send', autospec=True)
     @patch('api.tasks.Client', autospec=True)
     def test_delivery_successful(self, mock_client, mock_success_email):
-        mock_delivery = MagicMock(name='delivery')
+
+        mock_delivery = MagicMock(name='delivery', data={'codBarras': 'aaa'})
         client = MagicMock(name='client')
         client.create_delivery.return_value = [mock_delivery]
         mock_delivery._is_errored.return_value = False
-
         mock_delivery.print_pdf.return_value = "pdf_barcodes/test.pdf"
         mock_client.return_value = client
 
