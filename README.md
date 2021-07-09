@@ -27,7 +27,7 @@ You need to have an .env file created. Check the .env.example to see the require
 ```
 cp .env.example .env
 ```
-Edit the variables on .env adding the real data.
+Edit the variables on .env adding the actual data.
 
 ### Run manually
 
