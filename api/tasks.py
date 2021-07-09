@@ -4,7 +4,7 @@ from sugarcrm.customer import Customer
 import wordpress
 from wordpress.user import WPUser
 from lazona_connector.celery import app
-from api.models import Shipment, DeliveryStatus
+from api.models import Shipment, ShipmentStatus
 
 
 @app.task
@@ -13,14 +13,14 @@ def create_delivery(order):
     for delivery in deliveries_by_vendor:
         label_url = ""
         if delivery._is_errored():
-            delivery_status = DeliveryStatus.ERROR_FROM_BODY
+            delivery_status = ShipmentStatus.ERROR_FROM_BODY
             FailedDeliveryMail(
                 order_id=delivery.order_id,
                 error_returned=delivery.data.get("mensaje"),
                 req_body=delivery.req_body
             ).send()
         else:
-            delivery_status = DeliveryStatus.LABEL_SENT
+            delivery_status = ShipmentStatus.LABEL_SENT
             label_url = delivery.print_pdf()
             SuccessDeliveryMail(
                 pdf_path=label_url,
@@ -29,12 +29,12 @@ def create_delivery(order):
             ).send()
 
         Shipment(
-            shipment=delivery.data.get("codBarras"),
-            order=int(delivery.order_id),
+            delivery_id=delivery.data.get("codBarras", ""),
+            order_id=int(delivery.order_id),
             vendor_id=int(delivery.vendor.id),
             label_url=label_url,
             status=delivery_status,
-        )
+        ).save()
 
 
 @app.task
