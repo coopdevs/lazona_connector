@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from koiki.resources import Shipment, Sender, Recipient
-from koiki.woocommerce.models import Vendor, Billing, Shipping
+from koiki.woocommerce.resources import Vendor, Billing, Shipping
 
 
 class ModelsTest(TestCase):
