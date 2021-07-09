@@ -103,11 +103,11 @@ python manage.py migrate
 
 ### Authentication
 
-The API we expose for Woocommerce to send its webhook uses a signature mechanism. The signature is verified using SignatureValidaton class found [here](https://github.com/coopdevs/lazona_connector/blob/main/api/authentication.py).
+The API we expose for Woocommerce to send its webhook uses a signature mechanism. The signature is verified using our custom [SignatureValidaton](https://github.com/coopdevs/lazona_connector/blob/main/api/authentication.py).
 
 ### Sending a request to the connector
 
-We'll our woocommerce instance to send requests to the connector.
+We'll need to configure our woocommerce instance to send requests to the connector.
 
 First of all, define the webhook on WooCommerce / Ajustes / Avanzado / Webhooks
 
