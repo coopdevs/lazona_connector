@@ -1,5 +1,5 @@
 from collections import defaultdict
-from koiki.woocommerce.models import LineItem
+from koiki.woocommerce.resources import LineItem
 
 
 class Order():
