@@ -17,7 +17,7 @@ in a deployable state.
 
 In any case, to deploy either to staging or production head over to the app's
 [deploy] tab, scroll down to "Manual deploy" and choose the branch you want to
-deploy, likely `main` and push the button.
+deploy, likely `main`, and push the button.
 
 Alternatively, if you have the Git remote configured as described in [Creating
 a Heroku remote], you can do so from your terminal running `git push heroku
