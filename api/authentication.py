@@ -9,23 +9,6 @@ from rest_framework import authentication
 from rest_framework import exceptions
 
 
-class HostAuthentication(authentication.BaseAuthentication):
-
-    def authenticate(self, request):
-        source = request.META.get('HTTP_X_WC_WEBHOOK_SOURCE')
-        if not source:
-            return None
-
-        if 'staging.lazona.coop' not in source:
-            raise exceptions.AuthenticationFailed('Invalid source host')
-
-        user = User.objects.filter(is_superuser=True).first()
-        if not user:
-            raise exceptions.AuthenticationFailed('No such user')
-
-        return (user, None)
-
-
 class SignatureValidation(authentication.BaseAuthentication):
     def generate_woocommerce_signature(self, body, secret):
         digest = hmac.new(secret.encode('utf-8'), body, hashlib.sha256).digest()
