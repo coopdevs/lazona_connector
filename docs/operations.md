@@ -8,8 +8,6 @@ https://dashboard.heroku.com/ with the `Heroku Coopdevs` credentials in
 Bitwarden. If you have access with your account, however, it's advisable you use
 that one instead.
 
-
-
 ## Deployment
 
 `lazona-connector-staging` is configured to automatically deploy on every commit
@@ -24,6 +22,15 @@ deploy, likely `main` and push the button.
 Alternatively, if you have the Git remote configured as described in [Creating
 a Heroku remote], you can do so from your terminal running `git push heroku
 main`. More details: https://devcenter.heroku.com/articles/git.
+
+## Rolling back
+
+Rolling back to a previous release is very straightforward and pretty quick. If
+something suddenly fails caused by the changes you just deployed, this might be
+your safest bet.
+
+Go to the [Activity] tab and click on "Rollback to here". This will deploy that
+build again.
 
 ## Restarting
 
@@ -88,3 +95,4 @@ queue time.
 [Creating a Heroku remote]: https://devcenter.heroku.com/articles/git#creating-a-heroku-remote
 [Resources]: https://dashboard.heroku.com/apps/lazona-connector-staging/resources
 [logging in]: https://devcenter.heroku.com/articles/heroku-cli#getting-started
+[Activity]: https://dashboard.heroku.com/apps/lazona-connector-staging/activity
