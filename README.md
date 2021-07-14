@@ -76,7 +76,7 @@ We keep required config environment variables in `.envrc` which is managed by
 `direnv allow`. You'll see an error message telling you so when cd-ing into the
 project's directory.
 
-You need to have a .envrc file created. Check our .envrc.example to see the minimum variables to define and their pourpose. Run:
+You need to have an .envrc file created. Check the .envrc.example to see the required variables and their purpose. Run:
 
 ```
 cp .envrc.example .envrc
