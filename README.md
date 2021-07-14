@@ -81,7 +81,7 @@ You need to have a .envrc file created. Check our .envrc.example to see the mini
 ```
 cp .envrc.example .envrc
 ```
-Edit the variables on .envrc adding the real data.
+Edit the variables on .envrc adding the actual data.
 
 #### Django
 
