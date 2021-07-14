@@ -15,7 +15,7 @@ This is implemented using Django and Celery with Webhooks and API calls.
 
 ## Setup
 
-You have to options to work on the project. To run the docker containers or to run the project manually.
+You have two options to work on the project: to run the docker containers or to run the project manually.
 
 ### Run Docker
 
