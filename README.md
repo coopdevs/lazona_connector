@@ -15,17 +15,37 @@ This is implemented using Django and Celery with Webhooks and API calls.
 
 ## Setup
 
-### Docker
+You have two options to work on the project: to run the docker containers or to run the project manually.
+
+### Run Docker
 
 You can have the project up & running locally just with a command:
-`docker-compose up`. Check out each section below for details.
+`docker-compose up`. 
 
-### Python
+You need to have an .env file created. Check the .env.example to see the required variables and their purpose. Run:
+
+```
+cp .env.example .env
+```
+Edit the variables on .env adding the actual data.
+
+### Run manually
+
+#### Python
 
 First, install the Python versions listed above. We strongly recommend [pyenv]
 with its [pyenv-virtualenv] plugin.
 
-### Database
+[pyenv]: https://github.com/pyenv/pyenv
+[pyenv-virtualenv]: pyenv-virtualenv
+
+#### Database
+
+We need to create lazona_connector database on PostgreSQL. Login to PostgreSQL using psql and create it.
+
+```
+CREATE DATABASE lazona_connector;
+```
 
 The app relies on PostgreSQL peer authentication to work with a simple database
 configuration. To enable that add a new entry to the bottom of your pg_hba.conf,
@@ -39,10 +59,7 @@ local   lazona_connector  <your_user>                             peer
 
 Where `<your_user>` is your current user's name.
 
-[pyenv]: https://github.com/pyenv/pyenv
-[pyenv-virtualenv]: pyenv-virtualenv
-
-### Redis
+#### Redis
 
 We use Celery with Redis as broker. The quickest way to set it up locally is:
 
@@ -52,98 +69,70 @@ $ docker run -p 6379:6379 redis
 
 Alternatively, you can install the appropriate Redis package for your OS.
 
-### Direnv
+#### Direnv
 
 We keep required config environment variables in `.envrc` which is managed by
 [direnv](https://direnv.net/). Any time you modify that file, you'll need to run
 `direnv allow`. You'll see an error message telling you so when cd-ing into the
 project's directory.
 
+You need to have an .envrc file created. Check the .envrc.example to see the required variables and their purpose. Run:
+
+```
+cp .envrc.example .envrc
+```
+Edit the variables on .envrc adding the actual data.
+
+#### Django
+
+Create a superuser to authenticate Woocommerce's webhook requests:
+
+```
+python manage.py createsuperuser --username woocommerce --email woocommerce@example.com
+```
+
+
+Once all previous points are setup run migrations to create the necessary tables on django
+
+```
+python manage.py migrate
+
+```
+
+Afterwards collect all static files by running:
+
+```
+python manage.py collectstatic
+
+```
+
+#### Code style validation
+
+Before pushing changes in the repo please run the following code style validation command:
+
+```
+flake8 . --count --show-source --statistics
+
+```
+If it fails, you'll have to adapt your python code to pass the validation.
+
 ## Usage
 
 ### Authentication
 
-The API we expose for Woocommerce to send its webhook requests requires token
-authentication.
+The API we expose for Woocommerce to send its webhook uses a signature mechanism. The signature is verified using our custom [SignatureValidaton](https://github.com/coopdevs/lazona_connector/blob/main/api/authentication.py).
 
-To generate one you need to create a Django superuser and then to create a token
-for it. You can do so running the commands:
+### Sending a request to the connector
 
-```
-python manage.py createsuperuser --username pau --email pau@example.com
-python manage.py drf_create_token pau
-```
+We'll need to configure our woocommerce instance to send requests to the connector.
 
-This will give you the token to use with the `Authorization` HTTP header in your
-requests like `Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b`.
-See:
-https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication.
+First of all, define the webhook on WooCommerce / Ajustes / Avanzado / Webhooks
 
-### Running in development
+Afterwards, depending on the webhook defined, actions applied to Woocommerce orders will turn into API requests to the connector.
 
-We recommend [HTTPie](https://httpie.io/) to send requests to the API. It helps
-a great deal in managing the request bodies and authentication against the API.
 
-Once installed, make sure you have a user and a token for it in the DB.
-You can build an anonymous session like the one below.
+### Expose my local instance of the connector for testing
 
-```json
-# session.json
-{
-    "__meta__": {
-        "about": "HTTPie session file",
-        "help": "https://httpie.org/doc#sessions",
-        "httpie": "1.0.3"
-    },
-    "auth": {
-        "password": null,
-        "type": null,
-        "username": null
-    },
-    "cookies": {},
-    "headers": {
-        "Accept": "application/json, */*",
-        "Authorization": "Token <put_your_token_here>"
-    }
-}
-```
+For developing purposes we'll use a staging Woocomerce version to create the request and we'll send them to our local instance. To do this we expose our localhost:8000 using ngrok.
 
-then you need a dummy JSON body to send:
-
-```json
-# data.json
-{
-  "order_key": "abc",
-  "shipping": {
-    "first_name": "John",
-    "last_name": "Lennon",
-    "address_1": "Beatles Street 66",
-    "address_2": "",
-    "postcode": "08032",
-    "city": "Barcelona",
-    "state": "Barcelona",
-    "country": "ES"
-  },
-  "billing": {
-    "phone": "666666666",
-    "email": "lennon@example.com"
-  },
-  "customer_note": "prueba"
-}
-```
-
-Now, provided that we point to the Koiki's staging environment by default (see
-`.envrc`), you can run the dev server as `python manage.py runserver` and send
-requests as follows.
-
-```sh
-$ http --json post http://127.0.0.1:8000/api/deliveries/ \
-   --session=./session.json \
-   < data.json
-
-HTTP/1.1 201 Created
-Allow: POST, OPTIONS
-Content-Length: 279
-Content-Type: application/json
-(...)
-```
+You can read ngrok documentation [here](https://ngrok.com/product)
