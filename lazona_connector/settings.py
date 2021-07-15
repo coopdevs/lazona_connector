@@ -188,7 +188,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 # Security
 SECURE_SSL_REDIRECT = bool(os.getenv('SECURE_SSL_REDIRECT', global_settings.SECURE_SSL_REDIRECT))
 CSRF_COOKIE_SECURE = bool(os.getenv('CSRF_COOKIE_SECURE', global_settings.CSRF_COOKIE_SECURE))
-SESSION_COOKIE_SECURE = bool(os.getenv('SESSION_COOKIE_SECURE',global_settings.SESSION_COOKIE_SECURE))
+SESSION_COOKIE_SECURE = bool(os.getenv('SESSION_COOKIE_SECURE', global_settings.SESSION_COOKIE_SECURE))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
