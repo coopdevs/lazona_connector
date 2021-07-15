@@ -11,6 +11,7 @@ import koiki
 class ShipmentTests(TestCase):
     def setUp(self):
         Shipment.objects.all().delete()
+
         self.data = {
             "id": 33,
             "order_key": "xxx",
@@ -95,13 +96,17 @@ class ShipmentTests(TestCase):
                 ],
             },
         )
+
         serializer = OrderSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
+
         order = serializer.validated_data
         mock_email.send.return_value = True
         create_delivery(order)
         self.assertEqual(Shipment.objects.all().count(), 1)
+
         shipment = Shipment.objects.first()
+        self.assertEqual(str(shipment), "yyy")
         self.assertEqual(shipment.delivery_id, "yyy")
         self.assertEqual(shipment.order_id, 33)
         self.assertEqual(shipment.vendor_id, 6)
@@ -124,11 +129,14 @@ class ShipmentTests(TestCase):
 
         serializer = OrderSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
+
         order = serializer.validated_data
         mock_email.send.return_value = True
         create_delivery(order)
         self.assertEqual(Shipment.objects.all().count(), 1)
+
         shipment = Shipment.objects.first()
+        self.assertEqual(str(shipment), "")
         self.assertEqual(shipment.delivery_id, "")
         self.assertEqual(shipment.order_id, 33)
         self.assertEqual(shipment.vendor_id, 6)
