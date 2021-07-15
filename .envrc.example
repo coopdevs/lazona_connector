@@ -5,7 +5,7 @@ export SECRET_KEY="your_secret_here"
 export KOIKI_HOST="https://rekistest.koiki.es/services"
 export KOIKI_AUTH_TOKEN="your_auth_token here"
 
-# Wordpress woocommerce auth
+# Details to connect to WCFM, the Marketplace plugin's API on Woocommerce.
 export WCFMMP_HOST="your_wp_woocomerce_url"
 export WCFMMP_USER="your_wp_woocomerce_user"
 export WCFMMP_PASSWORD="your_wp_woocomerce_password"
@@ -13,6 +13,6 @@ export WCFMMP_PASSWORD="your_wp_woocomerce_password"
 # If you use redis with docker as described on the README, that's your url
 export REDIS_URL="redis://0.0.0.0:6379"
 
-# Details to connect to WCFM, the Marketplace plugin's API on Woocommerce.
+# Wordpress woocommerce webhook auth
 export WC_WEBHOOK_SECRET="your_secret"
 export WC_WEBHOOK_USER="woocommerce"
