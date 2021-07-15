@@ -99,6 +99,23 @@ python manage.py migrate
 
 ```
 
+Afterwards collect all static files by running:
+
+```
+python manage.py collectstatic
+
+```
+
+#### Code style validation
+
+Before pushing changes in the repo please run the following code style validation command:
+
+```
+flake8 . --count --show-source --statistics
+
+```
+If it fails, you'll have to adapt your python code to pass the validation.
+
 ## Usage
 
 ### Authentication
