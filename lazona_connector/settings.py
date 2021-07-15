@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'api',
     'rest_framework',
     'rest_framework.authtoken',
@@ -183,16 +184,18 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = bool(int(os.getenv('EMAIL_USE_TLS', global_settings.EMAIL_USE_TLS)))
 EMAIL_USE_SSL = bool(int(os.getenv('EMAIL_USE_SSL', global_settings.EMAIL_USE_SSL)))
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-# Security
 
+# Security
 SECURE_SSL_REDIRECT = bool(os.getenv('SECURE_SSL_REDIRECT', global_settings.SECURE_SSL_REDIRECT))
 CSRF_COOKIE_SECURE = bool(os.getenv('CSRF_COOKIE_SECURE', global_settings.CSRF_COOKIE_SECURE))
-SESSION_COOKIE_SECURE = bool(os.getenv('SESSION_COOKIE_SECURE',
-                             global_settings.SESSION_COOKIE_SECURE))
+SESSION_COOKIE_SECURE = bool(os.getenv('SESSION_COOKIE_SECURE',global_settings.SESSION_COOKIE_SECURE))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
-#  STATIC_URL = '/static/'
-
+# Woocommerce
 WC_WEBHOOK_USER = os.getenv('WC_WEBHOOK_USER')
