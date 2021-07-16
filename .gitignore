@@ -8,4 +8,4 @@ session.json
 data.json
 label.pdf
 pdf_barcodes/*.pdf
-static
+staticfiles
