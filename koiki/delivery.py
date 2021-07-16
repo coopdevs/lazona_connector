@@ -15,6 +15,10 @@ class Delivery:
         self.shipment_id = data["numPedido"]
         self.order_id = data["order_id"]
 
+    @property
+    def barcode(self):
+        return self.data.get("codBarras", "")
+
     def to_dict(self):
         return {
             "number": self.data["numPedido"],

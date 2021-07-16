@@ -32,7 +32,7 @@ def create_delivery(order):
             ).send()
 
         Shipment(
-            delivery_id=delivery.data.get("codBarras", ""),
+            delivery_id=delivery.barcode,
             order_id=int(delivery.order_id),
             vendor_id=int(delivery.vendor.id),
             label_url=label_url,

@@ -8,7 +8,7 @@ class ShipmentStatus(models.TextChoices):
 
 
 class Shipment(models.Model):
-    delivery_id = models.CharField(max_length=100, null=False, blank=False, unique=True)
+    delivery_id = models.CharField(max_length=100, null=False, blank=True, unique=False)
     order_id = models.IntegerField(null=False, blank=False)
     vendor_id = models.IntegerField(null=False, blank=False)
     label_url = models.CharField(max_length=200, blank=True)
