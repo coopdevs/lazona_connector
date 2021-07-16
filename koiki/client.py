@@ -22,7 +22,7 @@ class Client:
         endpoint_req = CreateDelivery(self.order)
         req_body = self._authentication(endpoint_req)
         url = self._url(endpoint_req)
-        self.logger.info("Koiki request to {}. body={}".format(url, req_body))
+        self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
 
         response = requests.post(url, json=req_body)
         response_body = json.loads(response.text)

@@ -44,7 +44,7 @@ class APIClient:
 
     def search_email(self, email):
         args = [email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
-        self.logger.info("SugarCRM searching email: {}".format(email))
+        self.logger.debug("SugarCRM searching email in CRM: {}".format(email))
         response = self._api_request("search_by_module", args)
         result = response.json()
 

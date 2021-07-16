@@ -16,7 +16,6 @@ class SuccessDeliveryMail:
         self.message = render_to_string("contact_template.txt", context)
 
     def send(self):
-        logger.info("Sending Koiki pdf to email {}".format(self.recipient))
         send_mail = EmailMessage(
             _("Enviament Koiki per a la comanda: {}").format(self.order_id),
             self.message,

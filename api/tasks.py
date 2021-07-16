@@ -1,3 +1,4 @@
+from koiki import logger
 from koiki.client import Client
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail
 from sugarcrm.customer import Customer
@@ -22,6 +23,8 @@ def create_delivery(order):
         else:
             delivery_status = ShipmentStatus.LABEL_SENT
             label_url = delivery.print_pdf()
+
+            logger.info("Sending Koiki pdf to vendor with id {}".format(delivery.vendor.id))
             SuccessDeliveryMail(
                 pdf_path=label_url,
                 recipient=delivery.vendor.email,

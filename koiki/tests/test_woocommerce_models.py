@@ -2,7 +2,7 @@ from unittest import TestCase
 import httpretty
 import json
 
-from koiki.woocommerce.models import LineItem, Vendor, Shipping, Billing
+from koiki.woocommerce.resources import LineItem, Vendor, Shipping, Billing
 import koiki
 
 
