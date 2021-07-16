@@ -82,7 +82,7 @@ class TasksTests(TestCase):
         client.create_delivery.return_value = [delivery]
         mock_print_pdf.return_value = "pdf_barcodes/test.pdf"
         mock_client.return_value = client
-        self.assertEqual(delivery.barcode, "CODBAR33")
+        self.assertEqual(delivery.get_data_val("barcode"), "CODBAR33")
         serializer = OrderSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
         order = serializer.validated_data

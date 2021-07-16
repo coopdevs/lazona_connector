@@ -16,8 +16,8 @@ def create_delivery(order):
         if delivery._is_errored():
             delivery_status = ShipmentStatus.ERROR_FROM_BODY
             FailedDeliveryMail(
-                order_id=delivery.order_id,
-                error_returned=delivery.data.get("mensaje"),
+                order_id=delivery.get_data_val("order_id"),
+                error_returned=delivery.get_data_val("message"),
                 req_body=delivery.req_body
             ).send()
         else:
@@ -28,12 +28,12 @@ def create_delivery(order):
             SuccessDeliveryMail(
                 pdf_path=label_url,
                 recipient=delivery.vendor.email,
-                order_id=delivery.order_id
+                order_id=delivery.get_data_val("order_id")
             ).send()
 
         Shipment(
-            delivery_id=delivery.barcode,
-            order_id=int(delivery.order_id),
+            delivery_id=delivery.get_data_val("barcode"),
+            order_id=int(delivery.get_data_val("order_id")),
             vendor_id=int(delivery.vendor.id),
             label_url=label_url,
             status=delivery_status,

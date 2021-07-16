@@ -36,9 +36,9 @@ class Client:
                 delivery = Delivery(delivery_data, vendor, req_body_shipping)
 
                 if delivery._is_errored():
-                    self._log(delivery.data.get("respuesta"), delivery.data, level="error")
+                    self._log(delivery.get_data_val("response"), delivery.data, level="error")
                 else:
-                    self._log(delivery.data.get("respuesta"), self._masked_body(delivery_data))
+                    self._log(delivery.get_data_val("response"), self._masked_body(delivery_data))
 
                 deliveries.append(delivery)
 
