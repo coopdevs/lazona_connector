@@ -98,8 +98,9 @@ class KoikiTest(TestCase):
         deliveries = Client(self.order).create_delivery()
 
         mock_logger.error.assert_not_called()
-        self.assertEqual(deliveries[0].to_dict(), {'number': '123', 'barcode': 'yyy',
-                                                   'label': 'abcd', 'order_id': 33})
+        self.assertEqual(deliveries[0].to_dict(), {'shipment_id': '123', 'barcode': 'yyy',
+                                                   'label': 'abcd', 'order_id': 33,
+                                                   'response': '', 'message': ''})
 
     @responses.activate
     @patch('koiki.logger', autospec=True)
