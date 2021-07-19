@@ -130,7 +130,7 @@ class TasksTests(TestCase):
         mock_logger.info.assert_called_once_with("Sending Koiki pdf to vendor with id 6")
         self.assertIn({'to': ['test@test.es']}, mock_email.call_args)
         message = mock_email.call_args[0][1]
-        self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)
+        self.assertIn(f"{koiki.wcfmmp_host}/area-privada/orders-details/33", message)
 
     @responses.activate
     @patch('koiki.email.EmailMessage', autospec=True)
@@ -154,7 +154,7 @@ class TasksTests(TestCase):
         mock_logger.info.assert_called_once_with("Sending Koiki error to admins for order 33")
         self.assertIn({'to': ['admin@email.com']}, mock_email.call_args)
         message = mock_email.call_args[0][1]
-        self.assertIn(f"{koiki.wcfmmp_host}area-privada/orders-details/33", message)
+        self.assertIn(f"{koiki.wcfmmp_host}/area-privada/orders-details/33", message)
         self.assertIn("Missing field X", message)
 
     @responses.activate

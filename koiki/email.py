@@ -12,7 +12,7 @@ class SuccessDeliveryMail:
         self.recipient = recipient
         self.order_id = order_id
 
-        context = {"url_wc_order": f"{wcfmmp_host}area-privada/orders-details/{order_id}"}
+        context = {"url_wc_order": f"{wcfmmp_host}/area-privada/orders-details/{order_id}"}
         self.message = render_to_string("contact_template.txt", context)
 
     def send(self):
@@ -34,7 +34,7 @@ class FailedDeliveryMail:
         if not error_returned:
             error_returned = "Missatge d'error no proporcionat"
         context = {
-            "url_wc_order": f"{wcfmmp_host}area-privada/orders-details/{order_id}",
+            "url_wc_order": f"{wcfmmp_host}/area-privada/orders-details/{order_id}",
             "req_body": req_body,
             "error_returned": error_returned,
         }
