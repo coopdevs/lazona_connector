@@ -16,3 +16,13 @@ export REDIS_URL="redis://0.0.0.0:6379"
 # Wordpress woocommerce webhook auth
 export WC_WEBHOOK_SECRET="your_secret"
 export WC_WEBHOOK_USER="woocommerce"
+
+# Email configuration
+export KOIKI_ERROR_MAIL_RECIPIENTS="email1@example.com,email2@example.com"
+export EMAIL_HOST="your smtp host"
+export EMAIL_PORT="your smtp port"
+export EMAIL_HOST_USER="your smtp user"
+export EMAIL_HOST_PASSWORD="your smtp user's password"
+export EMAIL_USE_TLS="If the connection is secure in nature then the value for this option will be true."
+export EMAIL_USE_SSL="If the connection is secure in nature then the value for this option will be true."
+export DEFAULT_FROM_EMAIL="email@example.com"
