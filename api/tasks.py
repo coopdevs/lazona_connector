@@ -5,11 +5,11 @@ from sugarcrm.customer import Customer
 import wordpress
 from wordpress.user import WPUser
 from lazona_connector.celery import app
-from api.models import Shipment, ShipmentStatus
 
 
 @app.task
 def create_delivery(order):
+    from api.models import Shipment, ShipmentStatus
     deliveries_by_vendor = Client(order).create_delivery()
     for delivery in deliveries_by_vendor:
         label_url = ""
