@@ -1,9 +1,6 @@
 import base64
 import os
 
-# TODO: convert this class into Django Model in order to link Koiki's shipping,
-# with WC purchase and PDF
-
 
 class Delivery:
     pdf_folder = "pdf_barcodes"
@@ -12,26 +9,29 @@ class Delivery:
         self.data = data
         self.vendor = vendor
         self.req_body = req_body
-        self.shipment_id = data["numPedido"]
-        self.order_id = data["order_id"]
 
     def to_dict(self):
         return {
-            "number": self.data["numPedido"],
-            "barcode": self.data["codBarras"],
-            "label": self.data["etiqueta"],
-            "order_id": self.data["order_id"]
+            "barcode": self.data.get("codBarras", ""),
+            "label": self.data.get("etiqueta", ""),
+            "order_id": self.data.get("order_id", ""),
+            "shipment_id": self.data.get("numPedido", ""),
+            "message": self.data.get("mensaje", ""),
+            "response": self.data.get("respuesta", "")
         }
 
     def _is_errored(self):
-        return self.data.get("respuesta", "") != "101"
+        return self.get_data_val("response") != "101"
 
     def print_pdf(self):
-        content = base64.b64decode(self.data["etiqueta"])
-        pdf_path = os.path.join(self.pdf_folder, f"{self.shipment_id}.pdf")
+        content = base64.b64decode(self.get_data_val("label"))
+        pdf_path = os.path.join(self.pdf_folder, f"{self.get_data_val('shipment_id')}.pdf")
         if not os.path.exists(pdf_path):
             pdf = open(pdf_path, "wb")
             pdf.write(content)
             pdf.close()
 
         return pdf_path
+
+    def get_data_val(self, key):
+        return self.to_dict()[key]

@@ -5,25 +5,39 @@ from sugarcrm.customer import Customer
 import wordpress
 from wordpress.user import WPUser
 from lazona_connector.celery import app
+from api.models import Shipment, ShipmentStatus
 
 
 @app.task
 def create_delivery(order):
     deliveries_by_vendor = Client(order).create_delivery()
     for delivery in deliveries_by_vendor:
+        label_url = ""
         if delivery._is_errored():
+            delivery_status = ShipmentStatus.ERROR_FROM_BODY
             FailedDeliveryMail(
-                order_id=delivery.order_id,
-                error_returned=delivery.data.get("mensaje"),
+                order_id=delivery.get_data_val("order_id"),
+                error_returned=delivery.get_data_val("message"),
                 req_body=delivery.req_body
             ).send()
         else:
+            delivery_status = ShipmentStatus.LABEL_SENT
+            label_url = delivery.print_pdf()
+
             logger.info("Sending Koiki pdf to vendor with id {}".format(delivery.vendor.id))
             SuccessDeliveryMail(
-                pdf_path=delivery.print_pdf(),
+                pdf_path=label_url,
                 recipient=delivery.vendor.email,
-                order_id=delivery.order_id
+                order_id=delivery.get_data_val("order_id")
             ).send()
+
+        Shipment(
+            delivery_id=delivery.get_data_val("barcode"),
+            order_id=int(delivery.get_data_val("order_id")),
+            vendor_id=int(delivery.vendor.id),
+            label_url=label_url,
+            status=delivery_status,
+        ).save()
 
 
 @app.task
