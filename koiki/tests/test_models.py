@@ -23,7 +23,8 @@ class ModelsTest(TestCase):
             'tipoServicio': '',
             'reembolso': 0.0,
             'kilos': 0.0,
-            'bultos': 2
+            # TODO: We're forcing each vendor generates always 1 package. Need to enhace this feature.
+            'bultos': 1
         })
 
     def test_shipment_default_packages(self):
