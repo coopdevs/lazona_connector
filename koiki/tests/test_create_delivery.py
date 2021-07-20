@@ -136,7 +136,8 @@ class CreateDeliveryTest(TestCase):
 
         self.assertDictContainsSubset({
             'numPedido': 'xxx',
-            'bultos': 2,
+            # TODO: Refactor we're forcing each vendor generates always 1 package.
+            'bultos': 1,
             'kilos': 0.0,
             'tipoServicio': '',
             'reembolso': 0.0,
