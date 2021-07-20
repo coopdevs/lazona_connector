@@ -52,7 +52,10 @@ class Shipment():
     def to_dict(self):
         return {
             'numPedido': self.number,
-            'bultos': self.packages,
+            # 'bultos': self.packages,
+            # TODO: control num of packages sent by each vendor. Right now we impose 1 package per vendor/
+            # Otherwise leaving one package per product per vendor we get an error on koiki.client create_delivery method
+            'bultos': 1,
             'kilos': 0.0,
             'tipoServicio': '',
             'reembolso': 0.0,
