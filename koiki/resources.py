@@ -49,12 +49,15 @@ class Shipment():
         self.note = order.get('customer_note', '')
         self.packages = packages
 
+    # TODO: control num of packages sent by each vendor.
+    """
+    Right now we force 1 package per vendor
+    More than one package per vendor throws an error on koiki.client create_delivery
+    """
     def to_dict(self):
         return {
             'numPedido': self.number,
             # 'bultos': self.packages,
-            # TODO: control num of packages sent by each vendor. Right now we impose 1 package per vendor/
-            # Otherwise leaving one package per product per vendor we get an error on koiki.client create_delivery method
             'bultos': 1,
             'kilos': 0.0,
             'tipoServicio': '',

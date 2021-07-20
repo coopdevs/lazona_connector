@@ -23,7 +23,7 @@ class ModelsTest(TestCase):
             'tipoServicio': '',
             'reembolso': 0.0,
             'kilos': 0.0,
-            # TODO: We're forcing each vendor generates always 1 package. Need to enhace this feature.
+            # TODO: Refactor we're forcing each vendor generates always 1 package.
             'bultos': 1
         })
 

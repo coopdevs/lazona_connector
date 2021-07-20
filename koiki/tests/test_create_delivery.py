@@ -136,7 +136,7 @@ class CreateDeliveryTest(TestCase):
 
         self.assertDictContainsSubset({
             'numPedido': 'xxx',
-            # TODO: We're forcing each vendor generates always 1 package. Need to enhace this feature.
+            # TODO: Refactor we're forcing each vendor generates always 1 package.
             'bultos': 1,
             'kilos': 0.0,
             'tipoServicio': '',
