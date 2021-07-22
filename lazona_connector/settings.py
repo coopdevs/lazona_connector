@@ -71,9 +71,7 @@ LOGGING = {
     }
 }
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'scout_apm.django',
     'django.contrib.admin',
@@ -102,6 +100,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'lazona_connector.urls'
@@ -127,14 +126,12 @@ WSGI_APPLICATION = 'lazona_connector.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
 if 'DATABASE_URL' in os.environ:
     disable_ssl = bool(os.getenv('DATABASE_DISABLE_SSL', default=False))
 
     DATABASES = {
         'default': dj_database_url.config(conn_max_age=600, ssl_require=not disable_ssl)
     }
-
 else:
     DATABASES = {
         'default': {
@@ -145,7 +142,6 @@ else:
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -161,18 +157,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 LOCALE_PATHS = [os.path.join(BASE_DIR, "i18n")]
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Mail settings
@@ -196,10 +187,6 @@ SESSION_COOKIE_SECURE = bool(
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Woocommerce
 WC_WEBHOOK_USER = os.getenv('WC_WEBHOOK_USER')
