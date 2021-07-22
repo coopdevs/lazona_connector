@@ -8,9 +8,9 @@ from lazona_connector.celery import app
 
 
 @app.task
-def create_delivery(order):
+def create_delivery(order_data):
     from api.models import Shipment, ShipmentStatus
-    deliveries_by_vendor = Client(order).create_delivery()
+    deliveries_by_vendor = Client().create_delivery(order_data)
     for delivery in deliveries_by_vendor:
         label_url = ""
         if delivery._is_errored():

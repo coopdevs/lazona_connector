@@ -1,7 +1,7 @@
 from unittest import TestCase
 import responses
 from koiki.order import Order
-from koiki.create_delivery import CreateDelivery
+from koiki.delivery_create import CreateDelivery
 import koiki
 
 

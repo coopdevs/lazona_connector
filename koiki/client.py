@@ -3,23 +3,24 @@ import requests
 import json
 import copy
 
-from koiki.create_delivery import CreateDelivery
+from koiki.delivery_create import CreateDelivery
+from koiki.delivery_update import UpdateDelivery
 from koiki.delivery import Delivery
 from koiki.order import Order
 import koiki
 
-API_PATH = "/rekis/api"
+# API_PATH = "/rekis/api"
 
 
 class Client:
-    def __init__(self, order, auth_token=koiki.auth_token, logger=koiki.logger):
-        self.order = Order(order)
+    def __init__(self, auth_token=koiki.auth_token, logger=koiki.logger):
         self.auth_token = auth_token
         self.host = koiki.host
         self.logger = logger
 
-    def create_delivery(self):
-        endpoint_req = CreateDelivery(self.order)
+    def create_delivery(self,order_data):
+        order = Order(order_data)
+        endpoint_req = CreateDelivery(order)
         req_body = self._authentication(endpoint_req)
         url = self._url(endpoint_req)
         self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
@@ -30,9 +31,9 @@ class Client:
         deliveries = []
         if response.status_code == status.HTTP_200_OK:
             for num, delivery_data in enumerate(response_body["envios"]):
-                vendor = self.order.vendors[num]
+                vendor = order.vendors[num]
                 req_body_shipping = req_body["envios"][num]
-                delivery_data["order_id"] = self.order.order_id
+                delivery_data["order_id"] = order.order_id
                 delivery = Delivery(delivery_data, vendor, req_body_shipping)
 
                 if delivery._is_errored():
@@ -47,8 +48,19 @@ class Client:
 
         return deliveries
 
+    def update_delivery_status(self,delivery_id):
+        endpoint_req = UpdateDelivery(delivery_id)
+        req_body = self._authentication(endpoint_req)
+        url = self._url(endpoint_req)
+        self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
+
+        response = requests.post(url, json=req_body)
+        response_body = json.loads(response.text)
+
+        return response
+
     def _url(self, endpoint_req):
-        return f"{self.host}{API_PATH}{endpoint_req.url()}"
+        return f"{self.host}{endpoint_req.url()}"
 
     def _authentication(self, endpoint_req):
         return {**endpoint_req.body(), **{"token": self.auth_token}}

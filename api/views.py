@@ -15,8 +15,8 @@ class DeliveryList(APIView):
     def post(self, request):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
-            order = serializer.validated_data
-            create_delivery.delay(order)
+            order_data = serializer.validated_data
+            create_delivery.delay(order_data)
 
             return Response(status=status.HTTP_201_CREATED)
 
