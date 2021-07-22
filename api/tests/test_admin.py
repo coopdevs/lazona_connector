@@ -15,6 +15,12 @@ request = request_factory.get('/admin')
 request.user = MockSuperUser()
 
 
+class MockSuperUserTest(TestCase):
+
+    def test_admin_user_permissions(self):
+        self.assertTrue(request.user.has_perm("any_perrmission_you_could_need"))
+
+
 class ShipmentAdminTest(TestCase):
 
     def setUp(self):
