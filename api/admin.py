@@ -18,7 +18,7 @@ class ShipmentAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         custom_urls = [
             path(
-                "deliveries/retrigger/<int:shipment_id>/",
+                "<int:shipment_id>/delivery/retry/",
                 self.admin_site.admin_view(self.retry_delivery),
                 name="retry-delivery",
             ),

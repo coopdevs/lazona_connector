@@ -29,11 +29,18 @@ class ShipmentAdminTest(TestCase):
         site = AdminSite()
         self.admin = ShipmentAdmin(Shipment, site)
 
+    def test_shipment_actions(self):
+        actions = self.admin.shipment_actions(self.shipment)
+        self.assertEqual(
+            actions,
+            '<a class="button" href="/admin/api/shipment/' +
+            str(self.shipment.pk) + '/delivery/retry/">Reintentar enviament</a>'
+        )
+
     def test_retry_delivery(self):
-        response = self.admin.retry_delivery(request, self.shipment)
-        print(response)
+        response = self.admin.retry_delivery(request, self.shipment.pk)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.content,
-            bytes("retrying delivery of "+self.shipment.delivery_id, response.charset)
+            bytes("retrying delivery of "+str(self.shipment.pk), response.charset)
         )
