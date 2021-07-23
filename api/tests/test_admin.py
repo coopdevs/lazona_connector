@@ -39,8 +39,8 @@ class ShipmentAdminTest(TestCase):
         actions = self.admin.shipment_actions(self.shipment)
         self.assertEqual(
             actions,
-            '<a class="button" href="/admin/api/shipment/' +
-            str(self.shipment.pk) + '/delivery/retry/">Reintentar enviament</a>'
+            '<a class="button" href="/admin/api/shipment/{}'.format(self.shipment.pk) +
+            '/delivery/retry/">Reintentar enviament</a>'
         )
 
     def test_retry_delivery(self):
@@ -48,5 +48,5 @@ class ShipmentAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.content,
-            bytes("retrying delivery of "+str(self.shipment.pk), response.charset)
+            bytes("retrying delivery of {}".format(self.shipment.pk), response.charset)
         )
