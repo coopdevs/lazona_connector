@@ -1,9 +1,14 @@
+from rest_framework import status
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse, path
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+
 from .models import Shipment
+from koiki.woocommerce.woocommerce import APIClient
+from api.serializers import OrderSerializer
+from api.tasks import create_delivery
 
 
 @admin.register(Shipment)
@@ -27,7 +32,16 @@ class ShipmentAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def retry_delivery(self, request, shipment_id):
-        return HttpResponse(f"retrying delivery of {shipment_id}")
+        client = APIClient()
+        shipment = Shipment.objects.get(id=shipment_id)
+        response = client.request(f"orders/{shipment.order_id}")
+        serializer = OrderSerializer(data=response.json())
+        if serializer.is_valid():
+            order = serializer.validated_data
+            create_delivery.delay(order, vendor_id=str(shipment.vendor_id))
+            return HttpResponseRedirect(reverse("admin:api_shipment_change", args=(shipment.id,)))
+
+        return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def shipment_actions(self, obj):
         if obj.pk:

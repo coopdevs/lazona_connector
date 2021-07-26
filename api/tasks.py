@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from koiki import logger
 from koiki.client import Client
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail
@@ -8,9 +10,10 @@ from lazona_connector.celery import app
 
 
 @app.task
-def create_delivery(order):
+def create_delivery(order, vendor_id=None):
     from api.models import Shipment, ShipmentStatus
-    deliveries_by_vendor = Client(order).create_delivery()
+
+    deliveries_by_vendor = Client(order, vendor_id).create_delivery()
     for delivery in deliveries_by_vendor:
         label_url = ""
         if delivery._is_errored():
@@ -18,7 +21,7 @@ def create_delivery(order):
             FailedDeliveryMail(
                 order_id=delivery.get_data_val("order_id"),
                 error_returned=delivery.get_data_val("message"),
-                req_body=delivery.req_body
+                req_body=delivery.req_body,
             ).send()
         else:
             delivery_status = ShipmentStatus.LABEL_SENT
@@ -28,16 +31,16 @@ def create_delivery(order):
             SuccessDeliveryMail(
                 pdf_path=label_url,
                 recipient=delivery.vendor.email,
-                order_id=delivery.get_data_val("order_id")
+                order_id=delivery.get_data_val("order_id"),
             ).send()
-
-        Shipment(
-            delivery_id=delivery.get_data_val("barcode"),
-            order_id=int(delivery.get_data_val("order_id")),
-            vendor_id=int(delivery.vendor.id),
-            label_url=label_url,
-            status=delivery_status,
-        ).save()
+        shipment, created = Shipment.objects.get_or_create(
+            order_id=int(delivery.get_data_val("order_id")), vendor_id=int(delivery.vendor.id)
+        )
+        shipment.delivery_id = delivery.get_data_val("barcode")
+        shipment.label_url = label_url
+        shipment.status = delivery_status
+        shipment.update_at = datetime.now()
+        shipment.save()
 
 
 @app.task
