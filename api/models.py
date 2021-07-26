@@ -19,6 +19,7 @@ class Shipment(models.Model):
         null=False,
         blank=False,
     )
+    updated_at = models.DateTimeField(_("Última actualització"), auto_now=True)
 
     def __str__(self):
-        return self.delivery_id
+        return '{}: (wc_order:{}, vendor:{})'.format(self.pk, self.order_id, self.vendor_id)
