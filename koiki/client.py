@@ -7,15 +7,15 @@ from koiki.delivery_create import CreateDelivery
 from koiki.delivery_update import UpdateDelivery
 from koiki.delivery import Delivery
 from koiki.order import Order
-import koiki
+import koiki.vars
 
 # API_PATH = "/rekis/api"
 
 
 class Client:
-    def __init__(self, auth_token=koiki.auth_token, logger=koiki.logger):
+    def __init__(self, auth_token=koiki.vars.auth_token, logger=koiki.vars.logger):
         self.auth_token = auth_token
-        self.host = koiki.host
+        self.host = koiki.vars.host
         self.logger = logger
 
     def create_delivery(self,order_data):

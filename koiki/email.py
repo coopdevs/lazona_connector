@@ -3,7 +3,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
-from koiki import wcfmmp_host, logger, error_mail_recipients
+from koiki.vars import wcfmmp_host, logger, error_mail_recipients
 
 
 class SuccessDeliveryMail:

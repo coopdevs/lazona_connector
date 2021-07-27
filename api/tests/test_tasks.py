@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from api.serializers import OrderSerializer
 from api.tasks import create_delivery
-import koiki
+import koiki.vars
 from koiki.delivery import Delivery
 
 
@@ -43,7 +43,7 @@ class TasksTests(TestCase):
             }]
         }
 
-        responses.add(responses.GET, f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
+        responses.add(responses.GET, f'{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
                       status=200,
                       json={
                         "phone": "",
@@ -130,7 +130,7 @@ class TasksTests(TestCase):
         mock_logger.info.assert_called_once_with("Sending Koiki pdf to vendor with id 6")
         self.assertIn({'to': ['test@test.es']}, mock_email.call_args)
         message = mock_email.call_args[0][1]
-        self.assertIn(f"{koiki.wcfmmp_host}/area-privada/orders-details/33", message)
+        self.assertIn(f"{koiki.vars.wcfmmp_host}/area-privada/orders-details/33", message)
 
     @responses.activate
     @patch('koiki.email.EmailMessage', autospec=True)
@@ -154,7 +154,7 @@ class TasksTests(TestCase):
         mock_logger.info.assert_called_once_with("Sending Koiki error to admins for order 33")
         self.assertIn({'to': ['admin@email.com']}, mock_email.call_args)
         message = mock_email.call_args[0][1]
-        self.assertIn(f"{koiki.wcfmmp_host}/area-privada/orders-details/33", message)
+        self.assertIn(f"{koiki.vars.wcfmmp_host}/area-privada/orders-details/33", message)
         self.assertIn("Missing field X", message)
 
     @responses.activate

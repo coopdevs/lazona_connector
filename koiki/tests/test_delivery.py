@@ -1,9 +1,12 @@
 from django.test import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import patch,MagicMock
 from koiki.delivery import Delivery
+from tests_support.env_tests_support import EnvTestsSupport
 
 
 class DeliveryTests(TestCase):
+    def setUp(self):
+        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
     def test_attributes(self):
         data = {
             "order_id": 33,

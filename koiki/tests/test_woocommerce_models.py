@@ -1,12 +1,17 @@
 from unittest import TestCase
+from unittest.mock import patch
 import httpretty
 import json
 
 from koiki.woocommerce.resources import LineItem, Vendor, Shipping, Billing
-import koiki
+import koiki.vars
+from tests_support.env_tests_support import EnvTestsSupport
 
 
 class WooocommerceModelsTest(TestCase):
+
+    def setUp(self):
+        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
 
     def test_line_item(self):
         metadata = [
@@ -52,7 +57,7 @@ class WooocommerceModelsTest(TestCase):
     def test_vendor_fetch(self):
         httpretty.register_uri(
             httpretty.GET,
-            f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1',
+            f'{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1',
             status=200,
             content_type='application/json',
             body=json.dumps({
@@ -89,7 +94,7 @@ class WooocommerceModelsTest(TestCase):
     def test_vendor_without_country(self):
         httpretty.register_uri(
             httpretty.GET,
-            f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1',
+            f'{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1',
             status=200,
             content_type='application/json',
             body=json.dumps({

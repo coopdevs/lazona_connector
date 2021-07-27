@@ -5,7 +5,7 @@ from django.test import TestCase
 from api.serializers import OrderSerializer
 from api.tasks import create_delivery
 from api.models import Shipment, ShipmentStatus
-import koiki
+import koiki.vars
 
 
 class ShipmentTests(TestCase):
@@ -47,7 +47,7 @@ class ShipmentTests(TestCase):
 
         responses.add(
             responses.GET,
-            f"{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6",
+            f"{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6",
             status=200,
             json={
                 "phone": "",

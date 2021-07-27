@@ -2,11 +2,13 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from koiki.woocommerce.wcfmmp import APIClient
+from tests_support.env_tests_support import EnvTestsSupport
 
 
 class APIClientTest(TestCase):
 
     def setUp(self):
+        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
         self.mock_client = MagicMock()
 
     def test_request(self):

@@ -1,11 +1,13 @@
 from unittest import TestCase
-
+from unittest.mock import patch
 from koiki.order import Order
+from tests_support.env_tests_support import EnvTestsSupport
 
 
 class OrderTest(TestCase):
 
     def setUp(self):
+        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
         self.data = {
             'id': 33,
             'order_key': '123x',
