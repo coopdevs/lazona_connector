@@ -9,6 +9,7 @@ from .models import Shipment
 from koiki.woocommerce.woocommerce import APIClient
 from api.serializers import OrderSerializer
 from api.tasks import create_or_update_delivery
+from koiki.client import Client
 
 
 @admin.register(Shipment)
@@ -26,6 +27,11 @@ class ShipmentAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.retry_delivery),
                 name="retry-delivery",
             ),
+            path(
+                "<int:shipment_id>/delivery/update-status/",
+                self.admin_site.admin_view(self.update_delivery_status),
+                name="update-delivery-status",
+            ),
         ]
 
         return custom_urls + urls
@@ -42,11 +48,24 @@ class ShipmentAdmin(admin.ModelAdmin):
 
         return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update_delivery_status(self, request, shipment_id):
+        shipment_model = Shipment.objects.get(pk=shipment_id)
+        response = Client().update_delivery_status(shipment_model.delivery_id)
+        return HttpResponse(f"updating delivery status of {shipment_id}")
+
+
     def shipment_actions(self, obj):
         if obj.pk:
             return format_html(
                 '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:retry-delivery", args=[obj.pk]), _("Reintentar enviament")
+                    reverse("admin:retry-delivery",
+                    args=[obj.pk]),
+                    _("Reintentar enviament")
+                ) +
+                '<a class="button" href="{}">{}</a>'.format(
+                    reverse("admin:update-delivery-status",
+                    args=[obj.pk]),
+                    _("Actualitzar estat de l'enviament")
                 )
             )
 

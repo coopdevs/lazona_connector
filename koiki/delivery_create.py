@@ -4,7 +4,7 @@ from koiki.woocommerce.resources import Shipping, Billing
 
 class CreateDelivery():
     LABEL_FORMAT = 'PDF'
-    RESOURCE_PATH = '/altaEnvios'
+    RESOURCE_PATH = '/rekis/api/altaEnvios'
 
     def __init__(self, order):
         self.order = order

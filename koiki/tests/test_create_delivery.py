@@ -1,7 +1,7 @@
 from unittest import TestCase
 import responses
 from koiki.order import Order
-from koiki.create_delivery import CreateDelivery
+from koiki.delivery_create import CreateDelivery
 import koiki
 
 
@@ -174,4 +174,4 @@ class CreateDeliveryTest(TestCase):
         }, deliveries[1])
 
     def test_url(self):
-        self.assertEqual(CreateDelivery(Order(self.order)).url(), '/altaEnvios')
+        self.assertEqual(CreateDelivery(Order(self.order)).url(), '/rekis/api/altaEnvios')
