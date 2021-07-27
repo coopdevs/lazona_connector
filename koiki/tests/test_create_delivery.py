@@ -174,4 +174,4 @@ class CreateDeliveryTest(TestCase):
         }, deliveries[1])
 
     def test_url(self):
-        self.assertEqual(CreateDelivery(Order(self.order)).url(), '/altaEnvios')
+        self.assertEqual(CreateDelivery(Order(self.order)).url(), '/rekis/api/altaEnvios')
