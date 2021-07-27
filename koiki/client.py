@@ -14,6 +14,7 @@ API_PATH = "/rekis/api"
 class Client:
     def __init__(self, order, vendor_id=None, auth_token=koiki.auth_token, logger=koiki.logger):
         self.order = Order(order).filter(vendor_id)
+        self.order = Order(order).filter_by_vendor(vendor_id)
         self.auth_token = auth_token
         self.host = koiki.host
         self.logger = logger

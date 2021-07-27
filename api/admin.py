@@ -8,12 +8,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Shipment
 from koiki.woocommerce.woocommerce import APIClient
 from api.serializers import OrderSerializer
-from api.tasks import create_delivery
+from api.tasks import create_or_update_delivery
 
 
 @admin.register(Shipment)
 class ShipmentAdmin(admin.ModelAdmin):
-
     list_display = ("pk", "updated_at", "status", "delivery_id", "order_id", "vendor_id")
     list_filter = ("status",)
     search_fields = ("delivery_id",)
@@ -38,7 +37,7 @@ class ShipmentAdmin(admin.ModelAdmin):
         serializer = OrderSerializer(data=response.json())
         if serializer.is_valid():
             order = serializer.validated_data
-            create_delivery.delay(order, vendor_id=str(shipment.vendor_id))
+            create_or_update_delivery(order, vendor_id=str(shipment.vendor_id))
             return HttpResponseRedirect(reverse("admin:api_shipment_change", args=(shipment.id,)))
 
         return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -10,7 +10,7 @@ from lazona_connector.celery import app
 
 
 @app.task
-def create_delivery(order, vendor_id=None):
+def create_or_update_delivery(order, vendor_id=None):
     from api.models import Shipment, ShipmentStatus
 
     deliveries_by_vendor = Client(order, vendor_id).create_delivery()
