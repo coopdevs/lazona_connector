@@ -40,6 +40,7 @@ class ShipmentAdmin(admin.ModelAdmin):
         response = Client().update_delivery_status(shipment_model.delivery_id)
         return HttpResponse(f"updating delivery status of {shipment_id}")
 
+
     def shipment_actions(self, obj):
         if obj.pk:
             return format_html(
