@@ -5,6 +5,7 @@ import json
 
 from koiki.woocommerce.resources import LineItem, Vendor, Shipping, Billing
 import koiki.vars
+import wordpress.vars
 from tests_support.env_tests_support import EnvTestsSupport
 
 
@@ -68,7 +69,7 @@ class WooocommerceModelsTest(TestCase):
         )
         httpretty.register_uri(
             httpretty.GET,
-            f"{koiki.vars.wp_host}/wp-json/wp/v2/users/1?context=edit",
+            f"{wordpress.vars.wp_host}/wp-json/wp/v2/users/1?context=edit",
             status=200,
             content_type="application/json",
             body=json.dumps(

@@ -12,5 +12,5 @@ class EnvTestsSupport:
             "SUGARCRM_USER": "test_sugarcrm_user",
             "SUGARCRM_PASSWORD": "test_sugarcrm_password",
             "SUGARCRM_MEMBERSHIP_ROLES": "^member^,^is_partner^",
-            "WP_PARTNER_ROLE": "socia_opcions",
+            "WP_PARTNER_ROLE": "wp_partner_role",
         }

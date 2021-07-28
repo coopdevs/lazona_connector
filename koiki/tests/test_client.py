@@ -2,10 +2,11 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock
 import responses
 import json
+import os
+
 from koiki.client import Client
 import koiki.vars
 from tests_support.env_tests_support import EnvTestsSupport
-import os
 
 
 @patch.dict(os.environ, EnvTestsSupport.to_dict())
