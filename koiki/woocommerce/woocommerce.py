@@ -1,17 +1,16 @@
 import requests
-
-import koiki
+import koiki.vars
 
 
 class APIClient():
     api_path = "wp-json/wc/v3"
-    api_url = f'{koiki.wcfmmp_host}/{api_path}'
+    api_url = f'{koiki.vars.wcfmmp_host}/{api_path}'
 
-    def __init__(self, client=requests, logger=koiki.logger):
+    def __init__(self, client=requests, logger=koiki.vars.logger):
         self.client = client
         self.logger = logger
-        self.user = koiki.wcfmmp_user
-        self.password = koiki.wcfmmp_password
+        self.user = koiki.vars.wcfmmp_user
+        self.password = koiki.vars.wcfmmp_password
 
     def request(self, path):
         abs_url = f'{self.api_url}/{path}'

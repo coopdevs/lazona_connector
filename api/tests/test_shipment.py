@@ -3,9 +3,9 @@ import responses
 from django.test import TestCase
 
 from api.serializers import OrderSerializer
-from api.tasks import create_delivery
+from api.tasks import create_or_update_delivery
 from api.models import Shipment, ShipmentStatus
-import koiki
+import koiki.vars
 
 
 class ShipmentTests(TestCase):
@@ -47,7 +47,7 @@ class ShipmentTests(TestCase):
 
         responses.add(
             responses.GET,
-            f"{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6",
+            f"{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6",
             status=200,
             json={
                 "phone": "",
@@ -64,7 +64,7 @@ class ShipmentTests(TestCase):
 
         responses.add(
             responses.GET,
-            "https://wp_testing_host/wp-json/wp/v2/users/6?context=edit",
+            f"{koiki.vars.wp_host}/wp-json/wp/v2/users/6?context=edit",
             status=200,
             content_type="application/json",
             json={
@@ -80,7 +80,7 @@ class ShipmentTests(TestCase):
     def test_create_shipment_successful(self, mock_email):
         responses.add(
             responses.POST,
-            "https://testing_host/rekis/api/altaEnvios",
+            f"{koiki.vars.host}/rekis/api/altaEnvios",
             status=200,
             json={
                 "respuesta": "101",
@@ -102,14 +102,14 @@ class ShipmentTests(TestCase):
 
         order = serializer.validated_data
         mock_email.send.return_value = True
-        create_delivery(order)
+        create_or_update_delivery(order)
         self.assertEqual(Shipment.objects.all().count(), 1)
 
         shipment = Shipment.objects.first()
-        self.assertEqual(str(shipment), "yyy")
         self.assertEqual(shipment.delivery_id, "yyy")
         self.assertEqual(shipment.order_id, 33)
         self.assertEqual(shipment.vendor_id, 6)
+        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment))
         self.assertEqual(shipment.label_url, "pdf_barcodes/123.pdf")
         self.assertEqual(shipment.status, ShipmentStatus.LABEL_SENT)
 
@@ -118,7 +118,7 @@ class ShipmentTests(TestCase):
     def test_create_shipment_failed(self, mock_email):
         responses.add(
             responses.POST,
-            "https://testing_host/rekis/api/altaEnvios",
+            f"{koiki.vars.host}/rekis/api/altaEnvios",
             status=200,
             json={
                 "respuesta": "102",
@@ -132,13 +132,14 @@ class ShipmentTests(TestCase):
 
         order = serializer.validated_data
         mock_email.send.return_value = True
-        create_delivery(order)
+        create_or_update_delivery(order)
         self.assertEqual(Shipment.objects.all().count(), 1)
 
         shipment = Shipment.objects.first()
-        self.assertEqual(str(shipment), "")
+
         self.assertEqual(shipment.delivery_id, "")
         self.assertEqual(shipment.order_id, 33)
         self.assertEqual(shipment.vendor_id, 6)
+        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment))
         self.assertEqual(shipment.label_url, "")
         self.assertEqual(shipment.status, ShipmentStatus.ERROR_FROM_BODY)

@@ -6,10 +6,14 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from unittest.mock import patch
-
+from tests_support.env_tests_support import EnvTestsSupport
 from api.serializers import CustomerSerializer
+import os
+from django.conf import settings
+settings.CELERY_ALWAYS_EAGER = True
 
 
+@patch.dict(os.environ, EnvTestsSupport.to_dict())
 class CustomerViewTests(TestCase):
     def setUp(self):
         self.url = reverse("deliveries:update_customer_if_partner")
@@ -28,9 +32,9 @@ class CustomerViewTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    @patch("api.tasks._check_customer_is_partner", autospec=True)
-    def test_successful_request(self, mock_check_customer_is_partner):
-        mock_check_customer_is_partner.return_value = True
+    @patch("api.tasks.update_customer_if_is_partner.delay", autospec=True)
+    def test_successful_request(self, update_customer_if_is_partner):
+        update_customer_if_is_partner.return_value = True
         serializer = CustomerSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
 

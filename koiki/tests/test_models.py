@@ -1,14 +1,15 @@
 from unittest import TestCase
-
+from unittest.mock import patch
 from koiki.resources import Shipment, Sender, Recipient
 from koiki.woocommerce.resources import Vendor, Billing, Shipping
-
+from tests_support.env_tests_support import EnvTestsSupport
 
 class ModelsTest(TestCase):
 
     maxDiff = None
 
     def setUp(self):
+        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
         self.order = {
             'order_key': 123,
             'customer_note': 'nota'

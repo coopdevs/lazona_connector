@@ -1,10 +1,13 @@
 from unittest import TestCase
+from unittest.mock import patch
 import pycountry
-
 from koiki.woocommerce.state import State, InvalidState
+from tests_support.env_tests_support import EnvTestsSupport
 
 
 class StateTest(TestCase):
+    def setUp(self):
+        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
     def test_with_code(self):
         barcelona = State('B')
         self.assertEquals(barcelona.value, pycountry.subdivisions.get(code='ES-B'))

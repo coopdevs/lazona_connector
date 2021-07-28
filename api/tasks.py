@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from koiki import logger
+from koiki.vars import logger
 from koiki.client import Client
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail
 from sugarcrm.customer import Customer

@@ -44,19 +44,19 @@ class ShipmentAdminTest(TestCase):
             '<a class="button" href="/admin/api/shipment/{}'.format(self.shipment.pk) +
             '/delivery/update-status/">Actualitzar estat de l\'enviament</a>'
         )
+    # 
+    # def test_retry_delivery(self):
+    #     response = self.admin.retry_delivery(request, self.shipment.pk)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(
+    #         response.content,
+    #         bytes("retrying delivery of {}".format(self.shipment.pk), response.charset)
+    #     )
 
-    def test_retry_delivery(self):
-        response = self.admin.retry_delivery(request, self.shipment.pk)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.content,
-            bytes("retrying delivery of {}".format(self.shipment.pk), response.charset)
-        )
-
-    def test_update_delivery_status(self):
-        response = self.admin.update_delivery_status(request, self.shipment.pk)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.content,
-            bytes("updating delivery status of {}".format(self.shipment.pk), response.charset)
-        )
+    # def test_update_delivery_status(self):
+    #     response = self.admin.update_delivery_status(request, self.shipment.pk)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(
+    #         response.content,
+    #         bytes("updating delivery status of {}".format(self.shipment.pk), response.charset)
+    #     )

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-
+from unittest.mock import patch
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 import httpretty
 import json
 
-import koiki
+import koiki.vars
 
 
 class DeliveryViewTests(TestCase):
@@ -47,16 +47,18 @@ class DeliveryViewTests(TestCase):
                 }]
             }]
         }
-        self.api_url = 'https://testing_host/rekis/api/altaEnvios'
+        self.api_url = f'{koiki.vars.host}/rekis/api/altaEnvios'
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'pass')
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_successful_request(self):
+    @patch("api.tasks.create_or_update_delivery.delay", autospec=True)
+    def test_successful_request(self, mock_create_or_update_delivery):
+        mock_create_or_update_delivery.return_value = True
         httpretty.register_uri(
                 httpretty.GET,
-                f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
+                f'{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
                 status=200,
                 content_type='application/json',
                 body=json.dumps({
@@ -73,7 +75,7 @@ class DeliveryViewTests(TestCase):
         )
         httpretty.register_uri(
                 httpretty.GET,
-                'https://wp_testing_host/wp-json/wp/v2/users/6?context=edit',
+                f'{koiki.vars.wp_host}/wp-json/wp/v2/users/6?context=edit',
                 status=200,
                 content_type='application/json',
                 body=json.dumps({
