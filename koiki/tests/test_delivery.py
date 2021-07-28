@@ -1,12 +1,13 @@
 from django.test import TestCase
-from unittest.mock import patch,MagicMock
+from unittest.mock import patch, MagicMock
 from koiki.delivery import Delivery
 from tests_support.env_tests_support import EnvTestsSupport
 
 
 class DeliveryTests(TestCase):
     def setUp(self):
-        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
+        self.env = patch.dict("os.environ", EnvTestsSupport.to_dict())
+
     def test_attributes(self):
         data = {
             "order_id": 33,
@@ -14,9 +15,7 @@ class DeliveryTests(TestCase):
             "codBarras": "JJD00026901003806220001",
             "etiqueta": "abc",
             "mensaje": "message_test",
-            "respuesta": "102"
-
-
+            "respuesta": "102",
         }
         vendor = MagicMock()
         delivery = Delivery(data, vendor)
@@ -29,6 +28,6 @@ class DeliveryTests(TestCase):
                 "barcode": "JJD00026901003806220001",
                 "label": "abc",
                 "message": "message_test",
-                "response": "102"
+                "response": "102",
             },
         )

@@ -55,7 +55,7 @@ class Client:
         self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
 
         response = requests.post(url, json=req_body)
-        response_body = json.loads(response.text)
+        _ = json.loads(response.text)
 
         return response
 

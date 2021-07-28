@@ -17,7 +17,10 @@ class ShipmentAdmin(admin.ModelAdmin):
     list_display = ("pk", "updated_at", "status", "delivery_id", "order_id", "vendor_id")
     list_filter = ("status",)
     search_fields = ("delivery_id",)
-    readonly_fields = ("shipment_actions", "updated_at",)
+    readonly_fields = (
+        "shipment_actions",
+        "updated_at",
+    )
 
     def get_urls(self):
         urls = super().get_urls()
@@ -50,22 +53,18 @@ class ShipmentAdmin(admin.ModelAdmin):
 
     def update_delivery_status(self, request, shipment_id):
         shipment_model = Shipment.objects.get(pk=shipment_id)
-        response = Client().update_delivery_status(shipment_model.delivery_id)
+        _ = Client().update_delivery_status(shipment_model.delivery_id)
         return HttpResponse(f"updating delivery status of {shipment_id}")
-
 
     def shipment_actions(self, obj):
         if obj.pk:
             return format_html(
                 '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:retry-delivery",
-                    args=[obj.pk]),
-                    _("Reintentar enviament")
-                ) +
-                '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:update-delivery-status",
-                    args=[obj.pk]),
-                    _("Actualitzar estat de l'enviament")
+                    reverse("admin:retry-delivery", args=[obj.pk]), _("Reintentar enviament")
+                )
+                + '<a class="button" href="{}">{}</a>'.format(
+                    reverse("admin:update-delivery-status", args=[obj.pk]),
+                    _("Actualitzar estat de l'enviament"),
                 )
             )
 

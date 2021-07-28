@@ -7,7 +7,7 @@ from tests_support.env_tests_support import EnvTestsSupport
 
 class CustomerTest(TestCase):
     def setUp(self):
-        self.env = patch.dict('os.environ',EnvTestsSupport.to_dict())
+        self.env = patch.dict("os.environ", EnvTestsSupport.to_dict())
         self.mock_client = MagicMock()
         self.email = "email@email.com"
         self.roles_from_crm_as_partner = "^is_partner^,^is_role_test^"

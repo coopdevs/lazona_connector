@@ -1,5 +1,5 @@
-from koiki.resources import Sender, Recipient, Shipment
-from koiki.woocommerce.resources import Shipping, Billing
+# from koiki.resources import Sender, Recipient, Shipment
+# from koiki.woocommerce.resources import Shipping, Billing
 
 
 class UpdateDelivery():
