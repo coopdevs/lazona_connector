@@ -1,15 +1,15 @@
 import requests
 import json
 import hashlib
-import sugarcrm
+import lazona_connector.vars
 from sugarcrm.error import CrmAuthenticationError, CrmResponseError
 
 
 class APIClient:
-    def __init__(self, client=requests, logger=sugarcrm.logger):
+    def __init__(self, client=requests, logger=lazona_connector.vars.logger):
         self.client = client
         self.session_id = None
-        self.rest_url = sugarcrm.rest_url
+        self.rest_url = lazona_connector.vars.sugarcrm_rest_url
         self.logger = logger
 
     def _api_request(self, method, args):
@@ -32,9 +32,14 @@ class APIClient:
         return response
 
     def _login(self):
-        encode = hashlib.md5(sugarcrm.password.encode("utf-8"))
+        encode = hashlib.md5(lazona_connector.vars.sugarcrm_password.encode("utf-8"))
         encoded_password = encode.hexdigest()
-        args = {"user_auth": {"user_name": sugarcrm.username, "password": encoded_password}}
+        args = {
+            "user_auth": {
+                "user_name": lazona_connector.vars.sugarcrm_username,
+                "password": encoded_password
+            }
+        }
         response = self._api_request("login", args)
         result = response.json()
         if "id" in result:
