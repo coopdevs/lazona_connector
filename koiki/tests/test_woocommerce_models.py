@@ -1,17 +1,11 @@
 from unittest import TestCase
-from unittest.mock import patch
 import httpretty
 import json
-
 from koiki.woocommerce.resources import LineItem, Vendor, Shipping, Billing
-import koiki.vars
-import wordpress.vars
-from tests_support.env_tests_support import EnvTestsSupport
+import lazona_connector.vars
 
 
 class WooocommerceModelsTest(TestCase):
-    def setUp(self):
-        self.env = patch.dict("os.environ", EnvTestsSupport.to_dict())
 
     def test_line_item(self):
         metadata = [
@@ -50,7 +44,7 @@ class WooocommerceModelsTest(TestCase):
     def test_vendor_fetch(self):
         httpretty.register_uri(
             httpretty.GET,
-            f"{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1",
+            f"{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1",
             status=200,
             content_type="application/json",
             body=json.dumps(
@@ -69,7 +63,7 @@ class WooocommerceModelsTest(TestCase):
         )
         httpretty.register_uri(
             httpretty.GET,
-            f"{wordpress.vars.wp_host}/wp-json/wp/v2/users/1?context=edit",
+            f"{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/1?context=edit",
             status=200,
             content_type="application/json",
             body=json.dumps(
@@ -91,7 +85,7 @@ class WooocommerceModelsTest(TestCase):
     def test_vendor_without_country(self):
         httpretty.register_uri(
             httpretty.GET,
-            f"{koiki.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1",
+            f"{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/1",
             status=200,
             content_type="application/json",
             body=json.dumps(

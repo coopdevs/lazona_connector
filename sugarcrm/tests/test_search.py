@@ -2,12 +2,10 @@ from unittest import TestCase
 from unittest.mock import patch, MagicMock, call
 from sugarcrm.client import APIClient
 from sugarcrm.error import CrmResponseError
-from tests_support.env_tests_support import EnvTestsSupport
 
 
 class SearchTest(TestCase):
     def setUp(self):
-        self.env = patch.dict('os.environ', EnvTestsSupport.to_dict())
         self.mock_client = MagicMock()
         self.email = "test@test.com"
 

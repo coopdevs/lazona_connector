@@ -15,6 +15,8 @@ if TESTING:
     logger = logging.getLogger('django.server')
     wp_host = "https://wcfmmp_testing_host"
     wp_user = "test_wcfmmp_user"
+    wp_password = "test_wcfmmp_password"
+    wp_partner_role = "test_partner_role"
 else:
     host = os.getenv('KOIKI_HOST')
     wcfmmp_host = os.getenv('WCFMMP_HOST')
@@ -25,3 +27,5 @@ else:
     logger = logging.getLogger('django.server')
     wp_host = os.getenv('WCFMMP_HOST')
     wp_user = os.getenv('WCFMMP_USER')
+    wp_password = os.getenv('WCFMMP_PASSWORD')
+    wp_partner_role = os.getenv('WP_PARTNER_ROLE')

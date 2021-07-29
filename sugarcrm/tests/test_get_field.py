@@ -1,13 +1,11 @@
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from sugarcrm.client import APIClient
 from sugarcrm.error import CrmResponseError
-from tests_support.env_tests_support import EnvTestsSupport
 
 
 class GetFieldTest(TestCase):
     def setUp(self):
-        self.env = patch.dict('os.environ', EnvTestsSupport.to_dict())
         self.mock_client = MagicMock()
         self.object_id = "CONTACT_RECORD_ID"
         self.field_to_get = "myfield"

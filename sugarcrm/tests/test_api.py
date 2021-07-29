@@ -4,12 +4,10 @@ import hashlib
 import json
 from sugarcrm.client import APIClient
 from sugarcrm.error import CrmAuthenticationError
-from tests_support.env_tests_support import EnvTestsSupport
 
 
 class APIClientTest(TestCase):
     def setUp(self):
-        self.env = patch.dict('os.environ', EnvTestsSupport.to_dict())
         self.mock_client = MagicMock()
 
     @patch("sugarcrm.logger", autospec=True)

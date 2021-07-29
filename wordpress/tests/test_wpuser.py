@@ -3,7 +3,6 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from wordpress.user import WPUser
 from wordpress.client import APIClient
-
 from api.tasks import update_user_as_partner
 
 

@@ -1,19 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from unittest.mock import patch
-from tests_support.env_tests_support import EnvTestsSupport
 from api.serializers import CustomerSerializer
-import os
 from django.conf import settings
 settings.CELERY_ALWAYS_EAGER = True
 
 
-@patch.dict(os.environ, EnvTestsSupport.to_dict())
 class CustomerViewTests(TestCase):
     def setUp(self):
         self.url = reverse("deliveries:update_customer_if_partner")
