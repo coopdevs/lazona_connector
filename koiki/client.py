@@ -5,6 +5,7 @@ import copy
 
 from koiki.delivery_create import CreateDelivery
 from koiki.delivery_update import UpdateDelivery
+from koiki.delivery_status import DeliveryStatus
 from koiki.delivery import Delivery
 from koiki.order import Order
 import lazona_connector.vars
@@ -14,28 +15,32 @@ import lazona_connector.vars
 
 class Client:
     def __init__(
-        self, auth_token=lazona_connector.vars.auth_token,
+        self,
         logger=lazona_connector.vars.logger
     ):
-        self.auth_token = auth_token
-        self.host = lazona_connector.vars.koiki_host
         self.logger = logger
 
     def create_delivery(self, order_data, vendor_id=None):
         order = Order(order_data).filter_by_vendor(vendor_id)
-        endpoint_req = CreateDelivery(order)
-        req_body = self._authentication(endpoint_req)
-        url = self._url(endpoint_req)
-        self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
+        create_delivery = CreateDelivery(order)
+        req_body_create_delivery = create_delivery.body()
+        self.logger.debug(
+            'Koiki request to {}. body={}'.format(
+                create_delivery.url(),
+                create_delivery.body()
+            )
+        )
 
-        response = requests.post(url, json=req_body)
+        response = requests.post(
+            create_delivery.url(),
+            json=create_delivery.auth_body())
         response_body = json.loads(response.text)
 
         deliveries = []
         if response.status_code == status.HTTP_200_OK:
             for num, delivery_data in enumerate(response_body["envios"]):
                 vendor = order.vendors[num]
-                req_body_shipping = req_body["envios"][num]
+                req_body_shipping = req_body_create_delivery["envios"][num]
                 delivery_data["order_id"] = order.order_id
                 delivery = Delivery(delivery_data, vendor, req_body_shipping)
 
@@ -52,21 +57,23 @@ class Client:
         return deliveries
 
     def update_delivery_status(self, delivery_id):
-        endpoint_req = UpdateDelivery(delivery_id)
-        req_body = self._authentication(endpoint_req)
-        url = self._url(endpoint_req)
-        self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
-
-        response = requests.post(url, json=req_body)
-        _ = json.loads(response.text)
-
-        return response
-
-    def _url(self, endpoint_req):
-        return f"{self.host}{endpoint_req.url()}"
-
-    def _authentication(self, endpoint_req):
-        return {**endpoint_req.body(), **{"token": self.auth_token}}
+        update_delivery = UpdateDelivery(delivery_id)
+        self.logger.debug(
+            'Koiki request to {}. body={}'.format(
+                update_delivery.url(),
+                update_delivery.body()
+            )
+        )
+        response = requests.post(
+            update_delivery.url(),
+            json=update_delivery.auth_body()
+        )
+        if response.status_code == status.HTTP_200_OK:
+            response_body = json.loads(response.text)
+            DeliveryStatus(response_body)
+            # status_code = delivery_status.get_data_val('status_code')
+            return True
+        return False
 
     # So far we've seen that failed responses come as:
     #
