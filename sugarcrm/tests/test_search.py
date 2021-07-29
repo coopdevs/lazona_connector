@@ -9,7 +9,7 @@ class SearchTest(TestCase):
         self.mock_client = MagicMock()
         self.email = "test@test.com"
 
-    @patch("sugarcrm.logger", autospec=True)
+    @patch("lazona_connector.vars.logger", autospec=True)
     def test_success_search_request(self, mock_logger):
         http_mock_response = MagicMock()
         self.mock_client.get = http_mock_response

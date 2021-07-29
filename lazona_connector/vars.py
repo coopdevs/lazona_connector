@@ -22,7 +22,6 @@ if TESTING:
     sugarcrm_username = 'test_sugarcrm_user'
     sugarcrm_password = 'test_sugarcrm_password'
     sugarcrm_membership_roles = ["^member^", "^is_partner^"]
-    sugarcrm_membership_roles = sugarcrm_membership_roles.split(",")
 else:
     koiki_host = os.getenv('KOIKI_HOST')
     wcfmmp_host = os.getenv('WCFMMP_HOST')

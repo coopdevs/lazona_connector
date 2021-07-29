@@ -7,7 +7,7 @@ class APIClientTest(TestCase):
     def setUp(self):
         self.mock_client = MagicMock()
 
-    @patch("wordpress.logger", autospec=True)
+    @patch("lazona_connector.vars.logger", autospec=True)
     def test_get_request(self, mock_logger):
         self.mock_client.get = MagicMock()
 
@@ -24,7 +24,7 @@ class APIClientTest(TestCase):
             auth=("test_wcfmmp_user", "test_wcfmmp_password"),
         )
 
-    @patch("wordpress.logger", autospec=True)
+    @patch("lazona_connector.vars.logger", autospec=True)
     def test_post_request(self, mock_logger):
         api_client = APIClient(self.mock_client, mock_logger)
         test_data = {"field": "data"}

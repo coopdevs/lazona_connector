@@ -7,17 +7,6 @@ import lazona_connector.vars
 
 
 class KoikiTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.env_patcher.start()
-
-        super().setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-
-        cls.env_patcher.stop()
 
     def setUp(self):
         super().setUp()
