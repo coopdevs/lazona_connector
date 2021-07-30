@@ -11,7 +11,6 @@ from lazona_connector.celery import app
 @app.task
 def create_or_update_delivery(order_data, vendor_id=None):
     from api.models import Shipment, ShipmentStatus
-
     deliveries_by_vendor = Client().create_delivery(order_data, vendor_id)
     for delivery in deliveries_by_vendor:
         label_url = ""
@@ -44,8 +43,30 @@ def create_or_update_delivery(order_data, vendor_id=None):
 
 @app.task
 def update_delivery_status(delivery_id):
-    shipment_status = Client().update_delivery_status(delivery_id)
-    return shipment_status.get_data_val('status_code')
+    from api.models import Shipment, ShipmentStatus
+    delivery_status = Client().update_delivery_status(delivery_id)
+    if delivery_status and delivery_id:
+        shipment = Shipment.objects.get(delivery_id=delivery_id)
+        shipment.tracking_updated_at = datetime.now()
+        shipment_status = delivery_status.get_data_val('shipment_status')
+        if delivery_status.is_errored():
+            shipment.status = shipment_status
+            shipment.delivery_message = delivery_status.get_data_val('response_error_message')
+            shipment.tracking_status_created_at = None
+        else:
+            shipment.tracking_status_created_at = delivery_status.get_data_val('response_date')
+            shipment.delivery_notes = delivery_status.get_data_val('response_notes')
+            if shipment_status:
+                shipment.status = shipment_status
+                shipment.delivery_message = delivery_status.get_data_val('response_message')
+            else:
+                shipment.status = ShipmentStatus.ERROR_FROM_TRACKING
+                shipment.delivery_message = "{}. Doesn't match any shipment status".format(
+                    delivery_status.get_data_val('response_message')
+                )
+        shipment.save()
+        return True
+    return False
 
 
 @app.task

@@ -51,11 +51,18 @@ class ShipmentAdmin(admin.ModelAdmin):
         return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update_delivery_status(self, request, shipment_id):
-        shipment_model = Shipment.objects.get(pk=shipment_id)
-        update_delivery_status(shipment_model.delivery_id)
+        shipment = Shipment.objects.get(pk=shipment_id)
+        if not shipment.delivery_id:
+            return HttpResponse(
+                _("No es pot executar l'acció. No tenim Id de l'enviament"),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        success = update_delivery_status(shipment.delivery_id)
+        if success:
+            return HttpResponseRedirect(reverse("admin:api_shipment_change", args=(shipment.id,)))
         return HttpResponse(
-            f"updating delivery status of {shipment_id}",
-            status=status.HTTP_200_OK
+            _("La crida a la API no s'ha realitzat correctament"),
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     def shipment_actions(self, obj):

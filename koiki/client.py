@@ -70,19 +70,10 @@ class Client:
         )
         if response.status_code == status.HTTP_200_OK:
             response_body = json.loads(response.text)
-            DeliveryStatus(response_body)
-            # status_code = delivery_status.get_data_val('status_code')
-            return True
+            return DeliveryStatus(response_body)
+        else:
+            self._log(response.status_code, response_body, level="error")
         return False
-
-    # So far we've seen that failed responses come as:
-    #
-    #   {"respuesta":"102","mensaje":"ERROR IN THE RECEIVED DATA",...}
-    #
-    # while successful ones as:
-    #
-    #   {"respuesta":"101","mensaje":"OK",...}
-    #
 
     def _log(self, code, msg, level="info"):
         log_line = "Koiki response. status={}, body={}".format(code, msg)
