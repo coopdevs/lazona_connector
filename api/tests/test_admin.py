@@ -91,15 +91,24 @@ class ShipmentAdminTest(TestCase):
             ),
         )
 
-    def test_shipment_actions(self):
+    def test_shipment_actions_with_errored_shipment(self):
+        self.shipment.status = ShipmentStatus.ERROR_FROM_BODY
         actions = self.admin.shipment_actions(self.shipment)
         self.assertEqual(
             actions,
-            '<a class="button" href="/admin/api/shipment/{}'.format(self.shipment.id)
-            + '/delivery/retry/">Reintentar enviament</a>'
-            + '<a class="button" href="/admin/api/shipment/{}'.format(self.shipment.id)
+            '<a class="button" href="javascript: ' +
+            'window.location.href = \'/admin/api/shipment/{}/delivery/retry/\'">'.format(
+                self.shipment.id
+            )
+            + "Reintentar enviament</a>"
+            + ' <a class="button" href="/admin/api/shipment/{}'.format(self.shipment.id)
             + "/delivery/update-status/\">Actualitzar estat de l'enviament</a>",
         )
+
+    def test_shipment_actions_with_confirm_shipment_already_sent(self):
+        self.shipment.status = ShipmentStatus.LABEL_SENT
+        actions = self.admin.shipment_actions(self.shipment)
+        self.assertIn("confirm(", actions)
 
     def test_retry_delivery(self):
         httpretty.register_uri(
