@@ -59,13 +59,13 @@ class ShipmentAdmin(admin.ModelAdmin):
         )
 
     def shipment_actions(self, obj):
-        if obj.pk:
+        if obj.id:
             return format_html(
                 '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:retry-delivery", args=[obj.pk]), _("Reintentar enviament")
+                    reverse("admin:retry-delivery", args=[obj.id]), _("Reintentar enviament")
                 )
                 + '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:update-delivery-status", args=[obj.pk]),
+                    reverse("admin:update-delivery-status", args=[obj.id]),
                     _("Actualitzar estat de l'enviament"),
                 )
             )
