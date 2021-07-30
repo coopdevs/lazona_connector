@@ -1,11 +1,13 @@
 import sys
 import os
 import logging
+from django.conf import settings
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 
 if TESTING:
+    settings.CELERY_ALWAYS_EAGER = True
     koiki_host = "https://testing_host"
     wcfmmp_host = "https://wcfmmp_testing_host"
     wcfmmp_user = "test_wcfmmp_user"

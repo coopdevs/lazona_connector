@@ -6,8 +6,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from unittest.mock import patch
 from api.serializers import CustomerSerializer
-from django.conf import settings
-settings.CELERY_ALWAYS_EAGER = True
 
 
 class CustomerViewTests(TestCase):
@@ -28,9 +26,7 @@ class CustomerViewTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    @patch("api.tasks.update_customer_if_is_partner.delay", autospec=True)
-    def test_successful_request(self, update_customer_if_is_partner):
-        update_customer_if_is_partner.return_value = True
+    def test_successful_request(self):
         serializer = CustomerSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
 

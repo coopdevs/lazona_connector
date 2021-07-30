@@ -51,9 +51,7 @@ class DeliveryViewTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    @patch("api.tasks.create_or_update_delivery.delay", autospec=True)
-    def test_successful_request(self, mock_create_or_update_delivery):
-        mock_create_or_update_delivery.return_value = True
+    def test_successful_request(self):
         httpretty.register_uri(
                 httpretty.GET,
                 f'{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
