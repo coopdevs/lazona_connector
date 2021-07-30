@@ -85,6 +85,7 @@ class DeliveryViewTests(TestCase):
                 body=json.dumps({
                     'respuesta': '101',
                     'envios': [{
+                        'respuesta': '101',
                         'numPedido': 'abc',
                         'etiqueta': 'ZXRpcXVldGE=',
                         'codBarras': '123'
