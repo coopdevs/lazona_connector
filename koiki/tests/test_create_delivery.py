@@ -180,4 +180,7 @@ class CreateDeliveryTest(TestCase):
         }, deliveries[1])
 
     def test_url(self):
-        self.assertEqual(CreateDelivery(Order(self.order)).url(), '/rekis/api/altaEnvios')
+        self.assertEqual(
+            CreateDelivery(Order(self.order)).url(),
+            f'{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios'
+        )

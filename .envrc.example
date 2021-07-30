@@ -5,6 +5,10 @@ export SECRET_KEY="your_secret_here"
 export KOIKI_HOST="https://rekistest.koiki.es/services"
 export KOIKI_AUTH_TOKEN="your_auth_token here"
 
+# Authentication for koiki tracking API.
+export KOIKI_TRACKING_HOST="your_tracking_url"
+export KOIKI_TRACKING_AUTH_TOKEN="your_auth_token here"
+
 # Details to connect to WCFM, the Marketplace plugin's API on Woocommerce.
 export WCFMMP_HOST="your_wp_woocomerce_url"
 export WCFMMP_USER="your_wp_woocomerce_user"

@@ -43,6 +43,12 @@ def create_or_update_delivery(order_data, vendor_id=None):
 
 
 @app.task
+def update_delivery_status(delivery_id):
+    shipment_status = Client().update_delivery_status(delivery_id)
+    return shipment_status.get_data_val('status_code')
+
+
+@app.task
 def update_customer_if_is_partner(email):
     if _check_customer_is_partner(email):
         update_user_as_partner.delay(email)

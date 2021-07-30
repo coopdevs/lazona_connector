@@ -161,6 +161,6 @@ class KoikiTest(TestCase):
         response.status_code = 200
         post_mock.return_value = response
 
-        Client(auth_token='xxx').create_delivery(self.order)
+        Client().create_delivery(self.order)
 
         post_mock.assert_called()

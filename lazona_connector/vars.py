@@ -5,14 +5,15 @@ from django.conf import settings
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
-
 if TESTING:
     settings.CELERY_ALWAYS_EAGER = True
     koiki_host = "https://testing_host"
+    koiki_auth_token = "testing_auth_token"
+    koiki_tracking_host = "https://testing_tracking_host"
+    koiki_tracking_auth_token = "testing_autj_token"
     wcfmmp_host = "https://wcfmmp_testing_host"
     wcfmmp_user = "test_wcfmmp_user"
     wcfmmp_password = "test_wcfmmp_password"
-    auth_token = "testing_auth_token"
     error_mail_recipients = ["test@test.com"]
     logger = logging.getLogger('django.server')
     wp_host = "https://wcfmmp_testing_host"
@@ -26,10 +27,12 @@ if TESTING:
     sugarcrm_membership_roles = ["^member^", "^is_partner^"]
 else:
     koiki_host = os.getenv('KOIKI_HOST')
+    koiki_auth_token = os.getenv('KOIKI_AUTH_TOKEN')
+    koiki_tracking_host = os.getenv('KOIKI_TRACKING_HOST')
+    koiki_tracking_auth_token = os.getenv('KOIKI_TRACKING_AUTH_TOKEN')
     wcfmmp_host = os.getenv('WCFMMP_HOST')
     wcfmmp_user = os.getenv('WCFMMP_USER')
     wcfmmp_password = os.getenv('WCFMMP_PASSWORD')
-    auth_token = os.getenv('KOIKI_AUTH_TOKEN')
     error_mail_recipients = os.getenv("KOIKI_ERROR_MAIL_RECIPIENTS", "").split(",")
     logger = logging.getLogger('django.server')
     wp_host = os.getenv('WCFMMP_HOST')

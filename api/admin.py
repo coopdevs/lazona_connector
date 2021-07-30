@@ -8,8 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Shipment
 from koiki.woocommerce.woocommerce import APIClient
 from api.serializers import OrderSerializer
-from api.tasks import create_or_update_delivery
-from koiki.client import Client
+from api.tasks import create_or_update_delivery, update_delivery_status
 
 
 @admin.register(Shipment)
@@ -53,8 +52,11 @@ class ShipmentAdmin(admin.ModelAdmin):
 
     def update_delivery_status(self, request, shipment_id):
         shipment_model = Shipment.objects.get(pk=shipment_id)
-        _ = Client().update_delivery_status(shipment_model.delivery_id)
-        return HttpResponse(f"updating delivery status of {shipment_id}")
+        update_delivery_status(shipment_model.delivery_id)
+        return HttpResponse(
+            f"updating delivery status of {shipment_id}",
+            status=status.HTTP_200_OK
+        )
 
     def shipment_actions(self, obj):
         if obj.pk:
