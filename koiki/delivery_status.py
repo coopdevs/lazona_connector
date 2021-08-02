@@ -52,7 +52,7 @@ class DeliveryStatus():
         return {
             "response_message": self._get_current_val('codEstado'),
             "response_code": self._get_current_val('code'),
-            "response_date": self._get_current_val('date'),
+            "response_date": self._get_current_val('date','date'),
             "response_notes": self._get_current_val('notas'),
             "response_error_code": self._get_error_val('code'),
             "response_error_message": self._get_error_val('message'),
@@ -67,18 +67,21 @@ class DeliveryStatus():
     def get_data_val(self, key):
         return self.to_dict()[key]
 
-    def _get_current_val(self, key):
+    def _get_current_val(self, key,val_type='char'):
         try:
             val = self.response_body['result'][0][key]
         except(Exception):
-            val = None
+            if val_type is 'char':
+                val = ''
+            if val_type is 'date':
+                val = None
         return val
 
     def _get_error_val(self, key):
         try:
             val = self.response_body['error'][key]
         except(Exception):
-            val = None
+            val = ''
         return val
 
     def _get_shipment_status(self, status_code):
@@ -92,11 +95,6 @@ class DeliveryStatus():
             if status_code in self.delivered_koiki_codes:
                 return ShipmentStatus.DELIVERED
         return False
-
-    # def _get_current_date_val(self, key):
-    #     if self.is_errored():
-    #         return None
-    #     return self.response_body['result'][0].get(key,'')
 
     # TODO: when sending status back to wc need to create this
     # def get_wc_order_status(self):
