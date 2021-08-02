@@ -19,6 +19,8 @@ class ShipmentAdmin(admin.ModelAdmin):
     readonly_fields = (
         "shipment_actions",
         "updated_at",
+        "tracking_status_created_at",
+        "tracking_updated_at"
     )
 
     def get_urls(self):
