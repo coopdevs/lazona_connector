@@ -1,0 +1,11 @@
+{% load i18n %}
+{% blocktranslate %}
+Hola, s'ha actualitzat l'estat de l'enviament: {{delivery_id}}
+
+Aquestes són les dades:
+
+Estat de l'enviament: {{status}}
+Data de creació del darrer estat de l'enviament: {{tracking_status_created_at}}
+Missatge de seguiment: {{delivery_message}}
+Notes de seguiment: {{delivery_notes}}
+{% endblocktranslate %}

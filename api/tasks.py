@@ -1,6 +1,6 @@
 from datetime import datetime
 from koiki.client import Client
-from koiki.email import FailedDeliveryMail, SuccessDeliveryMail
+from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
 from sugarcrm.customer import Customer
 import lazona_connector.vars
 from lazona_connector.vars import logger
@@ -42,13 +42,15 @@ def create_or_update_delivery(order_data, vendor_id=None):
 
 
 @app.task
-def update_delivery_status(delivery_id):
+def update_delivery_status(delivery_id, email_notify=False):
     from api.models import Shipment, ShipmentStatus
     delivery_status = Client().update_delivery_status(delivery_id)
     if delivery_status and delivery_id:
         shipment = Shipment.objects.get(delivery_id=delivery_id)
         shipment.tracking_updated_at = datetime.now()
         shipment_status = delivery_status.get_data_val('shipment_status')
+        old_shipment_status = shipment.status
+        old_shipment_delivery_message = shipment.delivery_message
         if delivery_status.is_errored():
             shipment.status = shipment_status
             shipment.delivery_message = delivery_status.get_data_val('response_error_message')
@@ -65,6 +67,10 @@ def update_delivery_status(delivery_id):
                     delivery_status.get_data_val('response_message')
                 )
         shipment.save()
+        if email_notify:
+            if (shipment.status != old_shipment_status or
+                    shipment.delivery_message != old_shipment_delivery_message):
+                UpdateDeliveryStatusChangedMail(shipment).send()
         return True
     return False
 

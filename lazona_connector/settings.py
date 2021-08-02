@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cron',
     'api',
     'rest_framework',
     'rest_framework.authtoken',
@@ -101,6 +102,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+]
+
+CRON_CLASSES = [
+    "api.crons.UpdateShipmentStatusCronJob",
 ]
 
 ROOT_URLCONF = 'lazona_connector.urls'

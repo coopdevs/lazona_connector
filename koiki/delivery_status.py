@@ -52,7 +52,7 @@ class DeliveryStatus():
         return {
             "response_message": self._get_current_val('codEstado'),
             "response_code": self._get_current_val('code'),
-            "response_date": self._get_current_val('date','date'),
+            "response_date": self._get_current_val('date', 'date'),
             "response_notes": self._get_current_val('notas'),
             "response_error_code": self._get_error_val('code'),
             "response_error_message": self._get_error_val('message'),
@@ -67,13 +67,13 @@ class DeliveryStatus():
     def get_data_val(self, key):
         return self.to_dict()[key]
 
-    def _get_current_val(self, key,val_type='char'):
+    def _get_current_val(self, key, val_type='char'):
         try:
             val = self.response_body['result'][0][key]
         except(Exception):
-            if val_type is 'char':
+            if val_type == 'char':
                 val = ''
-            if val_type is 'date':
+            if val_type == 'date':
                 val = None
         return val
 
