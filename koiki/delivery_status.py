@@ -36,6 +36,7 @@ ERROR_FROM_TRACKING = "ERROR_FROM_TRACKING", _(u"Error API de seguiment")
 DELIVERED = "DELIVERED", _(u"Entregat")
 '''
 
+
 from api.models import ShipmentStatus
 
 

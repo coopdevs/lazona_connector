@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from unittest.mock import patch
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
@@ -51,9 +50,7 @@ class DeliveryViewTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    @patch("api.tasks.create_or_update_delivery.delay", autospec=True)
-    def test_successful_request(self, mock_create_or_update_delivery):
-        mock_create_or_update_delivery.return_value = True
+    def test_successful_request(self):
         httpretty.register_uri(
                 httpretty.GET,
                 f'{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
@@ -88,6 +85,7 @@ class DeliveryViewTests(TestCase):
                 body=json.dumps({
                     'respuesta': '101',
                     'envios': [{
+                        'respuesta': '101',
                         'numPedido': 'abc',
                         'etiqueta': 'ZXRpcXVldGE=',
                         'codBarras': '123'

@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse, path
 from django.http import HttpResponse, HttpResponseRedirect
 
-from .models import Shipment
+from .models import Shipment, ShipmentStatus
 from koiki.woocommerce.woocommerce import APIClient
 from api.serializers import OrderSerializer
 from api.tasks import create_or_update_delivery, update_delivery_status
@@ -65,14 +65,23 @@ class ShipmentAdmin(admin.ModelAdmin):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    def _get_alert_msg(self, shipment):
+        if shipment.status != ShipmentStatus.ERROR_FROM_BODY:
+            return "if(confirm('Segur/a? Un enviament al transportista ja ha sigut realitzat.'))"
+        else:
+            return ""
+
     def shipment_actions(self, obj):
-        if obj.pk:
+        if obj.id:
             return format_html(
-                '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:retry-delivery", args=[obj.pk]), _("Reintentar enviament")
+                '<a class="button" href="javascript:{} window.location.href = \'{}\'">{}</a>'
+                .format(
+                    self._get_alert_msg(obj),
+                    reverse("admin:retry-delivery", args=[obj.id]),
+                    _("Reintentar enviament"),
                 )
-                + '<a class="button" href="{}">{}</a>'.format(
-                    reverse("admin:update-delivery-status", args=[obj.pk]),
+                + ' <a class="button" href="{}">{}</a>'.format(
+                    reverse("admin:update-delivery-status", args=[obj.id]),
                     _("Actualitzar estat de l'enviament"),
                 )
             )
