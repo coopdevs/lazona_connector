@@ -74,6 +74,15 @@ def update_delivery_status(delivery_id, email_notify=False):
         return True
     return False
 
+@app.task
+def update_delivery_status_periodic():
+    from api.models import Shipment
+    shipments = Shipment.objects.all().exclude(Q(delivery_id='') | Q(status='DELIVERED'))
+    if shipments:
+        for shipment in shipments:
+            logger.info("Updating shipment stratus for delivery id {}".format(shipment.delivery_id))
+            update_delivery_status(shipment.delivery_id, email_notify=True)
+
 
 @app.task
 def update_customer_if_is_partner(email):

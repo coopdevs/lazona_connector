@@ -3,18 +3,12 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class ShipmentStatus(models.TextChoices):
-    ERROR_FROM_BODY = "ERROR_FROM_BODY",
-    _(u"Error alta enviament")
-    LABEL_SENT = "LABEL_SENT",
-    _(u"Etiqueta enviada al venedor")
-    IN_PROCESS = "IN_PROCESS",
-    _(u"En proces")
-    ON_HOLD = "ON_HOLD",
-    _(u"Particularitat al proces d'enviament")
-    ERROR_FROM_TRACKING = "ERROR_FROM_TRACKING",
-    _(u"Error API de seguiment")
-    DELIVERED = "DELIVERED",
-    _(u"Entregat"),
+    ERROR_FROM_BODY = "ERROR_FROM_BODY", _(u"Error alta enviament")
+    LABEL_SENT = "LABEL_SENT", _(u"Etiqueta enviada al venedor")
+    IN_PROCESS = "IN_PROCESS", _(u"En proces")
+    ON_HOLD = "ON_HOLD", _(u"Particularitat al proces d'enviament")
+    ERROR_FROM_TRACKING = "ERROR_FROM_TRACKING", _(u"Error API de seguiment")
+    DELIVERED = "DELIVERED", _(u"Entregat"),
 
 
 class Shipment(models.Model):
