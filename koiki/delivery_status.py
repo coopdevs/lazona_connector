@@ -37,9 +37,6 @@ DELIVERED = "DELIVERED", _(u"Entregat")
 '''
 
 
-from api.models import ShipmentStatus
-
-
 class DeliveryStatus():
 
     def __init__(self, response_body={}):
@@ -86,6 +83,7 @@ class DeliveryStatus():
         return val
 
     def _get_shipment_status(self, status_code):
+        from api.models import ShipmentStatus
         if self.is_errored():
             return ShipmentStatus.ERROR_FROM_TRACKING
         else:
