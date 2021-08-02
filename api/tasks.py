@@ -6,6 +6,7 @@ import lazona_connector.vars
 from lazona_connector.vars import logger
 from wordpress.user import WPUser
 from lazona_connector.celery import app
+from django.db.models import Q
 
 
 @app.task
@@ -74,13 +75,18 @@ def update_delivery_status(delivery_id, email_notify=False):
         return True
     return False
 
+
 @app.task
 def update_delivery_status_periodic():
     from api.models import Shipment
     shipments = Shipment.objects.all().exclude(Q(delivery_id='') | Q(status='DELIVERED'))
     if shipments:
         for shipment in shipments:
-            logger.info("Updating shipment stratus for delivery id {}".format(shipment.delivery_id))
+            logger.info(
+                "Updating shipment stratus for delivery id {}".format(
+                    shipment.delivery_id
+                )
+            )
             update_delivery_status(shipment.delivery_id, email_notify=True)
 
 

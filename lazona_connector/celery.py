@@ -1,6 +1,5 @@
 import os
 from celery import Celery
-from celery.schedules import crontab
 from django.conf import settings
 import scout_apm.celery
 from lazona_connector.vars import redis_url
