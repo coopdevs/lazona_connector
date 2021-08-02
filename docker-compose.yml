@@ -32,7 +32,7 @@ services:
     tty: true
     stdin_open: true
     build: .
-    command: celery -A api.tasks worker --loglevel=INFO
+    command: celery -A api.tasks worker --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
       - .env
     environment:

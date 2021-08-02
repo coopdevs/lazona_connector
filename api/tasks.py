@@ -76,7 +76,7 @@ def update_delivery_status(delivery_id, email_notify=False):
     return False
 
 
-@app.task
+@app.task(name='update_delivery_status_periodic')
 def update_delivery_status_periodic():
     from api.models import Shipment
     shipments = Shipment.objects.all().exclude(Q(delivery_id='') | Q(status='DELIVERED'))
