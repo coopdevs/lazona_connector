@@ -9,6 +9,7 @@ from .models import Shipment, ShipmentStatus
 from koiki.woocommerce.woocommerce import APIClient
 from api.serializers import OrderSerializer
 from api.tasks import create_or_update_delivery, update_delivery_status
+from .forms import ShipmentModelForm
 
 
 @admin.register(Shipment)
@@ -22,6 +23,7 @@ class ShipmentAdmin(admin.ModelAdmin):
         "tracking_status_created_at",
         "tracking_updated_at"
     )
+    form = ShipmentModelForm
 
     def get_urls(self):
         urls = super().get_urls()
