@@ -30,9 +30,10 @@ class Vendor():
         self.phone = phone
 
     def fetch(self):
-        response = self.client.request(f"settings/id/{self.id}")
-        self._convert_to_resource(response)
-        self._fetch_email()
+        if self.email is None:
+            response = self.client.request(f"settings/id/{self.id}")
+            self._convert_to_resource(response)
+            self._fetch_email()
         return self
 
     def _fetch_email(self):
