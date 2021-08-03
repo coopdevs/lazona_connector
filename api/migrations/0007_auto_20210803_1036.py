@@ -6,23 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0006_auto_20210802_1514'),
+        ("api", "0006_auto_20210802_1514"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shipment',
-            name='req_body',
-            field=models.CharField(blank=True, max_length=1000, verbose_name='Cos de la petició de la comanda enviat'),
+            model_name="shipment",
+            name="req_body",
+            field=models.CharField(
+                blank=True, max_length=2000, verbose_name="Cos de la petició de la comanda enviat"
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='delivery_message',
-            field=models.CharField(blank=True, max_length=1000, verbose_name='Missatge de seguiment'),
+            model_name="shipment",
+            name="delivery_message",
+            field=models.CharField(
+                blank=True, max_length=1000, verbose_name="Missatge de seguiment"
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='delivery_notes',
-            field=models.CharField(blank=True, max_length=1000, verbose_name='Notes de seguiment'),
+            model_name="shipment",
+            name="delivery_notes",
+            field=models.CharField(blank=True, max_length=1000, verbose_name="Notes de seguiment"),
         ),
     ]
