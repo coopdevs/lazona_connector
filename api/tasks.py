@@ -1,3 +1,4 @@
+import pprint
 from datetime import datetime
 from koiki.client import Client
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
@@ -35,6 +36,8 @@ def create_or_update_delivery(order_data, vendor_id=None):
         shipment, created = Shipment.objects.get_or_create(
             order_id=int(delivery.get_data_val("order_id")), vendor_id=int(delivery.vendor.id)
         )
+        shipment.req_body = pprint.pformat(delivery.req_body)
+        shipment.delivery_message = delivery.get_data_val("message")
         shipment.delivery_id = delivery.get_data_val("barcode")
         shipment.label_url = label_url
         shipment.status = delivery_status
