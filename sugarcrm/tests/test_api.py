@@ -10,7 +10,7 @@ class APIClientTest(TestCase):
     def setUp(self):
         self.mock_client = MagicMock()
 
-    @patch("sugarcrm.logger", autospec=True)
+    @patch("lazona_connector.vars.logger", autospec=True)
     def test_success_login_request(self, mock_logger):
         http_mock_response = MagicMock()
         self.mock_client.get = http_mock_response

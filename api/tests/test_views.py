@@ -1,15 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-
 import httpretty
 import json
-
-import koiki
+import lazona_connector.vars
 
 
 class DeliveryViewTests(TestCase):
@@ -47,7 +44,7 @@ class DeliveryViewTests(TestCase):
                 }]
             }]
         }
-        self.api_url = 'https://testing_host/rekis/api/altaEnvios'
+        self.api_url = f'{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios'
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'pass')
 
         self.client = APIClient()
@@ -56,7 +53,7 @@ class DeliveryViewTests(TestCase):
     def test_successful_request(self):
         httpretty.register_uri(
                 httpretty.GET,
-                f'{koiki.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
+                f'{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
                 status=200,
                 content_type='application/json',
                 body=json.dumps({
@@ -73,7 +70,7 @@ class DeliveryViewTests(TestCase):
         )
         httpretty.register_uri(
                 httpretty.GET,
-                'https://wp_testing_host/wp-json/wp/v2/users/6?context=edit',
+                f'{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/6?context=edit',
                 status=200,
                 content_type='application/json',
                 body=json.dumps({
@@ -88,6 +85,7 @@ class DeliveryViewTests(TestCase):
                 body=json.dumps({
                     'respuesta': '101',
                     'envios': [{
+                        'respuesta': '101',
                         'numPedido': 'abc',
                         'etiqueta': 'ZXRpcXVldGE=',
                         'codBarras': '123'

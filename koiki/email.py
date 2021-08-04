@@ -3,7 +3,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
-from koiki import wcfmmp_host, logger, error_mail_recipients
+from lazona_connector.vars import wcfmmp_host, logger, error_mail_recipients
 
 
 class SuccessDeliveryMail:
@@ -49,4 +49,25 @@ class FailedDeliveryMail:
             to=error_mail_recipients,
         )
 
+        return send_mail.send(fail_silently=False)
+
+
+class UpdateDeliveryStatusChangedMail:
+    def __init__(self, shipment):
+        self.shipment = shipment
+        context = {
+            "delivery_id": shipment.delivery_id,
+            "status": shipment.status,
+            "tracking_status_created_at": shipment.tracking_status_created_at,
+            "delivery_message": shipment.delivery_message,
+            "delivery_notes": shipment.delivery_notes
+        }
+        self.message = render_to_string("shipment_status_update_template.txt", context)
+
+    def send(self):
+        send_mail = EmailMessage(
+            _("Actualització estat Koiki per l'enviament: {}").format(self.shipment.delivery_id),
+            self.message,
+            to=error_mail_recipients,
+        )
         return send_mail.send(fail_silently=False)

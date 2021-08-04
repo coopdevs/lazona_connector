@@ -1,12 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from unittest.mock import patch
-
 from api.serializers import CustomerSerializer
 
 
@@ -28,9 +26,7 @@ class CustomerViewTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    @patch("api.tasks._check_customer_is_partner", autospec=True)
-    def test_successful_request(self, mock_check_customer_is_partner):
-        mock_check_customer_is_partner.return_value = True
+    def test_successful_request(self):
         serializer = CustomerSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
 

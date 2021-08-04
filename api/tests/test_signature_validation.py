@@ -1,10 +1,8 @@
 import os
-
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.contrib.auth.models import User
 from django.conf import settings
-
 from api.authentication import SignatureValidation
 import rest_framework
 

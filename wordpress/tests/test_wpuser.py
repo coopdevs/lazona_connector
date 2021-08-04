@@ -3,7 +3,6 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from wordpress.user import WPUser
 from wordpress.client import APIClient
-
 from api.tasks import update_user_as_partner
 
 
@@ -20,14 +19,14 @@ class WPUserTest(TestCase):
         wp_user = WPUser(self.api_client)
         responses.add(
             responses.GET,
-            f"https://test_wp_host/wp-json/wp/v2/users/?search={self.email}",
+            f"https://wcfmmp_testing_host/wp-json/wp/v2/users/?search={self.email}",
             status=200,
             json=[{"id": self.user_id}],
         )
 
         responses.add(
             responses.GET,
-            f"https://test_wp_host/wp-json/wp/v2/users/{self.user_id}?context=edit",
+            f"https://wcfmmp_testing_host/wp-json/wp/v2/users/{self.user_id}?context=edit",
             status=200,
             json={
                 "id": self.user_id,
@@ -51,7 +50,7 @@ class WPUserTest(TestCase):
 
         responses.add(
             method=responses.POST,
-            url=f"https://test_wp_host/wp-json/wp/v2/users/{self.user_id}",
+            url=f"https://wcfmmp_testing_host/wp-json/wp/v2/users/{self.user_id}",
             status=200,
             json={
                 "id": self.user_id,

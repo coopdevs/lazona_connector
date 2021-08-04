@@ -1,10 +1,13 @@
-import wordpress
 from wordpress.client import APIClient
+import lazona_connector.vars
 
 
 class WPUser:
 
-    def __init__(self, client=APIClient(), logger=wordpress.logger):
+    def __init__(
+        self, client=APIClient(),
+        logger=lazona_connector.vars.logger
+    ):
         self.logger = logger
         self.roles = set()
         self.client = client

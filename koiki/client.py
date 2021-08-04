@@ -3,36 +3,45 @@ import requests
 import json
 import copy
 
-from koiki.create_delivery import CreateDelivery
+from koiki.delivery_create import CreateDelivery
+from koiki.delivery_update import UpdateDelivery
+from koiki.delivery_status import DeliveryStatus
 from koiki.delivery import Delivery
 from koiki.order import Order
-import koiki
+import lazona_connector.vars
 
-API_PATH = "/rekis/api"
+# API_PATH = "/rekis/api"
 
 
 class Client:
-    def __init__(self, order, auth_token=koiki.auth_token, logger=koiki.logger):
-        self.order = Order(order)
-        self.auth_token = auth_token
-        self.host = koiki.host
+    def __init__(
+        self,
+        logger=lazona_connector.vars.logger
+    ):
         self.logger = logger
 
-    def create_delivery(self):
-        endpoint_req = CreateDelivery(self.order)
-        req_body = self._authentication(endpoint_req)
-        url = self._url(endpoint_req)
-        self.logger.debug('Koiki request to {}. body={}'.format(url, req_body))
+    def create_delivery(self, order_data, vendor_id=None):
+        order = Order(order_data).filter_by_vendor(vendor_id)
+        create_delivery = CreateDelivery(order)
+        req_body_create_delivery = create_delivery.body()
+        self.logger.debug(
+            'Koiki request to {}. body={}'.format(
+                create_delivery.url(),
+                create_delivery.body()
+            )
+        )
 
-        response = requests.post(url, json=req_body)
+        response = requests.post(
+            create_delivery.url(),
+            json=create_delivery.auth_body())
         response_body = json.loads(response.text)
 
         deliveries = []
         if response.status_code == status.HTTP_200_OK:
             for num, delivery_data in enumerate(response_body["envios"]):
-                vendor = self.order.vendors[num]
-                req_body_shipping = req_body["envios"][num]
-                delivery_data["order_id"] = self.order.order_id
+                vendor = order.vendors[num]
+                req_body_shipping = req_body_create_delivery["envios"][num]
+                delivery_data["order_id"] = order.order_id
                 delivery = Delivery(delivery_data, vendor, req_body_shipping)
 
                 if delivery._is_errored():
@@ -47,20 +56,24 @@ class Client:
 
         return deliveries
 
-    def _url(self, endpoint_req):
-        return f"{self.host}{API_PATH}{endpoint_req.url()}"
-
-    def _authentication(self, endpoint_req):
-        return {**endpoint_req.body(), **{"token": self.auth_token}}
-
-    # So far we've seen that failed responses come as:
-    #
-    #   {"respuesta":"102","mensaje":"ERROR IN THE RECEIVED DATA",...}
-    #
-    # while successful ones as:
-    #
-    #   {"respuesta":"101","mensaje":"OK",...}
-    #
+    def update_delivery_status(self, delivery_id):
+        update_delivery = UpdateDelivery(delivery_id)
+        self.logger.debug(
+            'Koiki request to {}. body={}'.format(
+                update_delivery.url(),
+                update_delivery.body()
+            )
+        )
+        response = requests.post(
+            update_delivery.url(),
+            json=update_delivery.auth_body()
+        )
+        if response.status_code == status.HTTP_200_OK:
+            response_body = json.loads(response.text)
+            return DeliveryStatus(response_body)
+        else:
+            self._log(response.status_code, response_body, level="error")
+        return False
 
     def _log(self, code, msg, level="info"):
         log_line = "Koiki response. status={}, body={}".format(code, msg)

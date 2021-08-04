@@ -1,9 +1,9 @@
-import sugarcrm
+import lazona_connector.vars
 from sugarcrm.client import APIClient
 
 
 class Customer:
-    def __init__(self, api_client=APIClient(), logger=sugarcrm.logger):
+    def __init__(self, api_client=APIClient(), logger=lazona_connector.vars.logger):
         self.logger = logger
         self.roles = set()
         self.api_client = api_client
@@ -28,7 +28,7 @@ class Customer:
 
     def check_is_partner(self):
         for role in self.roles:
-            if role in sugarcrm.membership_roles:
+            if role in lazona_connector.vars.sugarcrm_membership_roles:
                 self.logger.info("Customer has partner role in the CRM")
                 return True
         self.logger.info("Customer does not have partner role in the CRM")

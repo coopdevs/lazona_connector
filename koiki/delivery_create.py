@@ -1,15 +1,18 @@
 from koiki.resources import Sender, Recipient, Shipment
 from koiki.woocommerce.resources import Shipping, Billing
+from lazona_connector.vars import koiki_host, koiki_auth_token
 
 
 class CreateDelivery():
     LABEL_FORMAT = 'PDF'
-    RESOURCE_PATH = '/altaEnvios'
 
     def __init__(self, order):
         self.order = order
         self.shipping = Shipping(order.data['shipping'])
         self.billing = Billing(order.data['billing'])
+
+    def url(self):
+        return f'{koiki_host}/rekis/api/altaEnvios'
 
     def body(self):
         return {
@@ -17,8 +20,8 @@ class CreateDelivery():
             'envios': self._deliveries()
         }
 
-    def url(self):
-        return self.RESOURCE_PATH
+    def auth_body(self):
+        return {**self.body(), **{"token": koiki_auth_token}}
 
     # Builds a single delivery for each vendor, aggregating the line items that vendor sold
     def _deliveries(self):

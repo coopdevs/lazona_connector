@@ -73,6 +73,7 @@ LOGGING = {
 
 # Application definition
 INSTALLED_APPS = [
+    'django_celery_beat',
     'scout_apm.django',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -101,6 +102,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+]
+
+CRON_CLASSES = [
+    "api.crons.UpdateShipmentStatusCronJob",
 ]
 
 ROOT_URLCONF = 'lazona_connector.urls'

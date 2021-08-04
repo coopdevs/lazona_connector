@@ -5,7 +5,7 @@ from rest_framework import status
 
 from api.authentication import SignatureValidation
 from api.serializers import OrderSerializer, CustomerSerializer
-from api.tasks import create_delivery, update_customer_if_is_partner
+from api.tasks import create_or_update_delivery, update_customer_if_is_partner
 
 
 class DeliveryList(APIView):
@@ -16,7 +16,7 @@ class DeliveryList(APIView):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             order = serializer.validated_data
-            create_delivery.delay(order)
+            create_or_update_delivery.delay(order)
 
             return Response(status=status.HTTP_201_CREATED)
 

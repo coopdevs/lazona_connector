@@ -10,3 +10,4 @@ label.pdf
 pdf_barcodes/*.pdf
 static
 staticfiles
+celerybeat-schedule

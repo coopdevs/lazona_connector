@@ -4,6 +4,7 @@ from koiki.delivery import Delivery
 
 
 class DeliveryTests(TestCase):
+
     def test_attributes(self):
         data = {
             "order_id": 33,
@@ -11,9 +12,7 @@ class DeliveryTests(TestCase):
             "codBarras": "JJD00026901003806220001",
             "etiqueta": "abc",
             "mensaje": "message_test",
-            "respuesta": "102"
-
-
+            "respuesta": "102",
         }
         vendor = MagicMock()
         delivery = Delivery(data, vendor)
@@ -26,6 +25,6 @@ class DeliveryTests(TestCase):
                 "barcode": "JJD00026901003806220001",
                 "label": "abc",
                 "message": "message_test",
-                "response": "102"
+                "response": "102",
             },
         )

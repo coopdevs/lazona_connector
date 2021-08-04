@@ -33,3 +33,14 @@ class Order():
         self.vendors = vendors
 
         return by_vendor
+
+    def filter_by_vendor(self, vendor_id):
+        if vendor_id:
+            self.by_vendor = {vendor_id: self.by_vendor[vendor_id]}
+
+        for vendor in self.vendors:
+            if vendor.id == vendor_id:
+                self.vendors = [vendor]
+                break
+
+        return self

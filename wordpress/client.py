@@ -1,16 +1,16 @@
 import requests
-import wordpress
+import lazona_connector.vars
 
 
 class APIClient:
     api_path = "wp-json/wp/v2"
 
-    def __init__(self, client=requests, logger=wordpress.logger):
+    def __init__(self, client=requests, logger=lazona_connector.vars.logger):
         self.client = client
         self.logger = logger
-        self.user = wordpress.wp_user
-        self.password = wordpress.wp_password
-        self.api_url = f'{wordpress.wp_host}/{self.api_path}'
+        self.user = lazona_connector.vars.wp_user
+        self.password = lazona_connector.vars.wp_password
+        self.api_url = f'{lazona_connector.vars.wp_host}/{self.api_path}'
 
     def get_request(self, path, params={}):
         abs_url = f'{self.api_url}/{path}'
