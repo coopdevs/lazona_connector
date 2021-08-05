@@ -49,15 +49,15 @@ class Shipment(models.Model):
     )
     req_body = models.CharField(
         _("Cos de la petició de la comanda enviat"),
-        max_length=300, blank=True
+        max_length=2000, blank=True
     )
     delivery_message = models.CharField(
         _("Missatge de seguiment"),
-        max_length=300, blank=True
+        max_length=1000, blank=True
     )
     delivery_notes = models.CharField(
         _("Notes de seguiment"),
-        max_length=300, blank=True
+        max_length=1000, blank=True
     )
 
     def __str__(self):
