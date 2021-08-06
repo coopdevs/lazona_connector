@@ -68,8 +68,8 @@ class Client:
             update_delivery.url(),
             json=update_delivery.auth_body()
         )
+        response_body = json.loads(response.text)
         if response.status_code == status.HTTP_200_OK:
-            response_body = json.loads(response.text)
             return DeliveryStatus(response_body)
         else:
             self._log(response.status_code, response_body, level="error")
