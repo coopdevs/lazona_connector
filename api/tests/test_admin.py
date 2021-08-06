@@ -238,7 +238,7 @@ class ShipmentAdminTest(TestCase):
                 }
             ),
         )
-        
+
         response = self.admin.update_delivery_status(request, self.shipment.id)
         expected_url = reverse("admin:api_shipment_change", args=(self.shipment.id,))
         self.assertRedirects(
