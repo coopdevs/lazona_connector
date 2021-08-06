@@ -96,8 +96,8 @@ class ShipmentAdminTest(TestCase):
         actions = self.admin.shipment_actions(self.shipment)
         self.assertEqual(
             actions,
-            '<a class="button" href="javascript: ' +
-            'window.location.href = \'/admin/api/shipment/{}/delivery/retry/\'">'.format(
+            '<a class="button" href="javascript: '
+            + "window.location.href = '/admin/api/shipment/{}/delivery/retry/'\">".format(
                 self.shipment.id
             )
             + "Reintentar enviament</a>"
@@ -194,10 +194,57 @@ class ShipmentAdminTest(TestCase):
         self.assertEqual(self.shipment.updated_at, previous_time)
         self.assertEqual(response.status_code, 400)
 
-    # def test_update_delivery_status(self):
-    #     response = self.admin.update_delivery_status(request, self.shipment.pk)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.content,
-    #         bytes("updating delivery status of {}".format(self.shipment.pk), response.charset)
-    #     )
+    def test_update_delivery_status_wrong_delivery_id(self):
+        self.shipment.delivery_id = ""
+        self.shipment.save()
+        response = self.admin.update_delivery_status(request, self.shipment.id)
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_delivery_status_wrong_api_response(self):
+        httpretty.register_uri(
+            httpretty.POST,
+            f"{lazona_connector.vars.koiki_tracking_host}/kis/api/v1/service/track/see",
+            status=500,
+            content_type="text/json",
+            body=json.dumps({}),
+        )
+
+        response = self.admin.update_delivery_status(request, self.shipment.id)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b"La crida a la API no s'ha realitzat correctament")
+
+    def test_update_delivery_status_success(self):
+        httpretty.register_uri(
+            httpretty.POST,
+            f"{lazona_connector.vars.koiki_tracking_host}/kis/api/v1/service/track/see",
+            status=200,
+            content_type="text/json",
+            body=json.dumps(
+                {
+                    "result": [
+                        {
+                            "servicio": "JJD00026901005395958001",
+                            "codEstado": "Envío entregado",
+                            "date": "2021-07-26T09:49:37+0000",
+                            "code": 108,
+                        },
+                        {
+                            "servicio": "JJD00026901005395958001",
+                            "codEstado": "Envio en Reparto",
+                            "date": "2021-07-26T07:09:21+0000",
+                            "code": 901,
+                        },
+                    ]
+                }
+            ),
+        )
+        
+        response = self.admin.update_delivery_status(request, self.shipment.id)
+        expected_url = reverse("admin:api_shipment_change", args=(self.shipment.id,))
+        self.assertRedirects(
+            response,
+            expected_url,
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=False,
+        )
