@@ -1,5 +1,6 @@
 from unittest import TestCase
-import responses
+import httpretty
+import json
 from koiki.order import Order
 from koiki.delivery_create import CreateDelivery
 import lazona_connector.vars
@@ -74,65 +75,71 @@ class CreateDeliveryTest(TestCase):
             ]
         }
 
-    @responses.activate
-    def test_body(self):
-        responses.add(
-            responses.GET,
-            f'{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/5',
+        httpretty.register_uri(
+            httpretty.GET,
+            f"{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/5",
             status=200,
-            json={
-                "phone": "93333333",
-                "address": {
-                    "street_1": "Sant Antoni Maria Claret, 175",
-                    "street_2": "",
-                    "city": "Barcelona",
-                    "zip": "08041",
-                    "country": "ES",
-                    "state": ""
+            content_type="application/json",
+            body=json.dumps(
+                {
+                    "phone": "93333333",
+                    "address": {
+                        "street_1": "Sant Antoni Maria Claret, 175",
+                        "street_2": "",
+                        "city": "Barcelona",
+                        "zip": "08041",
+                        "country": "ES",
+                        "state": "",
+                    },
                 }
-            }
+            ),
         )
-
-        responses.add(
-            responses.GET,
-            f'{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
+        httpretty.register_uri(
+            httpretty.GET,
+            f"{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/5?context=edit",
             status=200,
-            json={
-                "phone": "",
-                "address": {
-                    "street_1": "",
-                    "street_2": "",
-                    "city": "",
-                    "zip": "",
-                    "country": "ES",
-                    "state": ""
-                }
-            }
-        )
-
-        responses.add(
-                responses.GET,
-                f'{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/5?context=edit',
-                status=200,
-                content_type='application/json',
-                json={
+            content_type="application/json",
+            body=json.dumps({
                     "id": 5,
                     "username": "A Granel",
                     "email": "detergents@agranel.coop",
                     "roles": ["testrole"],
                 }
+            ),
         )
-        responses.add(
-                responses.GET,
-                f'{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/6?context=edit',
-                status=200,
-                content_type='application/json',
-                json={
+
+        httpretty.register_uri(
+            httpretty.GET,
+            f"{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6",
+            status=200,
+            content_type="application/json",
+            body=json.dumps(
+                {
+                    "phone": "",
+                    "address": {
+                        "street_1": "",
+                        "street_2": "",
+                        "city": "",
+                        "zip": "",
+                        "country": "ES",
+                        "state": "",
+                    },
+                }
+            ),
+        )
+        httpretty.register_uri(
+            httpretty.GET,
+            f"{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/6?context=edit",
+            status=200,
+            content_type="application/json",
+            body=json.dumps(
+                {
                     "id": 6,
                     "username": "Queviure",
                     "email": "queviure@lazona.coop",
                     "roles": ["testrole"],
                 }
+            ),
         )
 
         body = CreateDelivery(Order(self.order)).body()

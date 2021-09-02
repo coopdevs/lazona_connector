@@ -1,4 +1,5 @@
-import responses
+import httpretty
+import json
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from wordpress.user import WPUser
@@ -14,26 +15,30 @@ class WPUserTest(TestCase):
         self.user_id = 13
         self.partner_role = "test_partner_role"
 
-    @responses.activate
     def test_fetch_wp_user(self):
         wp_user = WPUser(self.api_client)
-        responses.add(
-            responses.GET,
+        httpretty.register_uri(
+            httpretty.GET,
             f"https://wcfmmp_testing_host/wp-json/wp/v2/users/?search={self.email}",
             status=200,
-            json=[{"id": self.user_id}],
+            content_type="application/json",
+            body=json.dumps(
+                [{"id": self.user_id}]
+            ),
         )
 
-        responses.add(
-            responses.GET,
+        httpretty.register_uri(
+            httpretty.GET,
             f"https://wcfmmp_testing_host/wp-json/wp/v2/users/{self.user_id}?context=edit",
             status=200,
-            json={
-                "id": self.user_id,
-                "username": "testusername",
-                "email": self.email,
-                "roles": ["testrole"],
-            },
+            content_type="application/json",
+            body=json.dumps({
+                    "id": self.user_id,
+                    "username": "testusername",
+                    "email": self.email,
+                    "roles": ["testrole"],
+                }
+            ),
         )
 
         wp_user.fetch_by_email(self.email)
@@ -43,22 +48,24 @@ class WPUserTest(TestCase):
         self.assertEqual(wp_user.username, "testusername")
         self.assertEqual(wp_user.user_id, self.user_id)
 
-    @responses.activate
     def test_update_wp_user(self):
         wp_user = WPUser(self.api_client)
         wp_user.roles = ["previousrole"]
 
-        responses.add(
-            method=responses.POST,
-            url=f"https://wcfmmp_testing_host/wp-json/wp/v2/users/{self.user_id}",
+        httpretty.register_uri(
+            httpretty.POST,
+            f"https://wcfmmp_testing_host/wp-json/wp/v2/users/{self.user_id}",
             status=200,
-            json={
-                "id": self.user_id,
-                "roles": [self.partner_role],
-                "username": "testusername",
-                "email": self.email,
-            },
+            content_type="application/json",
+            body=json.dumps({
+                    "id": self.user_id,
+                    "roles": [self.partner_role],
+                    "username": "testusername",
+                    "email": self.email,
+                }
+            ),
         )
+
         wp_user.user_id = self.user_id
         wp_user.update(roles=self.partner_role)
 
