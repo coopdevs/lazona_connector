@@ -41,15 +41,15 @@ class ModelsTest(TestCase):
             },
         )
 
-    def test_sender(self):
+    def test_sender_with_town_name_filtering(self):
         vendor = Vendor(
             id=1,
             name="Quèviure",
             address="C/ queviure, 1",
-            zip="08905",
+            zip="08791",
             email="queviure@lazona.coop",
             country="ES",
-            city="L'hospitalet del llobregat",
+            city="Sant Llorenç d'Hortons",
             state="B",
             phone="+34666554433",
         )
@@ -62,8 +62,8 @@ class ModelsTest(TestCase):
                 "apellidoRemi": "",
                 "direccionRemi": "C/ queviure, 1",
                 "numeroCalleRemi": "",
-                "codPostalRemi": "08905",
-                "poblacionRemi": "L hospitalet del llobregat",
+                "codPostalRemi": "08791",
+                "poblacionRemi": "Sant Llorenc d Hortons",
                 "provinciaRemi": "Barcelona",
                 "paisRemi": "ES",
                 "emailRemi": "queviure@lazona.coop",
@@ -71,7 +71,7 @@ class ModelsTest(TestCase):
             },
         )
 
-    def test_recipient(self):
+    def test_recipient_with_town_name_filtering(self):
         shipping = Shipping(
             {
                 "first_name": "Philip",
@@ -79,7 +79,7 @@ class ModelsTest(TestCase):
                 "address_1": "Pl. de la Vila",
                 "address_2": "1 3",
                 "postcode": "08905",
-                "city": "L'hospitalet del llobregat",
+                "city": "Bell-lloc d'Urgell",
                 "state": "Barcelona",
                 "country": "ES",
             }
@@ -96,7 +96,7 @@ class ModelsTest(TestCase):
                 "direccionAdicionalDesti": shipping.address_2,
                 "numeroCalleDesti": "",
                 "codPostalDesti": shipping.postcode,
-                "poblacionDesti": "L hospitalet del llobregat",
+                "poblacionDesti": "Bell lloc d Urgell",
                 "provinciaDesti": shipping.state,
                 "paisDesti": shipping.country,
             },
