@@ -1,6 +1,5 @@
 from django.utils import timezone
 from unittest.mock import patch, MagicMock
-import responses
 import httpretty
 import json
 from django.test import TestCase
@@ -55,34 +54,38 @@ class TasksTests(TestCase):
             ],
         }
 
-        responses.add(
-            responses.GET,
+        httpretty.register_uri(
+            httpretty.GET,
             f"{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6",
             status=200,
-            json={
-                "phone": "",
-                "address": {
-                    "street_1": "",
-                    "street_2": "",
-                    "city": "",
-                    "zip": "",
-                    "country": "ES",
-                    "state": "",
-                },
-            },
+            content_type="application/json",
+            body=json.dumps(
+                {
+                    "phone": "",
+                    "address": {
+                        "street_1": "",
+                        "street_2": "",
+                        "city": "",
+                        "zip": "",
+                        "country": "ES",
+                        "state": "",
+                    },
+                }
+            ),
         )
-
-        responses.add(
-            responses.GET,
+        httpretty.register_uri(
+            httpretty.GET,
             f"{lazona_connector.vars.wp_host}/wp-json/wp/v2/users/6?context=edit",
             status=200,
             content_type="application/json",
-            json={
-                "id": 6,
-                "username": "Queviure",
-                "email": "test@test.es",
-                "roles": ["testrole"],
-            },
+            body=json.dumps(
+                {
+                    "id": 6,
+                    "username": "Queviure",
+                    "email": "test@test.es",
+                    "roles": ["testrole"],
+                }
+            ),
         )
 
     @patch("koiki.delivery.Delivery.print_pdf", autospec=True)
@@ -129,27 +132,27 @@ class TasksTests(TestCase):
         create_or_update_delivery(order)
         self.assertTrue(delivery._is_errored())
 
-    @responses.activate
-    @patch("koiki.email.EmailMessage", autospec=True)
-    @patch("api.tasks.logger", autospec=True)
+    @patch('koiki.email.EmailMessage', autospec=True)
+    @patch('api.tasks.logger', autospec=True)
     def test_create_delivery_sends_email(self, mock_logger, mock_email):
-        responses.add(
-            responses.POST,
+        httpretty.register_uri(
+            httpretty.POST,
             f"{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios",
             status=200,
-            json={
-                "respuesta": "101",
-                "mensaje": "OK",
-                "envios": [
-                    {
-                        "numPedido": "123",
-                        "codBarras": "yyy",
-                        "etiqueta": "abcd",
-                        "respuesta": "101",
-                        "mensaje": "OK",
-                    }
-                ],
-            },
+            content_type="text/json",
+            body=json.dumps(
+                {
+                    'respuesta': '101',
+                    'mensaje': 'OK',
+                    'envios': [{
+                        'numPedido': '123',
+                        'codBarras': 'yyy',
+                        'etiqueta': 'abcd',
+                        'respuesta': '101',
+                        'mensaje': 'OK'
+                    }]
+                }
+            ),
         )
 
         serializer = OrderSerializer(data=self.data)
@@ -166,19 +169,23 @@ class TasksTests(TestCase):
             f"{lazona_connector.vars.wcfmmp_host}/area-privada/orders-details/33", message
         )
 
-    @responses.activate
-    @patch("koiki.email.EmailMessage", autospec=True)
-    @patch("koiki.email.logger", autospec=True)
+    @patch('koiki.email.EmailMessage', autospec=True)
+    @patch('koiki.email.logger', autospec=True)
     def test_create_delivery_sends_error_email(self, mock_logger, mock_email):
-        responses.add(
-            responses.POST,
+        httpretty.register_uri(
+            httpretty.POST,
             f"{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios",
             status=200,
-            json={
-                "respuesta": "102",
-                "mensaje": "ERROR",
-                "envios": [{"numPedido": "124", "respuesta": "102", "mensaje": "Missing field X"}],
-            },
+            content_type="text/json",
+            body=json.dumps({
+                'respuesta': '102',
+                'mensaje': 'ERROR',
+                'envios': [{
+                    'numPedido': '124',
+                    'respuesta': '102',
+                    'mensaje': 'Missing field X'
+                }]
+            })
         )
 
         serializer = OrderSerializer(data=self.data)
@@ -196,19 +203,23 @@ class TasksTests(TestCase):
         )
         self.assertIn("Missing field X", message)
 
-    @responses.activate
-    @patch("koiki.email.EmailMessage", autospec=True)
-    @patch("koiki.email.logger", autospec=True)
+    @patch('koiki.email.EmailMessage', autospec=True)
+    @patch('koiki.email.logger', autospec=True)
     def test_create_delivery_sends_error_email_default_error(self, mock_logger, mock_email):
-        responses.add(
-            responses.POST,
+        httpretty.register_uri(
+            httpretty.POST,
             f"{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios",
             status=200,
-            json={
-                "respuesta": "102",
-                "mensaje": "ERROR",
-                "envios": [{"numPedido": "124", "respuesta": "102", "mensaje": ""}],
-            },
+            content_type="text/json",
+            body=json.dumps({
+                'respuesta': '102',
+                'mensaje': 'ERROR',
+                'envios': [{
+                    'numPedido': '124',
+                    'respuesta': '102',
+                    'mensaje': ''
+                }]
+            })
         )
 
         serializer = OrderSerializer(data=self.data)
