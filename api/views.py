@@ -20,8 +20,9 @@ class DeliveryList(APIView):
             already_created = Shipment.objects.filter(order_id=order['id']).exists()
             if not already_created:
                 create_or_update_delivery.delay(order)
-
-            return Response(status=status.HTTP_201_CREATED)
+                return Response(status=status.HTTP_201_CREATED)
+            else:
+                return Response(status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
