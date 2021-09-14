@@ -3,16 +3,17 @@ from datetime import datetime
 from koiki.client import Client
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
 from sugarcrm.customer import Customer
-import lazona_connector.vars
-from lazona_connector.vars import logger
+from lazona_connector.vars import logger, wp_partner_role, TESTING
 from wordpress.user import WPUser
 from lazona_connector.celery import app
 from django.db.models import Q
 
+if __name__ == '__main__' or TESTING:
+    from api.models import Shipment, ShipmentStatus
+
 
 @app.task
 def create_or_update_delivery(order_data, vendor_id=None):
-    from api.models import Shipment, ShipmentStatus
     deliveries_by_vendor = Client().create_delivery(order_data, vendor_id)
     for delivery in deliveries_by_vendor:
         label_url = ""
@@ -108,4 +109,4 @@ def _check_customer_is_partner(email):
 def update_user_as_partner(email):
     wp_user = WPUser().fetch_by_email(email)
     if wp_user.roles and "customer" in wp_user.roles:
-        wp_user.update(roles=lazona_connector.vars.wp_partner_role)
+        wp_user.update(roles=wp_partner_role)
