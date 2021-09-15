@@ -85,6 +85,23 @@ class LineItem():
         raise Exception("No _vendor_id provided in line item's metadata")
 
 
+class ShippingLine():
+    def __init__(self, line_item):
+        self.method_title = line_item['method_title']
+        self.method_id = line_item['method_id']
+        self.metadata = line_item['meta_data']
+        vendor = self._find_vendor()
+        self.vendor = Vendor(id=vendor[0], name=vendor[1])
+
+    # Finds the vendor attributes from all the metadata entries
+    def _find_vendor(self):
+        for datum in self.metadata:
+            if datum['key'] == 'vendor_id':
+                return datum['value'], datum['display_value']
+
+        raise Exception("No _vendor_id provided in line item's metadata")
+
+
 class Shipping():
     def __init__(self, shipping):
         self.first_name = shipping['first_name']

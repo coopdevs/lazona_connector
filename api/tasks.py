@@ -1,6 +1,7 @@
 import pprint
 from datetime import datetime
 from koiki.client import Client
+from koiki.order import Order
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
 from sugarcrm.customer import Customer
 import lazona_connector.vars
@@ -12,8 +13,20 @@ from django.db.models import Q
 
 @app.task
 def create_or_update_delivery(order_data, vendor_id=None):
-    from api.models import Shipment, ShipmentStatus
-    deliveries_by_vendor = Client().create_delivery(order_data, vendor_id)
+    from api.models import Shipment, ShipmentStatus, ShipmentMethod
+
+    local_pickup_orders = Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.LOCAL_PICKUP)
+    for local_vendor_id in local_pickup_orders.by_vendor.keys():
+        shipment, created = Shipment.objects.get_or_create(
+            order_id=int(local_pickup_orders.order_id), vendor_id=int(local_vendor_id),
+            method=ShipmentMethod.LOCAL_PICKUP
+        )
+        shipment.status = ShipmentStatus.DELIVERED
+        shipment.update_at = datetime.now()
+        shipment.save()
+
+    koiki_orders = Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.KOIKI)
+    deliveries_by_vendor = Client().create_delivery(koiki_orders)
     for delivery in deliveries_by_vendor:
         label_url = ""
         if delivery._is_errored():
@@ -33,16 +46,17 @@ def create_or_update_delivery(order_data, vendor_id=None):
                 recipient=delivery.vendor.email,
                 order_id=delivery.get_data_val("order_id"),
             ).send()
-        shipment, created = Shipment.objects.get_or_create(
-            order_id=int(delivery.get_data_val("order_id")), vendor_id=int(delivery.vendor.id)
-        )
-        shipment.req_body = pprint.pformat(delivery.req_body)
-        shipment.delivery_message = delivery.get_data_val("message")
-        shipment.delivery_id = delivery.get_data_val("barcode")
-        shipment.label_url = label_url
-        shipment.status = delivery_status
-        shipment.update_at = datetime.now()
-        shipment.save()
+    shipment, created = Shipment.objects.get_or_create(
+        order_id=int(delivery.get_data_val("order_id")), vendor_id=int(delivery.vendor.id),
+        method=ShipmentMethod.KOIKI
+    )
+    shipment.req_body = pprint.pformat(delivery.req_body)
+    shipment.delivery_message = delivery.get_data_val("message")
+    shipment.delivery_id = delivery.get_data_val("barcode")
+    shipment.label_url = label_url
+    shipment.status = delivery_status
+    shipment.update_at = datetime.now()
+    shipment.save()
 
 
 @app.task
