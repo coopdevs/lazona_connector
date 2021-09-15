@@ -6,14 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0007_auto_20210803_1036'),
+        ("api", "0007_auto_20210803_1036"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shipment',
-            name='method',
-            field=models.CharField(choices=[('KOIKI', 'Enviament via Koiki'), ('LOCAL_PICKUP', 'Arreplegada en botiga')], default='KOIKI', max_length=20, verbose_name="Mètode d'enviament"),
+            model_name="shipment",
+            name="method",
+            field=models.CharField(
+                choices=[
+                    ("KOIKI", "Enviament via Koiki"),
+                    ("LOCAL_PICKUP", "Arreplegada en botiga"),
+                ],
+                default="KOIKI",
+                max_length=20,
+                verbose_name="Mètode d'enviament",
+            ),
             preserve_default=False,
         ),
     ]

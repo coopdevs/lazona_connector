@@ -15,17 +15,22 @@ from django.db.models import Q
 def create_or_update_delivery(order_data, vendor_id=None):
     from api.models import Shipment, ShipmentStatus, ShipmentMethod
 
-    local_pickup_orders = Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.LOCAL_PICKUP)
+    local_pickup_orders = (
+        Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.LOCAL_PICKUP)
+    )
     for local_vendor_id in local_pickup_orders.by_vendor.keys():
         shipment, created = Shipment.objects.get_or_create(
-            order_id=int(local_pickup_orders.order_id), vendor_id=int(local_vendor_id),
-            method=ShipmentMethod.LOCAL_PICKUP
+            order_id=int(local_pickup_orders.order_id),
+            vendor_id=int(local_vendor_id),
+            method=ShipmentMethod.LOCAL_PICKUP,
         )
         shipment.status = ShipmentStatus.DELIVERED
         shipment.update_at = datetime.now()
         shipment.save()
 
-    koiki_orders = Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.KOIKI)
+    koiki_orders = (
+        Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.KOIKI)
+    )
     deliveries_by_vendor = Client().create_delivery(koiki_orders)
     for delivery in deliveries_by_vendor:
         label_url = ""
@@ -47,8 +52,9 @@ def create_or_update_delivery(order_data, vendor_id=None):
                 order_id=delivery.get_data_val("order_id"),
             ).send()
     shipment, created = Shipment.objects.get_or_create(
-        order_id=int(delivery.get_data_val("order_id")), vendor_id=int(delivery.vendor.id),
-        method=ShipmentMethod.KOIKI
+        order_id=int(delivery.get_data_val("order_id")),
+        vendor_id=int(delivery.vendor.id),
+        method=ShipmentMethod.KOIKI,
     )
     shipment.req_body = pprint.pformat(delivery.req_body)
     shipment.delivery_message = delivery.get_data_val("message")
@@ -62,47 +68,49 @@ def create_or_update_delivery(order_data, vendor_id=None):
 @app.task
 def update_delivery_status(delivery_id, email_notify=False):
     from api.models import Shipment, ShipmentStatus
+
     delivery_status = Client().update_delivery_status(delivery_id)
     if delivery_status and delivery_id:
         shipment = Shipment.objects.get(delivery_id=delivery_id)
         shipment.tracking_updated_at = datetime.now()
-        shipment_status = delivery_status.get_data_val('shipment_status')
+        shipment_status = delivery_status.get_data_val("shipment_status")
         old_shipment_status = shipment.status
         old_shipment_delivery_message = shipment.delivery_message
         if delivery_status.is_errored():
             shipment.status = shipment_status
-            shipment.delivery_message = delivery_status.get_data_val('response_error_message')
+            shipment.delivery_message = delivery_status.get_data_val("response_error_message")
             shipment.tracking_status_created_at = None
         else:
-            shipment.tracking_status_created_at = delivery_status.get_data_val('response_date')
-            shipment.delivery_notes = delivery_status.get_data_val('response_notes')
+            shipment.tracking_status_created_at = delivery_status.get_data_val("response_date")
+            shipment.delivery_notes = delivery_status.get_data_val("response_notes")
             if shipment_status:
                 shipment.status = shipment_status
-                shipment.delivery_message = delivery_status.get_data_val('response_message')
+                shipment.delivery_message = delivery_status.get_data_val("response_message")
             else:
                 shipment.status = ShipmentStatus.ERROR_FROM_TRACKING
                 shipment.delivery_message = "{}. Doesn't match any shipment status".format(
-                    delivery_status.get_data_val('response_message')
+                    delivery_status.get_data_val("response_message")
                 )
         shipment.save()
         if email_notify:
-            if (shipment.status != old_shipment_status or
-                    shipment.delivery_message != old_shipment_delivery_message):
+            if (
+                shipment.status != old_shipment_status
+                or shipment.delivery_message != old_shipment_delivery_message
+            ):
                 UpdateDeliveryStatusChangedMail(shipment).send()
         return True
     return False
 
 
-@app.task(name='update_delivery_status_periodic')
+@app.task(name="update_delivery_status_periodic")
 def update_delivery_status_periodic():
     from api.models import Shipment
-    shipments = Shipment.objects.all().exclude(Q(delivery_id='') | Q(status='DELIVERED'))
+
+    shipments = Shipment.objects.all().exclude(Q(delivery_id="") | Q(status="DELIVERED"))
     if shipments:
         for shipment in shipments:
             logger.info(
-                "Updating shipment stratus for delivery id {}".format(
-                    shipment.delivery_id
-                )
+                "Updating shipment stratus for delivery id {}".format(shipment.delivery_id)
             )
             update_delivery_status(shipment.delivery_id, email_notify=True)
 
