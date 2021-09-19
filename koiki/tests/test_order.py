@@ -1,5 +1,5 @@
 from unittest import TestCase
-from koiki.order import Order
+from koiki.resources import KoikiOrder
 
 
 class OrderTest(TestCase):
@@ -8,6 +8,20 @@ class OrderTest(TestCase):
             "id": 33,
             "order_key": "123x",
             "customer_note": "dummy customer note",
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+                }
+            ],
             "line_items": [
                 {
                     "id": 17,
@@ -27,7 +41,7 @@ class OrderTest(TestCase):
         }
 
     def test_to_dict(self):
-        order = Order(self.data)
+        order = KoikiOrder(self.data)
 
         self.assertEqual(
             order.to_dict(),
