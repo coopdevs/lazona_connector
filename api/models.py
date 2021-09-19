@@ -13,7 +13,7 @@ class ShipmentStatus(models.TextChoices):
 
 class ShipmentMethod(models.TextChoices):
     KOIKI = "KOIKI", _(u"Enviament via Koiki")
-    LOCAL_PICKUP = "LOCAL_PICKUP", _(u"Arreplegada en botiga")
+    LOCAL_PICKUP = "LOCAL_PICKUP", _(u"Recollida en botiga")
 
 
 class Shipment(models.Model):
