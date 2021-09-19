@@ -1,7 +1,8 @@
 import pprint
 from datetime import datetime
 from koiki.client import Client
-from koiki.order import Order
+from koiki.woocommerce.order import LocalPickupOrder
+from koiki.resources import KoikiOrder
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
 from sugarcrm.customer import Customer
 import lazona_connector.vars
@@ -15,9 +16,8 @@ from django.db.models import Q
 def create_or_update_delivery(order_data, vendor_id=None):
     from api.models import Shipment, ShipmentStatus, ShipmentMethod
 
-    local_pickup_orders = (
-        Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.LOCAL_PICKUP)
-    )
+    local_pickup_orders = LocalPickupOrder(order_data)
+    print('local_pickup_orders', local_pickup_orders.by_vendor.keys())
     for local_vendor_id in local_pickup_orders.by_vendor.keys():
         shipment, created = Shipment.objects.get_or_create(
             order_id=int(local_pickup_orders.order_id),
@@ -28,9 +28,7 @@ def create_or_update_delivery(order_data, vendor_id=None):
         shipment.update_at = datetime.now()
         shipment.save()
 
-    koiki_orders = (
-        Order(order_data).filter_by_vendor(vendor_id).filter_by_method(ShipmentMethod.KOIKI)
-    )
+    koiki_orders = KoikiOrder(order_data).filter_by_vendor(vendor_id)
     deliveries_by_vendor = Client().create_delivery(koiki_orders)
     for delivery in deliveries_by_vendor:
         label_url = ""

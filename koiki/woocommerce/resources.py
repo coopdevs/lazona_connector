@@ -99,7 +99,7 @@ class ShippingLine():
             if datum['key'] == 'vendor_id':
                 return datum['value'], datum['display_value']
 
-        raise Exception("No _vendor_id provided in line item's metadata")
+        raise Exception("No vendor_id provided in line item's metadata")
 
 
 class Shipping():
