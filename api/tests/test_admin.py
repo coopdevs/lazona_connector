@@ -190,9 +190,6 @@ class ShipmentAdminTest(TestCase):
             fetch_redirect_response=False,
         )
         self.shipment.refresh_from_db()
-        print('shipment.update_at', self.shipment.updated_at)
-        print('shipment.vendor_id', self.shipment.vendor_id)
-        print('shipment.id', self.shipment.id)
         self.assertGreater(self.shipment.updated_at, previous_time)
         self.assertEqual(self.shipment.delivery_id, "123")
         self.assertEqual(self.shipment.status, ShipmentStatus.LABEL_SENT)
