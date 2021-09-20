@@ -17,13 +17,13 @@ def create_or_update_delivery(order_data, vendor_id=None):
     from api.models import Shipment, ShipmentStatus, ShipmentMethod
 
     local_pickup_orders = LocalPickupOrder(order_data)
-    print('local_pickup_orders', local_pickup_orders.by_vendor.keys())
+
     for local_vendor_id in local_pickup_orders.by_vendor.keys():
         shipment, created = Shipment.objects.get_or_create(
             order_id=int(local_pickup_orders.order_id),
-            vendor_id=int(local_vendor_id),
-            method=ShipmentMethod.LOCAL_PICKUP,
+            vendor_id=int(local_vendor_id)
         )
+        shipment.method = ShipmentMethod.LOCAL_PICKUP
         shipment.status = ShipmentStatus.DELIVERED
         shipment.update_at = datetime.now()
         shipment.save()
@@ -49,18 +49,19 @@ def create_or_update_delivery(order_data, vendor_id=None):
                 recipient=delivery.vendor.email,
                 order_id=delivery.get_data_val("order_id"),
             ).send()
-    shipment, created = Shipment.objects.get_or_create(
-        order_id=int(delivery.get_data_val("order_id")),
-        vendor_id=int(delivery.vendor.id),
-        method=ShipmentMethod.KOIKI,
-    )
-    shipment.req_body = pprint.pformat(delivery.req_body)
-    shipment.delivery_message = delivery.get_data_val("message")
-    shipment.delivery_id = delivery.get_data_val("barcode")
-    shipment.label_url = label_url
-    shipment.status = delivery_status
-    shipment.update_at = datetime.now()
-    shipment.save()
+
+        shipment, created = Shipment.objects.get_or_create(
+            order_id=int(delivery.get_data_val("order_id")),
+            vendor_id=int(delivery.vendor.id),
+        )
+        shipment.method = ShipmentMethod.KOIKI
+        shipment.req_body = pprint.pformat(delivery.req_body)
+        shipment.delivery_message = delivery.get_data_val("message")
+        shipment.delivery_id = delivery.get_data_val("barcode")
+        shipment.label_url = label_url
+        shipment.status = delivery_status
+        shipment.updated_at = datetime.now()
+        shipment.save()
 
 
 @app.task

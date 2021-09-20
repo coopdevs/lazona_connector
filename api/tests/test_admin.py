@@ -132,6 +132,20 @@ class ShipmentAdminTest(TestCase):
                         "country": "ES",
                     },
                     "billing": {"phone": "666666666", "email": "lennon@example.com"},
+                    "shipping_lines": [
+                        {
+                            "id": 54,
+                            "method_title": "Enviament Koiki",
+                            "method_id": "wcfmmp_product_shipping_by_zone",
+                            "meta_data": [{
+                                "id": 172,
+                                "key": "vendor_id",
+                                "value": "5",
+                                "display_key": "Store",
+                                "display_value": "Tenda Taronja",
+                            }]
+                        }
+                    ],
                     "line_items": [
                         {
                             "id": 17,
@@ -176,6 +190,9 @@ class ShipmentAdminTest(TestCase):
             fetch_redirect_response=False,
         )
         self.shipment.refresh_from_db()
+        print('shipment.update_at', self.shipment.updated_at)
+        print('shipment.vendor_id', self.shipment.vendor_id)
+        print('shipment.id', self.shipment.id)
         self.assertGreater(self.shipment.updated_at, previous_time)
         self.assertEqual(self.shipment.delivery_id, "123")
         self.assertEqual(self.shipment.status, ShipmentStatus.LABEL_SENT)
