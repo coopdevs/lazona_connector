@@ -1,5 +1,5 @@
 import pprint
-from datetime import datetime
+from django.utils import timezone
 from koiki.client import Client
 from koiki.woocommerce.order import LocalPickupOrder
 from koiki.resources import KoikiOrder
@@ -25,7 +25,7 @@ def create_or_update_delivery(order_data, vendor_id=None):
         )
         shipment.method = ShipmentMethod.LOCAL_PICKUP
         shipment.status = ShipmentStatus.DELIVERED
-        shipment.update_at = datetime.now()
+        shipment.update_at = timezone.now()
         shipment.save()
 
     koiki_orders = KoikiOrder(order_data).filter_by_vendor(vendor_id)
@@ -60,7 +60,7 @@ def create_or_update_delivery(order_data, vendor_id=None):
         shipment.delivery_id = delivery.get_data_val("barcode")
         shipment.label_url = label_url
         shipment.status = delivery_status
-        shipment.updated_at = datetime.now()
+        shipment.updated_at = timezone.now()
         shipment.save()
 
 
@@ -71,7 +71,7 @@ def update_delivery_status(delivery_id, email_notify=False):
     delivery_status = Client().update_delivery_status(delivery_id)
     if delivery_status and delivery_id:
         shipment = Shipment.objects.get(delivery_id=delivery_id)
-        shipment.tracking_updated_at = datetime.now()
+        shipment.tracking_updated_at = timezone.now()
         shipment_status = delivery_status.get_data_val("shipment_status")
         old_shipment_status = shipment.status
         old_shipment_delivery_message = shipment.delivery_message
