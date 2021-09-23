@@ -1,5 +1,6 @@
 from koiki.woocommerce.order import Order
 
+
 def clean_names_for_koiki(name):
     name = name.replace("'", " ")
     name = name.replace("ç", "c")
