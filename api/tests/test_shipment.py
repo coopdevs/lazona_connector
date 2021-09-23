@@ -1,11 +1,12 @@
 from unittest.mock import patch
 import httpretty
+from django.utils import timezone
 import json
 import ast
 from django.test import TestCase
 from api.serializers import OrderSerializer
 from api.tasks import create_or_update_delivery
-from api.models import Shipment, ShipmentStatus
+from api.models import Shipment, ShipmentStatus, ShipmentMethod
 import lazona_connector.vars
 
 
@@ -42,6 +43,46 @@ class ShipmentTests(TestCase):
                             "display_value": "Quèviure",
                         }
                     ],
+                },
+                {
+                    "id": 18,
+                    "quantity": 1,
+                    "name": "Producte 2",
+                    "meta_data": [
+                        {
+                            "id": 173,
+                            "key": "_vendor_id",
+                            "value": "7",
+                            "display_key": "Store",
+                            "display_value": "A granel",
+                        }
+                    ],
+                }
+            ],
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+                },
+                {
+                    "id": 55,
+                    "method_title": "Recollida en botiga",
+                    "method_id": "local_pickup",
+                    "meta_data": [{
+                        "id": 173,
+                        "key": "vendor_id",
+                        "value": "7",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
                 }
             ],
         }
@@ -105,24 +146,30 @@ class ShipmentTests(TestCase):
 
         serializer = OrderSerializer(data=self.data)
         self.assertTrue(serializer.is_valid())
-
+        previous_time = timezone.now()
         order = serializer.validated_data
         mock_email.send.return_value = True
         create_or_update_delivery(order)
-        self.assertEqual(Shipment.objects.all().count(), 1)
+        self.assertEqual(Shipment.objects.all().count(), 2)
 
-        shipment = Shipment.objects.first()
-        self.assertEqual(shipment.delivery_id, "yyy")
-        self.assertEqual(shipment.order_id, 33)
-        self.assertEqual(shipment.vendor_id, 6)
-        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment))
-        self.assertEqual(shipment.label_url, "pdf_barcodes/123.pdf")
-        self.assertEqual(shipment.status, ShipmentStatus.LABEL_SENT)
-        self.assertEqual(shipment.delivery_message, "OK")
+        shipment_koiki = Shipment.objects.filter(vendor_id=6).first()
+        self.assertEqual(shipment_koiki.delivery_id, "yyy")
+        self.assertEqual(shipment_koiki.order_id, 33)
+        self.assertEqual(shipment_koiki.method, ShipmentMethod.KOIKI)
+        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment_koiki))
+        self.assertEqual(shipment_koiki.label_url, "pdf_barcodes/123.pdf")
+        self.assertEqual(shipment_koiki.status, ShipmentStatus.LABEL_SENT)
+        self.assertEqual(shipment_koiki.delivery_message, "OK")
         delivery_req_body = json.loads(httpretty.last_request().body)["envios"][0]
-        self.assertEqual(ast.literal_eval(shipment.req_body), delivery_req_body)
-        self.assertEqual(ast.literal_eval(shipment.req_body)["paisRemi"], "ES")
-        self.assertEqual(ast.literal_eval(shipment.req_body)["emailRemi"], "test@test.es")
+        self.assertEqual(ast.literal_eval(shipment_koiki.req_body), delivery_req_body)
+        self.assertEqual(ast.literal_eval(shipment_koiki.req_body)["paisRemi"], "ES")
+        self.assertEqual(ast.literal_eval(shipment_koiki.req_body)["emailRemi"], "test@test.es")
+
+        shipment_local = Shipment.objects.filter(vendor_id=7).first()
+        self.assertEqual(shipment_local.order_id, 33)
+        self.assertEqual(shipment_local.status, ShipmentStatus.DELIVERED)
+        self.assertEqual(shipment_local.method, ShipmentMethod.LOCAL_PICKUP)
+        self.assertGreater(shipment_local.updated_at, previous_time)
 
     @patch("koiki.email.EmailMessage", autospec=True)
     def test_create_shipment_failed(self, mock_email):
@@ -148,14 +195,19 @@ class ShipmentTests(TestCase):
         order = serializer.validated_data
         mock_email.send.return_value = True
         create_or_update_delivery(order)
-        self.assertEqual(Shipment.objects.all().count(), 1)
+        self.assertEqual(Shipment.objects.all().count(), 2)
 
-        shipment = Shipment.objects.first()
+        shipment_koiki = Shipment.objects.filter(vendor_id=6).first()
 
-        self.assertEqual(shipment.delivery_id, "")
-        self.assertEqual(shipment.order_id, 33)
-        self.assertEqual(shipment.vendor_id, 6)
-        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment))
-        self.assertEqual(shipment.label_url, "")
-        self.assertEqual(shipment.status, ShipmentStatus.ERROR_FROM_BODY)
-        self.assertEqual(shipment.delivery_message, "Missing field X")
+        self.assertEqual(shipment_koiki.delivery_id, "")
+        self.assertEqual(shipment_koiki.order_id, 33)
+        self.assertEqual(shipment_koiki.method, ShipmentMethod.KOIKI)
+        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment_koiki))
+        self.assertEqual(shipment_koiki.label_url, "")
+        self.assertEqual(shipment_koiki.status, ShipmentStatus.ERROR_FROM_BODY)
+        self.assertEqual(shipment_koiki.delivery_message, "Missing field X")
+
+        shipment_local = Shipment.objects.filter(vendor_id=7).first()
+        self.assertEqual(shipment_local.order_id, 33)
+        self.assertEqual(shipment_local.status, ShipmentStatus.DELIVERED)
+        self.assertEqual(shipment_local.method, ShipmentMethod.LOCAL_PICKUP)

@@ -14,8 +14,8 @@ from .forms import ShipmentModelForm
 
 @admin.register(Shipment)
 class ShipmentAdmin(admin.ModelAdmin):
-    list_display = ("pk", "updated_at", "status", "delivery_id", "order_id", "vendor_id")
-    list_filter = ("status",)
+    list_display = ("pk", "method", "updated_at", "status", "delivery_id", "order_id", "vendor_id")
+    list_filter = ("status", "method")
     search_fields = ("delivery_id",)
     readonly_fields = (
         "shipment_actions",

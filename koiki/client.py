@@ -7,7 +7,6 @@ from koiki.delivery_create import CreateDelivery
 from koiki.delivery_update import UpdateDelivery
 from koiki.delivery_status import DeliveryStatus
 from koiki.delivery import Delivery
-from koiki.order import Order
 import lazona_connector.vars
 
 # API_PATH = "/rekis/api"
@@ -20,8 +19,7 @@ class Client:
     ):
         self.logger = logger
 
-    def create_delivery(self, order_data, vendor_id=None):
-        order = Order(order_data).filter_by_vendor(vendor_id)
+    def create_delivery(self, order):
         create_delivery = CreateDelivery(order)
         req_body_create_delivery = create_delivery.body()
         self.logger.debug(

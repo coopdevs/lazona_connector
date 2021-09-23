@@ -31,6 +31,20 @@ class DeliveryViewTests(TestCase):
                 'phone': '666666666',
                 'email': 'lennon@example.com'
             },
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+                }
+            ],
             'line_items': [{
                 'id': 17,
                 'quantity': 1,

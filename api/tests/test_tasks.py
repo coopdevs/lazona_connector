@@ -52,6 +52,20 @@ class TasksTests(TestCase):
                     ],
                 }
             ],
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+                }
+            ],
         }
 
         httpretty.register_uri(
