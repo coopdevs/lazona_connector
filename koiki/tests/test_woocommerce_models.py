@@ -1,7 +1,7 @@
 from unittest import TestCase
 import httpretty
 import json
-from koiki.woocommerce.resources import LineItem, Vendor, Shipping, Billing
+from koiki.woocommerce.resources import LineItem, Vendor, Shipping, Billing, ShippingLine
 import lazona_connector.vars
 
 
@@ -34,6 +34,35 @@ class WooocommerceModelsTest(TestCase):
     def test_line_item_without_vendor(self):
         data = {"id": 1, "quantity": 1, "meta_data": []}
         self.assertRaises(Exception, LineItem, data)
+
+    def test_shipping_line(self):
+
+        shipping_line = {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+        }
+
+        shipping_line = ShippingLine(shipping_line)
+
+        self.assertEquals(shipping_line.method_id, "wcfmmp_product_shipping_by_zone")
+        self.assertEquals(shipping_line.vendor, Vendor(id="6", name="Quèviure"))
+
+    def test_shipping_line_without_vendor(self):
+        shipping_line = {
+            "id": 54,
+            "method_title": "Enviament Koiki",
+            "method_id": "wcfmmp_product_shipping_by_zone",
+            "meta_data": []
+        }
+        self.assertRaises(Exception, ShippingLine, shipping_line)
 
     def test_vendor(self):
         vendor = Vendor(id=1, name="name")

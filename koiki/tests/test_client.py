@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 import httpretty
 import json
 from koiki.client import Client
+from koiki.resources import KoikiOrder
 import lazona_connector.vars
 
 
@@ -28,6 +29,20 @@ class KoikiTest(TestCase):
                 'email': 'email@example.com',
                 'phone': '+34666554433'
             },
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+                }
+            ],
             "line_items": [
                 {
                     "id": 17,
@@ -112,7 +127,7 @@ class KoikiTest(TestCase):
             ),
         )
 
-        deliveries = Client().create_delivery(self.order)
+        deliveries = Client().create_delivery(KoikiOrder(self.order))
 
         mock_logger.error.assert_not_called()
         self.assertEqual(deliveries[0].to_dict(), {'shipment_id': '123', 'barcode': 'yyy',
@@ -133,7 +148,8 @@ class KoikiTest(TestCase):
 
         mock_logger = MagicMock()
         client = Client(logger=mock_logger)
-        deliveries = client.create_delivery(self.order)
+
+        deliveries = client.create_delivery(KoikiOrder(self.order))
 
         mock_logger.error.assert_called_once_with(
             "Koiki response. status=400, body={'error': 'Bad Request'}")
@@ -152,7 +168,7 @@ class KoikiTest(TestCase):
 
         mock_logger = MagicMock()
 
-        deliveries = Client(logger=mock_logger).create_delivery(self.order)
+        deliveries = Client(logger=mock_logger).create_delivery(KoikiOrder(self.order))
 
         self.assertEqual(len(deliveries), 0)
 
@@ -170,6 +186,6 @@ class KoikiTest(TestCase):
         response.status_code = 200
         post_mock.return_value = response
 
-        Client().create_delivery(self.order)
+        Client().create_delivery(KoikiOrder(self.order))
 
         post_mock.assert_called()

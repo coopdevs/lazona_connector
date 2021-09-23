@@ -11,6 +11,11 @@ class ShipmentStatus(models.TextChoices):
     DELIVERED = "DELIVERED", _(u"Entregat"),
 
 
+class ShipmentMethod(models.TextChoices):
+    KOIKI = "KOIKI", _(u"Enviament via Koiki")
+    LOCAL_PICKUP = "LOCAL_PICKUP", _(u"Recollida en botiga")
+
+
 class Shipment(models.Model):
     delivery_id = models.CharField(
         _("Id de l'enviament"),
@@ -32,6 +37,13 @@ class Shipment(models.Model):
         _("Estat de l'enviament"),
         max_length=20,
         choices=ShipmentStatus.choices,
+        null=False,
+        blank=False,
+    )
+    method = models.CharField(
+        _("Mètode d'enviament"),
+        max_length=20,
+        choices=ShipmentMethod.choices,
         null=False,
         blank=False,
     )

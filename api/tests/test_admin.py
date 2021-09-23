@@ -132,6 +132,20 @@ class ShipmentAdminTest(TestCase):
                         "country": "ES",
                     },
                     "billing": {"phone": "666666666", "email": "lennon@example.com"},
+                    "shipping_lines": [
+                        {
+                            "id": 54,
+                            "method_title": "Enviament Koiki",
+                            "method_id": "wcfmmp_product_shipping_by_zone",
+                            "meta_data": [{
+                                "id": 172,
+                                "key": "vendor_id",
+                                "value": "5",
+                                "display_key": "Store",
+                                "display_value": "Tenda Taronja",
+                            }]
+                        }
+                    ],
                     "line_items": [
                         {
                             "id": 17,

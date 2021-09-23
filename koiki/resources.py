@@ -1,8 +1,27 @@
+from koiki.woocommerce.order import Order
+
 def clean_names_for_koiki(name):
     name = name.replace("'", " ")
     name = name.replace("ç", "c")
     name = name.replace("-", " ")
     return name
+
+
+class KoikiOrder(Order):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self = self.filter_by_method("KOIKI")
+
+    def to_dict(self):
+        return {
+            'numPedido': self.number,
+            'bultos': 1,
+            'kilos': 1.0,
+            'tipoServicio': '',
+            'reembolso': 0.0,
+            'observaciones': self.note
+        }
 
 
 class Sender():

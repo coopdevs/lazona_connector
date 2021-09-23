@@ -32,6 +32,13 @@ class LineItemSerializer(serializers.Serializer):
     meta_data = MetadataSerializer(many=True)
 
 
+class ShippingLineSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=True)
+    method_title = serializers.CharField()
+    method_id = serializers.CharField()
+    meta_data = MetadataSerializer(many=True)
+
+
 class OrderSerializer(serializers.Serializer):
     order_key = serializers.CharField(required=True)
     id = serializers.IntegerField(required=True)
@@ -39,6 +46,7 @@ class OrderSerializer(serializers.Serializer):
     shipping = ShippingSerializer()
     billing = BillingSerializer()
     line_items = LineItemSerializer(many=True)
+    shipping_lines = ShippingLineSerializer(many=True)
 
 
 class CustomerSerializer(serializers.Serializer):

@@ -1,7 +1,7 @@
 from unittest import TestCase
 import httpretty
 import json
-from koiki.order import Order
+from koiki.resources import KoikiOrder
 from koiki.delivery_create import CreateDelivery
 import lazona_connector.vars
 
@@ -29,6 +29,32 @@ class CreateDeliveryTest(TestCase):
                 'email': 'email@example.com',
                 'phone': '+34666554433'
             },
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 172,
+                        "key": "vendor_id",
+                        "value": "5",
+                        "display_key": "Store",
+                        "display_value": "Quèviure",
+                    }]
+                },
+                {
+                    "id": 55,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "wcfmmp_product_shipping_by_zone",
+                    "meta_data": [{
+                        "id": 182,
+                        "key": "vendor_id",
+                        "value": "6",
+                        "display_key": "Store",
+                        "display_value": "A granel",
+                    }]
+                }
+            ],
             'line_items': [
                 {
                     'id': 1,
@@ -142,7 +168,7 @@ class CreateDeliveryTest(TestCase):
             ),
         )
 
-        body = CreateDelivery(Order(self.order)).body()
+        body = CreateDelivery(KoikiOrder(self.order)).body()
         deliveries = body['envios']
 
         self.assertEquals(len(deliveries), 2)
@@ -188,6 +214,6 @@ class CreateDeliveryTest(TestCase):
 
     def test_url(self):
         self.assertEqual(
-            CreateDelivery(Order(self.order)).url(),
+            CreateDelivery(KoikiOrder(self.order)).url(),
             f'{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios'
         )
