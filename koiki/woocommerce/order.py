@@ -76,4 +76,4 @@ class Order():
 class LocalPickupOrder(Order):
     def __init__(self, data):
         super().__init__(data)
-        self = self.filter_by_method(ShipmentMethod.LOCAL_PICKUP)
+        self = self.filter_by_method("LOCAL_PICKUP")
