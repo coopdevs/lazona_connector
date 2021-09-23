@@ -5,17 +5,17 @@ from koiki.woocommerce.order import LocalPickupOrder
 from koiki.resources import KoikiOrder
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
 from sugarcrm.customer import Customer
-import lazona_connector.vars
-from lazona_connector.vars import logger
+from lazona_connector.vars import logger, wp_partner_role, TESTING
 from wordpress.user import WPUser
 from lazona_connector.celery import app
 from django.db.models import Q
 
+if __name__ == '__main__' or TESTING:
+    from api.models import Shipment, ShipmentStatus, ShipmentMethod
+
 
 @app.task
 def create_or_update_delivery(order_data, vendor_id=None):
-    from api.models import Shipment, ShipmentStatus, ShipmentMethod
-
     local_pickup_orders = LocalPickupOrder(order_data)
 
     for local_vendor_id in local_pickup_orders.by_vendor.keys():
@@ -30,6 +30,7 @@ def create_or_update_delivery(order_data, vendor_id=None):
 
     koiki_orders = KoikiOrder(order_data).filter_by_vendor(vendor_id)
     deliveries_by_vendor = Client().create_delivery(koiki_orders)
+
     for delivery in deliveries_by_vendor:
         label_url = ""
         if delivery._is_errored():
@@ -129,4 +130,4 @@ def _check_customer_is_partner(email):
 def update_user_as_partner(email):
     wp_user = WPUser().fetch_by_email(email)
     if wp_user.roles and "customer" in wp_user.roles:
-        wp_user.update(roles=lazona_connector.vars.wp_partner_role)
+        wp_user.update(roles=wp_partner_role)

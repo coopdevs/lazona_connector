@@ -1,6 +1,5 @@
 from collections import defaultdict
 from koiki.woocommerce.resources import LineItem, ShippingLine
-from api.models import ShipmentMethod
 
 
 class Order():
@@ -56,8 +55,8 @@ class Order():
         return by_method
 
     def filter_by_method(self, method_id):
-        method_mapping = {ShipmentMethod.KOIKI: "wcfmmp_product_shipping_by_zone",
-                          ShipmentMethod.LOCAL_PICKUP: "local_pickup"}
+        method_mapping = {"KOIKI": "wcfmmp_product_shipping_by_zone",
+                          "LOCAL_PICKUP": "local_pickup"}
 
         method_vendors = self.by_method[method_mapping[method_id]]
         by_vendor_method = {}
@@ -77,4 +76,4 @@ class Order():
 class LocalPickupOrder(Order):
     def __init__(self, data):
         super().__init__(data)
-        self = self.filter_by_method(ShipmentMethod.LOCAL_PICKUP)
+        self = self.filter_by_method("LOCAL_PICKUP")

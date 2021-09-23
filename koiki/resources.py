@@ -1,6 +1,4 @@
 from koiki.woocommerce.order import Order
-from api.models import ShipmentMethod
-
 
 def clean_names_for_koiki(name):
     name = name.replace("'", " ")
@@ -13,7 +11,7 @@ class KoikiOrder(Order):
 
     def __init__(self, data):
         super().__init__(data)
-        self = self.filter_by_method(ShipmentMethod.KOIKI)
+        self = self.filter_by_method("KOIKI")
 
     def to_dict(self):
         return {
