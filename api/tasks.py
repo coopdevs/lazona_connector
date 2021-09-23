@@ -5,17 +5,15 @@ from koiki.woocommerce.order import LocalPickupOrder
 from koiki.resources import KoikiOrder
 from koiki.email import FailedDeliveryMail, SuccessDeliveryMail, UpdateDeliveryStatusChangedMail
 from sugarcrm.customer import Customer
-from lazona_connector.vars import logger, wp_partner_role, TESTING
+from lazona_connector.vars import logger, wp_partner_role
 from wordpress.user import WPUser
 from lazona_connector.celery import app
 from django.db.models import Q
 
-if __name__ == '__main__' or TESTING:
-    from api.models import Shipment, ShipmentStatus, ShipmentMethod
-
 
 @app.task
 def create_or_update_delivery(order_data, vendor_id=None):
+    from api.models import Shipment, ShipmentStatus, ShipmentMethod
     local_pickup_orders = LocalPickupOrder(order_data)
 
     for local_vendor_id in local_pickup_orders.by_vendor.keys():
