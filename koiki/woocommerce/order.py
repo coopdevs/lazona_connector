@@ -54,11 +54,14 @@ class Order():
 
         return by_method
 
-    def filter_by_method(self, method_id):
-        method_mapping = {"KOIKI": "wcfmmp_product_shipping_by_zone",
-                          "LOCAL_PICKUP": "local_pickup"}
+    def filter_by_method(self, method_mapping_id):
+        method_mapping = {"KOIKI": ["wcfmmp_product_shipping_by_zone", "flat_rate"],
+                          "LOCAL_PICKUP": ["local_pickup"]}
 
-        method_vendors = self.by_method[method_mapping[method_id]]
+        method_vendors = []
+        for method_id in method_mapping[method_mapping_id]:
+            method_vendors += self.by_method[method_id]
+
         by_vendor_method = {}
         for vendor_id in method_vendors:
             by_vendor_method[vendor_id] = self.by_vendor[vendor_id]
