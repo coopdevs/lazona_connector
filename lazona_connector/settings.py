@@ -75,6 +75,10 @@ LOGGING = {
         'api': {
             'handlers': ['console'],
             'level': 'INFO',
+        },
+        'koiki': {
+            'handlers': ['console'],
+            'level': 'INFO',
         }
     }
 }
