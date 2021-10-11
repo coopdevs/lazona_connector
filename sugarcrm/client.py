@@ -26,9 +26,9 @@ class APIClient:
             "response_type": "json",
             "rest_data": data,
         }
-        self.logger.debug("SugarCRM request to {}, args={}".format(self.rest_url, args))
+        self.logger.info("SugarCRM request to {}, args={}".format(self.rest_url, args))
         response = self.client.get(self.rest_url, args)
-        self.logger.debug("SugarCRM response: {}".format(response.content))
+        self.logger.info("SugarCRM response: {}".format(response.content))
         return response
 
     def _login(self):
@@ -49,7 +49,7 @@ class APIClient:
 
     def search_email(self, email):
         args = [email, ["Accounts", "Contacts"], 0, 1, "", ["id"], False, False]
-        self.logger.debug("SugarCRM searching email in CRM: {}".format(email))
+        self.logger.info("SugarCRM searching email in CRM: {}".format(email))
         response = self._api_request("search_by_module", args)
         result = response.json()
 
@@ -73,7 +73,7 @@ class APIClient:
         args = [module, object_id, [], [], False]
         response = self._api_request("get_entry", args)
         result = response.json()
-        self.logger.debug("SugarCRM response: {}".format(response.content))
+        self.logger.info("SugarCRM response: {}".format(response.content))
         if "entry_list" not in result:
             raise CrmResponseError("Unexpected Response: {}".format(response.content))
         else:

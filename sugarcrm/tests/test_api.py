@@ -37,7 +37,7 @@ class APIClientTest(TestCase):
         api_client._login()
         http_mock_response.assert_called_once_with("https://test_sugarcrm_host", args)
         self.assertEqual(api_client.session_id, 111)
-        self.assertEqual(mock_logger.debug.call_count, 2)
+        self.assertEqual(mock_logger.info.call_count, 2)
 
     def test_wrong_login_request(self):
         http_mock_response = MagicMock()
