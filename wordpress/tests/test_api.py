@@ -14,7 +14,7 @@ class APIClientTest(TestCase):
         api_client = APIClient(self.mock_client, mock_logger)
         api_client.get_request("endpoint")
 
-        mock_logger.debug.assert_called_once_with(
+        mock_logger.info.assert_called_once_with(
             "WP GET request. url=https://wcfmmp_testing_host/wp-json/wp/v2/endpoint. params={}"
         )
 
@@ -30,7 +30,7 @@ class APIClientTest(TestCase):
         test_data = {"field": "data"}
         api_client.post_request("endpoint", test_data)
 
-        mock_logger.debug.assert_called_once_with(
+        mock_logger.info.assert_called_once_with(
             "WP POST request. url=https://wcfmmp_testing_host/wp-json/wp/v2/endpoint."
             " data={'field': 'data'}"
         )

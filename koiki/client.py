@@ -22,7 +22,7 @@ class Client:
     def create_delivery(self, order):
         create_delivery = CreateDelivery(order)
         req_body_create_delivery = create_delivery.body()
-        self.logger.debug(
+        self.logger.info(
             'Koiki request to {}. body={}'.format(
                 create_delivery.url(),
                 create_delivery.body()
@@ -56,7 +56,7 @@ class Client:
 
     def update_delivery_status(self, delivery_id):
         update_delivery = UpdateDelivery(delivery_id)
-        self.logger.debug(
+        self.logger.info(
             'Koiki request to {}. body={}'.format(
                 update_delivery.url(),
                 update_delivery.body()

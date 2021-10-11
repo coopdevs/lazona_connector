@@ -61,12 +61,20 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.NullHandler',
         },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.tests': {
             'handlers': ['null'],
             'level': 'INFO',
             'propagate': False,
+        },
+        'api': {
+            'handlers': ['console'],
+            'level': 'INFO',
         }
     }
 }
