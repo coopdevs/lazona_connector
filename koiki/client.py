@@ -36,6 +36,9 @@ class Client:
 
         deliveries = []
         if response.status_code == status.HTTP_200_OK:
+            if response_body["envios"] == []:
+                self._log(response.status_code, response_body, level="error")
+
             for num, delivery_data in enumerate(response_body["envios"]):
                 vendor = order.vendors[num]
                 req_body_shipping = req_body_create_delivery["envios"][num]
