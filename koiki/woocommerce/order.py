@@ -48,14 +48,20 @@ class Order():
 
     def _by_method(self, shipping_lines):
         by_method = defaultdict(list)
+        method_id = None
+        nometadata = False
         for line_item in shipping_lines:
             item = ShippingLine(line_item)
+            method_id = item.method_id
             if item.vendor:
-                by_method[item.method_id].append(item.vendor.id)
+                by_method[method_id].append(item.vendor.id)
             else:
-                for vendor in self.vendors:
-                    by_method[item.method_id].append(vendor.id)
+                nometadata = True
                 break
+
+        if nometadata:
+            for vendor in self.vendors:
+                by_method[method_id].append(vendor.id)
 
         return by_method
 
