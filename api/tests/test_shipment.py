@@ -211,3 +211,85 @@ class ShipmentTests(TestCase):
         self.assertEqual(shipment_local.order_id, 33)
         self.assertEqual(shipment_local.status, ShipmentStatus.DELIVERED)
         self.assertEqual(shipment_local.method, ShipmentMethod.LOCAL_PICKUP)
+
+    @patch("koiki.email.EmailMessage", autospec=True)
+    def test_create_shipment_without_shipment_metadata(self, mock_email):
+        httpretty.register_uri(
+            httpretty.POST,
+            f"{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios",
+            status=200,
+            content_type="text/json",
+            body=json.dumps(
+                {
+                    "respuesta": "101",
+                    "mensaje": "OK",
+                    "envios": [
+                        {
+                            "numPedido": "123",
+                            "codBarras": "yyy",
+                            "etiqueta": "abcd",
+                            "respuesta": "101",
+                            "mensaje": "OK",
+                        }
+                    ],
+                }
+            ),
+        )
+
+        order_data = {
+            "id": 33,
+            "order_key": "xxx",
+            "customer_note": "",
+            "shipping": {
+                "first_name": "John",
+                "last_name": "Lennon",
+                "address_1": "Beatles Street 66",
+                "address_2": "",
+                "postcode": "08032",
+                "city": "Barcelona",
+                "state": "Barcelona",
+                "country": "ES",
+            },
+            "billing": {"phone": "666666666", "email": "lennon@example.com"},
+            "line_items": [
+                {
+                    "id": 17,
+                    "quantity": 1,
+                    "name": "Suc Taronja 1l",
+                    "meta_data": [
+                        {
+                            "id": 172,
+                            "key": "_vendor_id",
+                            "value": "6",
+                            "display_key": "Store",
+                            "display_value": "Quèviure",
+                        }
+                    ],
+                }
+            ],
+            "shipping_lines": [
+                {
+                    "id": 54,
+                    "method_title": "Enviament Koiki",
+                    "method_id": "flat_rate",
+                    "meta_data": []
+                }
+            ],
+        }
+
+        serializer = OrderSerializer(data=order_data)
+        self.assertTrue(serializer.is_valid())
+
+        order = serializer.validated_data
+        mock_email.send.return_value = True
+        create_or_update_delivery(order)
+        self.assertEqual(Shipment.objects.all().count(), 1)
+
+        shipment_koiki = Shipment.objects.filter(vendor_id=6).first()
+        self.assertEqual(shipment_koiki.delivery_id, "yyy")
+        self.assertEqual(shipment_koiki.order_id, 33)
+        self.assertEqual(shipment_koiki.method, ShipmentMethod.KOIKI)
+        self.assertTrue("(wc_order:33, vendor:6)" in str(shipment_koiki))
+        self.assertEqual(shipment_koiki.label_url, "pdf_barcodes/123.pdf")
+        self.assertEqual(shipment_koiki.status, ShipmentStatus.LABEL_SENT)
+        self.assertEqual(shipment_koiki.delivery_message, "OK")

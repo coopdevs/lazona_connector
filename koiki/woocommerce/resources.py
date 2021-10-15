@@ -91,7 +91,10 @@ class ShippingLine():
         self.method_id = line_item['method_id']
         self.metadata = line_item['meta_data']
         vendor = self._find_vendor()
-        self.vendor = Vendor(id=vendor[0], name=vendor[1])
+        if vendor:
+            self.vendor = Vendor(id=vendor[0], name=vendor[1])
+        else:
+            self.vendor = None
 
     # Finds the vendor attributes from all the metadata entries
     def _find_vendor(self):
@@ -99,7 +102,7 @@ class ShippingLine():
             if datum['key'] == 'vendor_id':
                 return datum['value'], datum['display_value']
 
-        raise Exception("No vendor_id provided in line item's metadata")
+        return None
 
 
 class Shipping():
