@@ -62,7 +62,10 @@ class WooocommerceModelsTest(TestCase):
             "method_id": "wcfmmp_product_shipping_by_zone",
             "meta_data": []
         }
-        self.assertRaises(Exception, ShippingLine, shipping_line)
+        shipping_line = ShippingLine(shipping_line)
+
+        self.assertEquals(shipping_line.method_id, "wcfmmp_product_shipping_by_zone")
+        self.assertEquals(shipping_line.vendor, None)
 
     def test_vendor(self):
         vendor = Vendor(id=1, name="name")

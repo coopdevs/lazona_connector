@@ -50,7 +50,12 @@ class Order():
         by_method = defaultdict(list)
         for line_item in shipping_lines:
             item = ShippingLine(line_item)
-            by_method[item.method_id].append(item.vendor.id)
+            if item.vendor:
+                by_method[item.method_id].append(item.vendor.id)
+            else:
+                for vendor in self.vendors:
+                    by_method[item.method_id].append(vendor.id)
+                break
 
         return by_method
 
