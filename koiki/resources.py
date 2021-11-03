@@ -19,7 +19,7 @@ class KoikiOrder(Order):
             'numPedido': self.number,
             'bultos': 1,
             'kilos': 1.0,
-            'tipoServicio': '',
+            'tipoServicio': 5,
             'reembolso': 0.0,
             'observaciones': self.note
         }
@@ -87,7 +87,7 @@ class Shipment():
             # 'bultos': self.packages,
             'bultos': 1,
             'kilos': 0.0,
-            'tipoServicio': '',
+            'tipoServicio': 5,
             'reembolso': 0.0,
             'observaciones': self.note
         }

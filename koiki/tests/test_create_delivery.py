@@ -178,7 +178,7 @@ class CreateDeliveryTest(TestCase):
             # TODO: Refactor we're forcing each vendor generates always 1 package.
             'bultos': 1,
             'kilos': 0.0,
-            'tipoServicio': '',
+            'tipoServicio': 5,
             'reembolso': 0.0,
             'observaciones': 'delivery testing',
             'nombreRemi': 'A granel',
@@ -197,7 +197,7 @@ class CreateDeliveryTest(TestCase):
             'numPedido': 'xxx',
             'bultos': 1,
             'kilos': 0.0,
-            'tipoServicio': '',
+            'tipoServicio': 5,
             'reembolso': 0.0,
             'observaciones': 'delivery testing',
             'nombreRemi': 'Quèviure',
