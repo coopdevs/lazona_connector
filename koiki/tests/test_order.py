@@ -49,7 +49,7 @@ class OrderTest(TestCase):
                 "numPedido": self.data["order_key"],
                 "bultos": 1,
                 "kilos": 1.0,
-                "tipoServicio": "",
+                "tipoServicio": 5,
                 "reembolso": 0.0,
                 "observaciones": "dummy customer note",
             },

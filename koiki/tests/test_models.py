@@ -18,7 +18,7 @@ class ModelsTest(TestCase):
             {
                 "numPedido": 123,
                 "observaciones": "nota",
-                "tipoServicio": "",
+                "tipoServicio": 5,
                 "reembolso": 0.0,
                 "kilos": 0.0,
                 # TODO: Refactor we're forcing each vendor generates always 1 package.
@@ -34,7 +34,7 @@ class ModelsTest(TestCase):
             {
                 "numPedido": 123,
                 "observaciones": "nota",
-                "tipoServicio": "",
+                "tipoServicio": 5,
                 "reembolso": 0.0,
                 "kilos": 0.0,
                 "bultos": 1,
