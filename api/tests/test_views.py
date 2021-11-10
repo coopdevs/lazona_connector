@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 import httpretty
 import json
 import lazona_connector.vars
+from api.models import Shipment
 
 
 class DeliveryViewTests(TestCase):
@@ -58,13 +59,14 @@ class DeliveryViewTests(TestCase):
                 }]
             }]
         }
+
+        Shipment.objects.all().delete()
         self.api_url = f'{lazona_connector.vars.koiki_host}/rekis/api/altaEnvios'
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'pass')
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_successful_request(self):
         httpretty.register_uri(
                 httpretty.GET,
                 f'{lazona_connector.vars.wcfmmp_host}/wp-json/wcfmmp/v1/settings/id/6',
@@ -107,11 +109,25 @@ class DeliveryViewTests(TestCase):
                 })
         )
 
+    def test_successful_request(self):
         token = Token.objects.create(key='test token', user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         response = self.client.post(self.url, self.data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_successful_request_twice_idempotent(self):
+        token = Token.objects.create(key='test token', user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = self.client.post(self.url, self.data, format='json')
+        total_shipments = Shipment.objects.count()
+        self.assertEqual(total_shipments, 1)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(self.url, self.data, format='json')
+        total_shipments = Shipment.objects.count()
+        self.assertEqual(total_shipments, 1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_request(self):
         response = self.client.post(self.url, {})
