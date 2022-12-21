@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
+import environ
 import os
 import dj_database_url
 
@@ -17,6 +18,8 @@ from django.conf import global_settings
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+
+env = environ.Env()
 
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DSN'),
@@ -51,7 +54,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = [".herokuapp.com", "127.0.0.1", ".ngrok.io", "0.0.0.0"]
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 LOGGING = {
     'version': 1,
