@@ -1,5 +1,6 @@
 __pycache__/
-.env
+.env*
+!.env.example
 .envrc
 .coverage
 htmlcov/
@@ -11,3 +12,5 @@ pdf_barcodes/*.pdf
 static
 staticfiles
 celerybeat-schedule
+dumps/
+.idea/
