@@ -10,6 +10,37 @@ that one instead.
 
 ## Deployment
 
+### New deployment steps for Digital Ocean (december 2022)
+
+1. Generate the Docker image
+
+From project's root folder:
+
+Before deploying to pre-production or production, you'll need to update the image at DO.
+
+From the root folder run:
+
+    docker build -t lazona_connector:release-YY.MM.001 .
+
+Where the release number is YY.MM.00X, where X is the release number within this month. The format `00X` is to make it
+obvious that it's not the day of the month.
+
+For the next steps, you should check the instructions directly at the DO's control panel, by going to Container Registry
+and using the *Push images using Docker CLI* link at the footer. Nonetheless, we're copying below those instructions:
+
+After having set up the `doctl` command in your system according to the aforementioned documentation, copy the generated
+image to another tag that will include the DO prefix:
+
+    docker tag lazona_connector:release-YY.MM.001 registry.digitalocean.com/codihub/lazona_connector:release-YY.MM.001
+
+Then push it:
+
+    docker push registry.digitalocean.com/codihub/lazona_connector:release-YY.MM.001
+
+Now check the DO's Container Registry page and that new release should appear.
+
+### Deprecated after it's moved to Digital Ocean
+
 `lazona-connector-staging` is configured to automatically deploy on every commit
 to `main`, so every merged pull request will be immediately available there,
 which ensures that server contains the latest changes while ensuring `main` is
