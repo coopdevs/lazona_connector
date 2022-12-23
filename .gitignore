@@ -14,3 +14,4 @@ staticfiles
 celerybeat-schedule
 dumps/
 .idea/
+/docker/settings/preproduction.env
