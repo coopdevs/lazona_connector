@@ -15,3 +15,4 @@ celerybeat-schedule
 dumps/
 .idea/
 /docker/settings/preproduction.env
+/docker/settings/digitalocean.env
