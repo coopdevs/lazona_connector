@@ -65,7 +65,7 @@ LOGGING = {
             'class': 'logging.NullHandler',
         },
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
     },
@@ -77,12 +77,17 @@ LOGGING = {
         },
         'api': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
         'koiki': {
             'handlers': ['console'],
-            'level': 'INFO',
-        }
+            'level': 'DEBUG',
+        },
+        'werkzeug': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     }
 }
 
