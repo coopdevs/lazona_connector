@@ -23,8 +23,8 @@ services:
       - develop_lazona_conn_db
       - develop_lazona_conn_redis
 
-  develop_lazona_conn_celery-beat:
-    container_name: develop_lazona_conn_celery
+  develop_lazona_conn_celery_beat:
+    container_name: develop_lazona_conn_celery_beat
     image: registry.digitalocean.com/codihub/lazona_connector:latest
     command: celery -A api.tasks beat -l INFO
     env_file:
