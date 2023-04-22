@@ -3,7 +3,7 @@ version: "3.7"
 services:
   develop_lazona_conn_app:
     container_name: develop_lazona_conn_app
-    image: registry.digitalocean.com/codihub/lazona_connector:release-22.12.001
+    image: registry.digitalocean.com/codihub/lazona_connector:latest
     command: gunicorn lazona_connector.wsgi:application --bind 0.0.0.0:8000 --reload --threads=10
     env_file:
       - ./settings/preproduction.env
@@ -14,8 +14,19 @@ services:
 
   develop_lazona_conn_celery:
     container_name: develop_lazona_conn_celery
-    image: registry.digitalocean.com/codihub/lazona_connector:release-22.12.001
-    command: celery -A api.tasks worker --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    image: registry.digitalocean.com/codihub/lazona_connector:latest
+#    command: celery -A api.tasks worker --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A api.tasks worker -l INFO
+    env_file:
+      - ./settings/preproduction.env
+    depends_on:
+      - develop_lazona_conn_db
+      - develop_lazona_conn_redis
+
+  develop_lazona_conn_celery-beat:
+    container_name: develop_lazona_conn_celery
+    image: registry.digitalocean.com/codihub/lazona_connector:latest
+    command: celery -A api.tasks beat -l INFO
     env_file:
       - ./settings/preproduction.env
     depends_on:
